@@ -1,0 +1,17 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "complaints": {
+      ".read": "auth != null && query.orderByChild == 'userId' && query.equalTo == auth.uid",
+      "$complaintId": {
+        ".read": "auth != null && data.child('userId').val() == auth.uid",
+        ".write": "auth != null && newData.child('userId').val() == auth.uid"
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "750029186116",
+    "firebase_url": "https://legal-sathi-f6009-default-rtdb.firebaseio.com",
+    "project_id": "legal-sathi-f6009",
+    "storage_bucket": "legal-sathi-f6009.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750029186116:android:4c6cfcac4f3af961c28811",
+        "android_client_info": {
+          "package_name": "com.example.front_end"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTE4eS_qQ4JlB7vnLlgUvEvB3TQQr3Xs4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

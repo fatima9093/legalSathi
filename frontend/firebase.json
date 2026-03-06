@@ -1,0 +1,24 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "legal-sathi-f6009",
+          "appId": "1:750029186116:android:4c6cfcac4f3af961c28811",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "legal-sathi-f6009",
+          "configurations": {
+            "android": "1:750029186116:android:4c6cfcac4f3af961c28811"
+          }
+        }
+      }
+    }
+  },
+  "database": {
+    "rules": "database.rules.json"
+  }
+}
