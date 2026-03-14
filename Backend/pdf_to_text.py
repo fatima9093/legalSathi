@@ -10,3 +10,7 @@ for page in reader.pages:
         full_text += text + "\n"
 
 print(full_text[:1000])
+
+
+
+

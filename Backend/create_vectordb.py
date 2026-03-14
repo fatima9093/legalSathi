@@ -13,13 +13,14 @@ from chromadb.utils import embedding_functions
 print("Starting vector database creation...")
 
 # Remove old chroma_db folder if it exists (fixes schema mismatch from different ChromaDB versions)
-chroma_path = Path("./chroma_db")
+BASE_DIR = Path(__file__).resolve().parent
+chroma_path = BASE_DIR / "chroma_db"
 if chroma_path.exists():
     print("Removing old chroma_db folder (different schema)...")
     shutil.rmtree(chroma_path)
 
 # Initialize ChromaDB
-client = chromadb.PersistentClient(path="./chroma_db")
+client = chromadb.PersistentClient(path=str(chroma_path))
 
 # Use sentence transformers for embeddings
 embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(

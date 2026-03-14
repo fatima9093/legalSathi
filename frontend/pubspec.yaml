@@ -54,6 +54,12 @@ dependencies:
   speech_to_text: ^7.0.0
   permission_handler: ^11.3.1
 
+  # Markdown rendering for AI responses
+  flutter_markdown: ^0.7.4
+
+  # Share & export chat
+  share_plus: ^10.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

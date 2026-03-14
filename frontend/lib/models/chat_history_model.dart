@@ -1,17 +1,19 @@
 class ChatHistory {
   final String id;
-  final String title;
+  String title; // mutable — supports rename
   final String previewText;
   final DateTime timestamp;
-  final List<ChatMessage> messages;
+
+  /// Stores screen's ChatMessage objects as dynamic to avoid circular imports.
+  final List<dynamic> messages;
 
   ChatHistory({
     required this.id,
     required this.title,
     required this.previewText,
     required this.timestamp,
-    required this.messages,
-  });
+    List<dynamic>? messages,
+  }) : messages = messages ?? [];
 
   String getFormattedDate() {
     final now = DateTime.now();
@@ -27,20 +29,4 @@ class ChatHistory {
       return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
     }
   }
-}
-
-class ChatMessage {
-  final String text;
-  final String? urduText;
-  final bool isUser;
-  final String? timestamp;
-  final bool showActions;
-
-  ChatMessage({
-    required this.text,
-    this.urduText,
-    required this.isUser,
-    this.timestamp,
-    this.showActions = true,
-  });
 }

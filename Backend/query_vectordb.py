@@ -1,8 +1,11 @@
 import chromadb
+from pathlib import Path
 from chromadb.utils import embedding_functions
 
 # Connect to database
-client = chromadb.PersistentClient(path="./chroma_db")
+BASE_DIR = Path(__file__).resolve().parent
+CHROMA_DB_PATH = BASE_DIR / "chroma_db"
+client = chromadb.PersistentClient(path=str(CHROMA_DB_PATH))
 embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
     model_name="all-MiniLM-L6-v2"
 )
