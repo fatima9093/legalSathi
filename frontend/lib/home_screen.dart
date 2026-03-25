@@ -12,6 +12,7 @@ import 'package:front_end/scenario_simulator_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
 import 'package:front_end/Traffic%20Module/traffic_challan_ocr_screen.dart';
 import 'package:front_end/cyber%20law%20module/draft_document_type_screen.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         user != null
                             ? 'Welcome, ${user.displayName ?? user.email?.split('@').first ?? 'User'}'
-                            : 'Welcome, Guest',
+                            : AppLocalizations.of(context)!.welcome,
                         style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                       if (user != null)
@@ -96,9 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
                       },
-                      child: const Text(
-                        'Logout',
-                        style: TextStyle(fontSize: 12),
+                      child:  Text(
+                        (AppLocalizations.of(context)!.language),
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ),
                 ],
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextField(
                     enabled: false,
                     decoration: InputDecoration(
-                      hintText: 'Ask a legal question...',
+                      hintText: AppLocalizations.of(context)!.askALegalQuestion,
                       hintStyle: TextStyle(color: Colors.grey[400]),
                       prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
                       border: InputBorder.none,
@@ -146,9 +147,9 @@ class _HomeScreenState extends State<HomeScreen> {
             // Legal Categories
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                'Legal Categories',
-                style: TextStyle(
+              child:  Text(
+                AppLocalizations.of(context)!.legalCategoies,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -240,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisSpacing: 12,
                 children: [
                   _buildQuickAction(
-                    'Ask AI',
+                     AppLocalizations.of(context)!.askAi,
                     Icons.chat_bubble_outline,
                     onTap: () {
                       Navigator.push(
@@ -252,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   _buildQuickAction(
-                    'Upload\nEvidence',
+                    AppLocalizations.of(context)!.uploadEvidence,
                     Icons.camera_alt_outlined,
                     onTap: () {
                       Navigator.push(
@@ -264,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   _buildQuickAction(
-                    'Draft\nDocument',
+                    AppLocalizations.of(context)!.draftDocument,
                     Icons.local_offer_outlined,
                     onTap: () {
                       Navigator.push(
@@ -280,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   _buildQuickAction(
-                    'Simulate',
+                    AppLocalizations.of(context)!.simulate,
                     Icons.play_circle_outline,
                     onTap: () {
                       Navigator.push(
@@ -301,9 +302,9 @@ class _HomeScreenState extends State<HomeScreen> {
             // Recent Activity
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                'Recent Activity',
-                style: TextStyle(
+              child:  Text(
+                AppLocalizations.of(context)!.recentActivity,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -345,8 +346,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'FIR Draft',
+                         Text((
+                          AppLocalizations.of(context)!.firDraft),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -354,7 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Created 2 hours ago',
+                          AppLocalizations.of(context)!.created2HoursAgo,
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 12,

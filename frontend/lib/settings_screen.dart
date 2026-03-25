@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:front_end/providers/language_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,7 +14,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _voiceMode = true;
   bool _notifications = true;
   bool _darkMode = false;
-  String _selectedLanguage = 'English';
+  String _selectedLanguage = 'English'; // ← still kept for local display
+
+  @override
+  void initState() {
+    super.initState();
+    // ← Load the globally saved language on screen open
+    _selectedLanguage = context.read<LanguageProvider>().languageString;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Settings',
+        title:  Text((AppLocalizations.of(context)!.settings),
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -64,8 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title: const Text(
-                          'Language',
+                        title: Text(AppLocalizations.of(context)!.language,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -73,14 +81,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         trailing: Text(
-                          _selectedLanguage,
+                          _selectedLanguage, // ← shows current language
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
                           ),
                         ),
                         onTap: () {
-                          // TODO: Show language selection dialog
                           _showLanguageDialog();
                         },
                       ),
@@ -102,8 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title: const Text(
-                          'Voice Mode',
+                        title: Text(AppLocalizations.of(context)!.voiceMode,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -139,8 +145,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title: const Text(
-                          'Notifications',
+                        title: Text(AppLocalizations.of(context)!.notifications,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -176,8 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title: const Text(
-                          'Dark Mode',
+                        title:  Text(AppLocalizations.of(context)!.darkMode,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -216,19 +220,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showLanguageDialog() {
+    final langProvider = context.read<LanguageProvider>(); // ← NEW
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Select Language'),
+        title:  Text(AppLocalizations.of(context)!.selectLanguage),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // ← Added Roman Urdu option, fixed Urdu string mismatch
             ListTile(
-              title: const Text('English'),
+              title:  Text(AppLocalizations.of(context)!.english),
               trailing: _selectedLanguage == 'English'
                   ? const Icon(Icons.check, color: Color(0xFF00401A))
                   : null,
               onTap: () {
+                langProvider.changeLanguage('English'); // ← NEW
                 setState(() {
                   _selectedLanguage = 'English';
                 });
@@ -236,13 +244,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             ListTile(
-              title: const Text('اردو (Urdu)'),
-              trailing: _selectedLanguage == 'اردو'
+              title:  Text(AppLocalizations.of(context)!.romanUrdu),
+              trailing: _selectedLanguage == 'Roman Urdu'
                   ? const Icon(Icons.check, color: Color(0xFF00401A))
                   : null,
               onTap: () {
+                langProvider.changeLanguage('Roman Urdu'); // ← NEW
                 setState(() {
-                  _selectedLanguage = 'اردو';
+                  _selectedLanguage = 'Roman Urdu';
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.urdu),
+              trailing: _selectedLanguage == 'Urdu'
+                  ? const Icon(Icons.check, color: Color(0xFF00401A))
+                  : null,
+              onTap: () {
+                langProvider.changeLanguage('Urdu'); // ← NEW
+                setState(() {
+                  _selectedLanguage = 'Urdu';
                 });
                 Navigator.pop(context);
               },

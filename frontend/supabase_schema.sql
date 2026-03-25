@@ -6,6 +6,7 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
   email text,
+  language text default 'English' check (language in ('English', 'Urdu', 'Roman Urdu')),
   created_at timestamptz default now(),
   last_login timestamptz default now()
 );
@@ -67,11 +68,12 @@ create policy "Users can manage own complaints" on public.complaints for all usi
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, full_name, email, created_at, last_login)
+  insert into public.profiles (id, full_name, email, language, created_at, last_login)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', ''),
     new.email,
+    'English',
     now(),
     now()
   )

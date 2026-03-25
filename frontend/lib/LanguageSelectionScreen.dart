@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Create account/signin_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:front_end/providers/language_provider.dart';
 
 class LanguageSelectionScreen extends StatefulWidget {
   final bool fromProfile;
@@ -13,6 +15,14 @@ class LanguageSelectionScreen extends StatefulWidget {
 
 class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
   String selectedLanguage = 'English';
+
+  @override
+  void initState() {
+    super.initState();
+    // Load whatever language was previously saved
+    final langProvider = context.read<LanguageProvider>();
+    selectedLanguage = langProvider.languageString;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,10 +126,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (widget.fromProfile) {
-                            // Go back to profile
                             Navigator.pop(context);
                           } else {
-                            // Go to signup during onboarding
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -170,6 +178,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
         setState(() {
           selectedLanguage = value;
         });
+        // ← ONLY NEW LINE: save language globally
+        context.read<LanguageProvider>().changeLanguage(value);
       },
       child: Container(
         padding: const EdgeInsets.all(16),

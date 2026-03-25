@@ -35,6 +35,19 @@ except ImportError:
     _VERIFICATION_AVAILABLE = False
     print("⚠️  verification_agent not found — strict freshness verification will be limited.")
 
+# Import Supabase client for language preference management
+try:
+    from supabase_client import (
+        get_user_language,
+        set_user_language,
+        get_user_profile,
+        check_languages_available,
+    )
+    _SUPABASE_AVAILABLE = check_languages_available()
+except ImportError:
+    _SUPABASE_AVAILABLE = False
+    print("⚠️  supabase_client not found — language persistence will be unavailable.")
+
 # Load environment variables from Backend/.env regardless of cwd
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=BASE_DIR / ".env")
@@ -233,7 +246,7 @@ def _should_activate_agents_automatically(
     return False
 
 
-def _to_agent_answer_response(orch_result: OrchestratorResponse, source: str = "agent_pipeline") -> AgentAnswerResponse:
+def _to_agent_answer_response(orch_result: "OrchestratorResponse", source: str = "agent_pipeline") -> AgentAnswerResponse:
     return AgentAnswerResponse(
         answer=orch_result.answer,
         source=source,
@@ -384,11 +397,18 @@ async def ask_question(request: QuestionRequest):
     try:
         # Step 1: Search Vector DB
         print(f"\n🔍 Query: {question}")
+        print(f"🌐 Language: {request.language}")
         
-        # Build filter if module specified
+        # Build filter for module and language
         where_filter = None
-        if agent_module:
-            where_filter = {"module": agent_module}
+        if agent_module or request.language:
+            where_filter = {}
+            if agent_module:
+                where_filter["module"] = agent_module
+            # Only filter by language if it's not the default (English)
+            # This ensures backward compatibility with existing documents
+            if request.language and request.language != "English":
+                where_filter["language"] = request.language
         
         results = collection.query(
             query_texts=[question],
@@ -735,7 +755,14 @@ async def ask_question_stream(request: QuestionRequest, raw_request: FastAPIRequ
             # ---------- try RAG context ---------------------------------
             if collection and groq_client:
                 agent_module = request.module if request.module in MODULE_NAMES else None
-                where_filter = {"module": agent_module} if agent_module else None
+                where_filter = None
+                if agent_module or request.language:
+                    where_filter = {}
+                    if agent_module:
+                        where_filter["module"] = agent_module
+                    if request.language and request.language != "English":
+                        where_filter["language"] = request.language
+                
                 results = collection.query(
                     query_texts=[question],
                     n_results=5,
@@ -813,6 +840,139 @@ Cite the relevant law/act if mentioned. Keep answers concise but informative."""
             "X-Accel-Buffering": "no",
         },
     )
+
+
+# ============================================================================
+# Language Preference Endpoints
+# ============================================================================
+
+class LanguagePreferenceRequest(BaseModel):
+    """Request model for setting language preference"""
+    language: str  # "English", "Urdu", or "Roman Urdu"
+
+class LanguagePreferenceResponse(BaseModel):
+    """Response model for language operations"""
+    user_id: str
+    language: str
+    message: str
+
+@app.get("/api/user/{user_id}/language")
+async def get_user_language_endpoint(user_id: str) -> LanguagePreferenceResponse:
+    """
+    Fetch user's language preference from Supabase.
+    
+    Args:
+        user_id: UUID of the user
+        
+    Returns:
+        Language preference: "English", "Urdu", or "Roman Urdu"
+        Defaults to "English" if not set or Supabase unavailable
+    """
+    if not _SUPABASE_AVAILABLE:
+        print(f"⚠️ Supabase unavailable — returning default language")
+        return LanguagePreferenceResponse(
+            user_id=user_id,
+            language="English",
+            message="Supabase not configured. Using default language."
+        )
+    
+    try:
+        language = get_user_language(user_id)
+        return LanguagePreferenceResponse(
+            user_id=user_id,
+            language=language,
+            message=f"Language preference fetched: {language}"
+        )
+    except Exception as e:
+        print(f"❌ Error fetching language: {e}")
+        return LanguagePreferenceResponse(
+            user_id=user_id,
+            language="English",
+            message="Error fetching preference. Using default: English"
+        )
+
+@app.post("/api/user/{user_id}/language")
+async def set_user_language_endpoint(user_id: str, request: LanguagePreferenceRequest) -> LanguagePreferenceResponse:
+    """
+    Update user's language preference in Supabase.
+    
+    Args:
+        user_id: UUID of the user
+        request: LanguagePreferenceRequest with language field
+        
+    Returns:
+        Updated language preference and status message
+    """
+    # Validate language
+    if request.language not in ["English", "Urdu", "Roman Urdu"]:
+        raise HTTPException(
+            status_code=400,
+            detail='Language must be "English", "Urdu", or "Roman Urdu"'
+        )
+    
+    if not _SUPABASE_AVAILABLE:
+        print(f"⚠️ Supabase unavailable — language preference not persisted")
+        return LanguagePreferenceResponse(
+            user_id=user_id,
+            language=request.language,
+            message="Supabase not configured. Language not persisted."
+        )
+    
+    try:
+        success, message = set_user_language(user_id, request.language)
+        if success:
+            return LanguagePreferenceResponse(
+                user_id=user_id,
+                language=request.language,
+                message=message
+            )
+        else:
+            print(f"❌ Error setting language: {message}")
+            raise HTTPException(
+                status_code=400,
+                detail=message
+            )
+    except HTTPException:
+        raise
+    except Exception as e:
+        error_msg = str(e)
+        print(f"❌ Unexpected error setting language: {error_msg}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error updating language: {error_msg}"
+        )
+
+@app.get("/api/languages")
+async def get_supported_languages():
+    """
+    Get list of supported languages.
+    
+    Returns:
+        List of supported languages with their display names
+    """
+    return {
+        "supported_languages": [
+            {
+                "code": "English",
+                "name": "English",
+                "native_name": "English",
+                "rtl": False
+            },
+            {
+                "code": "Urdu",
+                "name": "Urdu",
+                "native_name": "اردو",
+                "rtl": True
+            },
+            {
+                "code": "Roman Urdu",
+                "name": "Roman Urdu",
+                "native_name": "Urdu (Roman)",
+                "rtl": False
+            }
+        ],
+        "default_language": "English"
+    }
 
 
 if __name__ == "__main__":

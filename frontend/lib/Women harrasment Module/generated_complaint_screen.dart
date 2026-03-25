@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -400,7 +401,8 @@ Date: $currentDate''';
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+             child: Text((AppLocalizations.of(context)!.cancel)
+                      ),
           ),
           TextButton(
             onPressed: () {
@@ -412,8 +414,8 @@ Date: $currentDate''';
                 ),
               );
             },
-            child: const Text(
-              'Regenerate',
+             child: Text((AppLocalizations.of(context)!.generate)
+                      ,
               style: TextStyle(color: Color(0xFF00401A)),
             ),
           ),

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,7 +16,7 @@ import 'package:front_end/models/chat_history_model.dart';
 import 'package:front_end/widgets/agent_status_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
 class ChatScreen extends StatefulWidget {
   final ModuleType? selectedModule;
 
@@ -147,6 +148,11 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    
+    // Debug: Print user ID to console
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    print('🔍 DEBUG: Your User ID: $userId');
+    
     _speech = stt.SpeechToText();
     _conversationId = _newConversationId();
 
@@ -776,7 +782,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text((AppLocalizations.of(context)!.cancel))
           ),
           TextButton(
             onPressed: () {
@@ -1262,6 +1268,15 @@ class _ChatScreenState extends State<ChatScreen> {
                     : Colors.grey.shade600,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
+              ),
+            ),
+            // Display User ID for testing
+            Text(
+              'User ID: ${Supabase.instance.client.auth.currentUser?.id ?? "Not logged in"}',
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ],
@@ -2503,7 +2518,8 @@ class _ChatScreenState extends State<ChatScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+               child: Text((AppLocalizations.of(context)!.cancel)
+                      ),
             ),
             TextButton(
               onPressed: () {

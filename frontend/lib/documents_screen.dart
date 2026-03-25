@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class DocumentsScreen extends StatefulWidget {
   const DocumentsScreen({super.key});
@@ -43,8 +44,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          'Documents',
+        title: Text(
+          AppLocalizations.of(context)!.documents)
           style: TextStyle(
             color: Colors.black,
             fontSize: 20,
@@ -127,7 +128,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                 // Download functionality - will be implemented later
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Download feature coming soon'),
+                    content: Text(AppLocalizations.of(context)!.downloadFeatureComingSoon)),
                     duration: Duration(seconds: 1),
                   ),
                 );
@@ -156,7 +157,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text((AppLocalizations.of(context)!.cancel)),
             ),
             TextButton(
               onPressed: () {
@@ -168,7 +169,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                   ),
                 );
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text((AppLocalizations.of(context)!.delete), style: TextStyle(color: Colors.red)),
             ),
           ],
         );

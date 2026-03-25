@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/auth_service.dart';
 import 'package:front_end/settings_screen.dart';
 import 'package:front_end/privacy_policy_screen.dart';
@@ -27,8 +28,7 @@ class ProfileScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Profile',
+        title: Text(AppLocalizations.of(context)!.profile,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -102,7 +102,7 @@ class ProfileScreen extends StatelessWidget {
           // Settings
           _buildMenuCard(
             icon: Icons.settings,
-            title: 'Settings',
+            title: AppLocalizations.of(context)!.settings,
             onTap: () {
               Navigator.push(
                 context,
@@ -115,9 +115,9 @@ class ProfileScreen extends StatelessWidget {
 
           // Language
           _buildMenuCard(
-            icon: Icons.language,
-            title: 'Language',
-            onTap: () {
+              icon: Icons.language,
+              title: AppLocalizations.of(context)!.language,
+              onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -133,7 +133,7 @@ class ProfileScreen extends StatelessWidget {
           // Notifications
           _buildMenuCard(
             icon: Icons.notifications_outlined,
-            title: 'Notifications',
+            title: AppLocalizations.of(context)!.notifications,
             onTap: () {
               Navigator.push(
                 context,
@@ -149,7 +149,7 @@ class ProfileScreen extends StatelessWidget {
           // Privacy
           _buildMenuCard(
             icon: Icons.shield_outlined,
-            title: 'Privacy',
+            title: AppLocalizations.of(context)!.privacy,
             onTap: () {
               Navigator.push(
                 context,
@@ -165,7 +165,7 @@ class ProfileScreen extends StatelessWidget {
           // Help Center
           _buildMenuCard(
             icon: Icons.help_outline,
-            title: 'Help Center',
+            title: AppLocalizations.of(context)!.helpCenter,
             onTap: () {
               Navigator.push(
                 context,
@@ -181,7 +181,7 @@ class ProfileScreen extends StatelessWidget {
           // About
           _buildMenuCard(
             icon: Icons.info_outline,
-            title: 'About',
+            title: AppLocalizations.of(context)!.about,
             onTap: () {
               Navigator.push(
                 context,
@@ -219,8 +219,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 child: Icon(Icons.logout, color: Colors.red.shade700, size: 20),
               ),
-              title: Text(
-                'Logout',
+              title: Text(AppLocalizations.of(context)!.logout,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -232,19 +231,20 @@ class ProfileScreen extends StatelessWidget {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Logout'),
-                    content: const Text('Are you sure you want to logout?'),
+                    title: Text(AppLocalizations.of(context)!.logout),
+                    content: Text(AppLocalizations.of(context)!.areYouSureYouWantToLogout),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
+                         child: Text((AppLocalizations.of(context)!.cancel))
+                      
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(context, true),
                         style: TextButton.styleFrom(
                           foregroundColor: Colors.red,
                         ),
-                        child: const Text('Logout'),
+                        child: Text(AppLocalizations.of(context)!.logout),
                       ),
                     ],
                   ),

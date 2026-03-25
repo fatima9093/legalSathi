@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:front_end/supabase_config.dart';
+import 'providers/language_provider.dart';
 import 'splash_screen.dart';
 import 'OnboardingScreen.dart';
 import 'home_screen.dart';
@@ -11,7 +15,12 @@ import 'theme/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => LanguageProvider()..loadSavedLanguage(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -19,18 +28,43 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final langProvider = context.watch<LanguageProvider>();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Legal Sathi',
       theme: AppTheme.lightTheme,
       home: const SplashScreen(),
+      
+
+      // ← Add these:
+      locale: langProvider.locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ur'),
+        Locale('ro'),
+      ],
+      builder: (context, child) {
+        return Directionality(
+          textDirection: langProvider.locale.languageCode == 'ur'
+              ? TextDirection.rtl
+              : TextDirection.ltr,
+          child: child!,
+        );
+      },
+
       routes: {
         '/onboarding': (context) => const OnboardingScreen(),
         '/home_screen': (context) => const HomeScreen(),
         '/chat': (context) => const ChatScreen(),
         '/documents': (context) => const DocumentsScreen(),
-        '/profile': (context) =>
-            const HomeScreen(),
+        '/profile': (context) => const HomeScreen(),
       },
     );
   }

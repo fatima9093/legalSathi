@@ -102,7 +102,8 @@ for module_name, folder_path in modules.items():
                         "module": module_name,
                         "file": pdf_file.name,
                         "chunk_id": i,
-                        "total_chunks": len(chunks)
+                        "total_chunks": len(chunks),
+                        "language": "English"  # Default language for current documents
                     }],
                     ids=[f"{module_name}_{pdf_file.stem}_{i}"]
                 )
