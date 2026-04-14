@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'police_ai_complaint_generator_screen.dart';
+import 'traffic_contact_launcher.dart';
+import 'traffic_police_contacts.dart';
 
 class PoliceComplaintFilingScreen extends StatelessWidget {
   const PoliceComplaintFilingScreen({super.key});
@@ -30,8 +33,6 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 24),
-
-              // Header icon
               Container(
                 width: 64,
                 height: 64,
@@ -45,10 +46,7 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                   color: Color(0xFF00401A),
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // Title
               const Text(
                 'Where to File Your Complaint',
                 textAlign: TextAlign.center,
@@ -58,17 +56,12 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                   color: Colors.black87,
                 ),
               ),
-
               const SizedBox(height: 8),
-
               Text(
                 'Choose the most convenient option',
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
-
               const SizedBox(height: 32),
-
-              // Filing options
               _buildFilingOption(
                 icon: Icons.phone,
                 iconColor: const Color(0xFF00401A),
@@ -76,55 +69,48 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 title: 'Provincial Helpline',
                 subtitle: 'Call 1915 (Punjab, Sindh, KPK)',
                 actionText: 'Call Now',
-                onTap: () {
-                  // TODO: Launch phone dialer
-                },
+                onTap: () => TrafficContactLauncher.dial(
+                  context,
+                  TrafficPoliceContacts.helpline1915,
+                ),
               ),
-
               const SizedBox(height: 12),
-
               _buildFilingOption(
                 icon: Icons.chat_bubble_outline,
                 iconColor: const Color(0xFF00401A),
                 iconBgColor: const Color(0xFFE6F7F0),
-                title: 'IG Complaint WhatsApp',
-                subtitle: 'Send complaint to IG Office',
+                title: 'IG / Police WhatsApp',
+                subtitle: 'Opens WhatsApp with a pre-filled message',
                 actionText: 'Open WhatsApp',
-                onTap: () {
-                  // TODO: Launch WhatsApp
-                },
+                onTap: () => TrafficContactLauncher.whatsAppComplaint(context),
               ),
-
               const SizedBox(height: 12),
-
               _buildFilingOption(
                 icon: Icons.public,
                 iconColor: const Color(0xFF00401A),
                 iconBgColor: const Color(0xFFE6F7F0),
-                title: 'SafeCity App',
-                subtitle: 'Report through SafeCity platform',
+                title: 'SafeCity / PSCA',
+                subtitle: 'Official Safe Cities Punjab site',
                 actionText: 'Visit Website',
-                onTap: () {
-                  // TODO: Launch URL
-                },
+                onTap: () => TrafficContactLauncher.openHttpUrl(
+                  context,
+                  TrafficPoliceContacts.safeCityWebsite,
+                ),
               ),
-
               const SizedBox(height: 12),
-
               _buildFilingOption(
                 icon: Icons.location_on_outlined,
                 iconColor: const Color(0xFF6B21A8),
                 iconBgColor: const Color(0xFFF3E8FF),
                 title: 'Police Khidmat Markaz',
-                subtitle: 'Visit nearest service center',
+                subtitle: 'Find a service centre on the map',
                 actionText: 'Find Location',
-                onTap: () {
-                  // TODO: Open maps
-                },
+                onTap: () => TrafficContactLauncher.openMapsSearch(
+                  context,
+                  TrafficPoliceContacts.mapsKhidmatMarkazQuery,
+                ),
               ),
-
               const SizedBox(height: 12),
-
               _buildFilingOption(
                 icon: Icons.phone_in_talk,
                 iconColor: const Color(0xFFD97706),
@@ -132,28 +118,25 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 title: '1787 Complaint Helpline',
                 subtitle: 'National police complaint line',
                 actionText: 'Call Now',
-                onTap: () {
-                  // TODO: Launch phone dialer
-                },
+                onTap: () => TrafficContactLauncher.dial(
+                  context,
+                  TrafficPoliceContacts.helpline1787,
+                ),
               ),
-
               const SizedBox(height: 12),
-
               _buildFilingOption(
                 icon: Icons.mail_outline,
                 iconColor: const Color(0xFF00401A),
                 iconBgColor: const Color(0xFFE6EFEA),
                 title: 'Written Complaint',
-                subtitle: 'Submit to SP Traffic office',
+                subtitle: 'Addresses, copy, maps & online portal',
                 actionText: 'Get Address',
-                onTap: () {
-                  // TODO: Show addresses
-                },
+                onTap: () =>
+                    TrafficContactLauncher.showWrittenComplaintAddressesSheet(
+                  context,
+                ),
               ),
-
               const SizedBox(height: 24),
-
-              // Contact Information
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -184,10 +167,7 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(height: 24),
-
-              // AI Generator button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -225,10 +205,7 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              // Tip
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
@@ -242,7 +219,6 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
                 ),
               ),
-
               const SizedBox(height: 24),
             ],
           ),

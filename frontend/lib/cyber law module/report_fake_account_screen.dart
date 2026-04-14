@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'reporting_guidance_screen.dart';
+import 'package:front_end/services/fake_account_report_service.dart';
 import '../utils/validators.dart';
 
 class ReportFakeAccountScreen extends StatefulWidget {
@@ -15,7 +16,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
   final _profileUrlController = TextEditingController();
   final _usernameController = TextEditingController();
   String? _selectedPlatform;
-  List<String> _uploadedFiles = [];
+  List<PlatformFile> _uploadedFiles = [];
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -38,6 +40,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
         type: FileType.image,
         allowMultiple: true,
         allowCompression: true,
+        withData: true,
       );
 
       if (result == null) return;
@@ -55,7 +58,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
       }
 
       setState(() {
-        _uploadedFiles = result.files.map((file) => file.name).toList();
+        _uploadedFiles = result.files;
       });
 
       if (mounted) {
@@ -80,7 +83,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
     }
   }
 
-  void _proceedToGuidance() {
+  Future<void> _proceedToGuidance() async {
     if (!_isFormComplete) {
       Validators.showError(
         context,
@@ -99,6 +102,32 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
       return;
     }
 
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    final save = await FakeAccountReportService().saveReport(
+      platform: _selectedPlatform!,
+      profileUrl: _profileUrlController.text.trim(),
+      username: _usernameController.text.trim(),
+      evidenceFiles: _uploadedFiles,
+    );
+
+    if (!mounted) return;
+    setState(() {
+      _isSubmitting = false;
+    });
+
+    if (!(save['success'] as bool? ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(save['message'] as String? ?? 'Could not save report.'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -107,6 +136,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
           username: _usernameController.text.trim(),
           platform: _selectedPlatform!,
           uploadedFiles: _uploadedFiles,
+          reportId: save['reportId'] as String?,
         ),
       ),
     );
@@ -452,7 +482,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        entry.value,
+                                        entry.value.name,
                                         style: const TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
@@ -463,7 +493,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
-                                        '2.5MB',
+                                        '${(entry.value.size / 1024).toStringAsFixed(1)} KB',
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Colors.grey.shade600,
@@ -488,7 +518,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ],
                 ),
@@ -503,7 +533,9 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isFormComplete ? _proceedToGuidance : null,
+                  onPressed: (_isFormComplete && !_isSubmitting)
+                      ? _proceedToGuidance
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isFormComplete
                         ? const Color(0xFF00401A)
@@ -514,10 +546,22 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Check & Get Reporting Steps',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                  ),
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Check & Get Reporting Steps',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             ),

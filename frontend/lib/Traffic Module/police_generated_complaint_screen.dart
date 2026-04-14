@@ -12,6 +12,15 @@ class PoliceGeneratedComplaintScreen extends StatefulWidget {
   final String time;
   final String officerId;
   final String witnesses;
+  final String complainantName;
+  final String contactNumber;
+  final String cnic;
+
+  /// Supabase row id when the draft was saved; used so edits call UPDATE, not INSERT.
+  final String? savedComplaintId;
+
+  /// Opens the edit form (provided by the caller to avoid circular imports).
+  final VoidCallback? onEditPressed;
 
   const PoliceGeneratedComplaintScreen({
     super.key,
@@ -21,6 +30,11 @@ class PoliceGeneratedComplaintScreen extends StatefulWidget {
     required this.time,
     required this.officerId,
     required this.witnesses,
+    required this.complainantName,
+    required this.contactNumber,
+    required this.cnic,
+    this.savedComplaintId,
+    this.onEditPressed,
   });
 
   @override
@@ -74,9 +88,9 @@ I am willing to provide any additional information or evidence if required and w
 Thank you for your attention to this matter.
 
 Yours sincerely,
-[Your Name]
-[Your Contact Number]
-[Your CNIC Number]''';
+${widget.complainantName.trim()}
+Contact: ${widget.contactNumber.trim()}
+CNIC: ${widget.cnic.trim()}''';
   }
 
   Future<void> _downloadAsPDF() async {
@@ -133,13 +147,7 @@ Yours sincerely,
   }
 
   void _editComplaint() {
-    // TODO: Implement edit functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Edit feature coming soon'),
-        backgroundColor: Color(0xFF00401A),
-      ),
-    );
+    widget.onEditPressed?.call();
   }
 
   @override
@@ -293,7 +301,8 @@ Yours sincerely,
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: _editComplaint,
+                      onPressed:
+                          widget.onEditPressed != null ? _editComplaint : null,
                       icon: const Icon(Icons.edit, size: 18),
                       label: const Text('Edit'),
                       style: OutlinedButton.styleFrom(

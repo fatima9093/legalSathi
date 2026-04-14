@@ -1,10 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+import 'package:front_end/services/traffic_police_complaint_service.dart';
+
 import 'police_generated_complaint_screen.dart';
 import '../utils/validators.dart';
 
 class PoliceAIComplaintGeneratorScreen extends StatefulWidget {
-  const PoliceAIComplaintGeneratorScreen({super.key});
+  /// When set, [saveSubmission] updates this row instead of inserting a new one.
+  final String? existingComplaintId;
+
+  final String? initialWhatHappened;
+  final String? initialLocation;
+  final String? initialDate;
+  final String? initialTime;
+  final String? initialOfficerId;
+  final String? initialWitnesses;
+  final String? initialComplainantName;
+  final String? initialContactNumber;
+  final String? initialCnic;
+
+  const PoliceAIComplaintGeneratorScreen({
+    super.key,
+    this.existingComplaintId,
+    this.initialWhatHappened,
+    this.initialLocation,
+    this.initialDate,
+    this.initialTime,
+    this.initialOfficerId,
+    this.initialWitnesses,
+    this.initialComplainantName,
+    this.initialContactNumber,
+    this.initialCnic,
+  });
 
   @override
   State<PoliceAIComplaintGeneratorScreen> createState() =>
@@ -14,12 +42,53 @@ class PoliceAIComplaintGeneratorScreen extends StatefulWidget {
 class _PoliceAIComplaintGeneratorScreenState
     extends State<PoliceAIComplaintGeneratorScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _trafficComplaintService = TrafficPoliceComplaintService();
+  bool _saving = false;
+
   final _whatHappenedController = TextEditingController();
   final _whereController = TextEditingController();
   final _dateController = TextEditingController();
   final _timeController = TextEditingController();
   final _officerIdController = TextEditingController();
   final _witnessController = TextEditingController();
+  final _complainantNameController = TextEditingController();
+  final _contactController = TextEditingController();
+  final _cnicController = TextEditingController();
+
+  bool get _isEditing => widget.existingComplaintId != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final w = widget;
+    if (w.initialWhatHappened != null) {
+      _whatHappenedController.text = w.initialWhatHappened!;
+    }
+    if (w.initialLocation != null) {
+      _whereController.text = w.initialLocation!;
+    }
+    if (w.initialDate != null) {
+      _dateController.text = w.initialDate!;
+    }
+    if (w.initialTime != null) {
+      _timeController.text = w.initialTime!;
+    }
+    if (w.initialOfficerId != null) {
+      _officerIdController.text = w.initialOfficerId!;
+    }
+    if (w.initialWitnesses != null) {
+      _witnessController.text = w.initialWitnesses!;
+    }
+    if (w.initialComplainantName != null) {
+      _complainantNameController.text = w.initialComplainantName!;
+    }
+    if (w.initialContactNumber != null) {
+      _contactController.text = w.initialContactNumber!;
+    }
+    if (w.initialCnic != null) {
+      _cnicController.text = w.initialCnic!;
+    }
+  }
 
   @override
   void dispose() {
@@ -29,6 +98,9 @@ class _PoliceAIComplaintGeneratorScreenState
     _timeController.dispose();
     _officerIdController.dispose();
     _witnessController.dispose();
+    _complainantNameController.dispose();
+    _contactController.dispose();
+    _cnicController.dispose();
     super.dispose();
   }
 
@@ -74,8 +146,7 @@ class _PoliceAIComplaintGeneratorScreenState
     }
   }
 
-  void _generateComplaint() {
-    // Validate all required fields
+  Future<void> _generateComplaint() async {
     if (!Validators.isNonEmpty(_whatHappenedController.text)) {
       Validators.showError(context, 'Please describe what happened.');
       return;
@@ -99,19 +170,102 @@ class _PoliceAIComplaintGeneratorScreenState
       return;
     }
 
-    if (_formKey.currentState!.validate()) {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    setState(() => _saving = true);
+
+    final saveResult = await _trafficComplaintService.saveSubmission(
+      existingComplaintId: widget.existingComplaintId,
+      whatHappened: _whatHappenedController.text.trim(),
+      incidentLocation: _whereController.text.trim(),
+      incidentDate: _dateController.text.trim(),
+      incidentTime: _timeController.text.trim(),
+      officerId: _officerIdController.text.trim(),
+      witnesses: _witnessController.text.trim(),
+      complainantName: _complainantNameController.text.trim(),
+      contactNumber: _contactController.text.trim(),
+      cnic: _cnicController.text.trim(),
+    );
+
+    if (!mounted) return;
+    setState(() => _saving = false);
+
+    if (saveResult['success'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            saveResult['message'] as String? ?? 'Done',
+          ),
+          backgroundColor: const Color(0xFF00401A),
+        ),
+      );
+    } else if (saveResult['needAuth'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            saveResult['message'] as String? ??
+                'Sign in to save this complaint to your account.',
+          ),
+          backgroundColor: const Color(0xFFD97706),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            saveResult['message'] as String? ?? 'Could not save complaint.',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+
+    final resolvedId = saveResult['id'] as String? ?? widget.existingComplaintId;
+
+    final generated = PoliceGeneratedComplaintScreen(
+      whatHappened: _whatHappenedController.text,
+      location: _whereController.text,
+      date: _dateController.text,
+      time: _timeController.text,
+      officerId: _officerIdController.text,
+      witnesses: _witnessController.text,
+      complainantName: _complainantNameController.text.trim(),
+      contactNumber: _contactController.text.trim(),
+      cnic: _cnicController.text.trim(),
+      savedComplaintId: resolvedId,
+      onEditPressed: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (context) => PoliceAIComplaintGeneratorScreen(
+              existingComplaintId: resolvedId,
+              initialWhatHappened: _whatHappenedController.text.trim(),
+              initialLocation: _whereController.text.trim(),
+              initialDate: _dateController.text.trim(),
+              initialTime: _timeController.text.trim(),
+              initialOfficerId: _officerIdController.text.trim(),
+              initialWitnesses: _witnessController.text.trim(),
+              initialComplainantName: _complainantNameController.text.trim(),
+              initialContactNumber: _contactController.text.trim(),
+              initialCnic: _cnicController.text.trim(),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (_isEditing) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => generated),
+      );
+    } else {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => PoliceGeneratedComplaintScreen(
-            whatHappened: _whatHappenedController.text,
-            location: _whereController.text,
-            date: _dateController.text,
-            time: _timeController.text,
-            officerId: _officerIdController.text,
-            witnesses: _witnessController.text,
-          ),
-        ),
+        MaterialPageRoute(builder: (context) => generated),
       );
     }
   }
@@ -127,9 +281,9 @@ class _PoliceAIComplaintGeneratorScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'AI Complaint Generator',
-          style: TextStyle(
+        title: Text(
+          _isEditing ? 'Edit Complaint' : 'AI Complaint Generator',
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -163,10 +317,10 @@ class _PoliceAIComplaintGeneratorScreenState
                 const SizedBox(height: 16),
 
                 // Title
-                const Text(
-                  'Generate Formal Complaint',
+                Text(
+                  _isEditing ? 'Update Formal Complaint' : 'Generate Formal Complaint',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
@@ -176,12 +330,135 @@ class _PoliceAIComplaintGeneratorScreenState
                 const SizedBox(height: 8),
 
                 Text(
-                  'AI will create a properly formatted complaint letter',
+                  _isEditing
+                      ? 'Change details below, then update your letter'
+                      : 'AI will create a properly formatted complaint letter',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 ),
 
                 const SizedBox(height: 32),
+
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Your details',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                _buildLabel('Full name', required: true),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _complainantNameController,
+                  textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                    hintText: 'As on CNIC',
+                    hintStyle: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade400,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF00401A)),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Enter your full name';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                _buildLabel('Contact number', required: true),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _contactController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    hintText: 'Mobile number',
+                    hintStyle: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade400,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF00401A)),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (!Validators.isValidPhone(value)) {
+                      return 'Enter a valid phone number (at least 10 digits)';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 16),
+
+                _buildLabel('CNIC', required: true),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: _cnicController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    hintText: '12345-1234567-1',
+                    hintStyle: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade400,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Color(0xFF00401A)),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (!Validators.isValidCnic(value)) {
+                      return 'Use format 12345-1234567-1';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 28),
 
                 // What Happened
                 _buildLabel('What Happened?', required: true),
@@ -474,23 +751,36 @@ class _PoliceAIComplaintGeneratorScreenState
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _generateComplaint,
+                    onPressed: _saving ? null : _generateComplaint,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6B9B7A),
+                      backgroundColor: const Color(0xFF00401A),
                       foregroundColor: Colors.white,
+                      disabledBackgroundColor: const Color(0xFF00401A),
+                      disabledForegroundColor: Colors.white70,
                       minimumSize: const Size(double.infinity, 54),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Generate Complaint Letter',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    child: _saving
+                        ? const SizedBox(
+                            height: 22,
+                            width: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            _isEditing
+                                ? 'Update Complaint Letter'
+                                : 'Generate Complaint Letter',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                   ),
                 ),
 

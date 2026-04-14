@@ -9,7 +9,7 @@ os.environ["ANONYMIZED_TELEMETRY"] = "false"
 import groq_config  # noqa: F401 — side-effects: sets default Groq client
 
 import json
-from fastapi import FastAPI, HTTPException, Request as FastAPIRequest
+from fastapi import FastAPI, File, HTTPException, Request as FastAPIRequest, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Any, AsyncIterator, Dict, List, Optional, Union
@@ -293,6 +293,199 @@ async def root():
         "vector_db_loaded": collection is not None,
         "total_documents": collection.count() if collection else 0
     }
+
+
+@app.post("/api/challan/extract-text")
+async def extract_challan_text(file: UploadFile = File(...)):
+    """
+    Extract plain text from a traffic challan PDF (text layer) or image.
+    PDF uses pypdf. Images use Pillow + optional pytesseract if installed.
+    """
+    import io
+
+    raw = await file.read()
+    if not raw:
+        return {"text": ""}
+
+    # PDF by magic bytes (works even if filename is wrong)
+    if len(raw) >= 4 and raw[:4] == b"%PDF":
+        try:
+            from pypdf import PdfReader
+
+            reader = PdfReader(io.BytesIO(raw))
+            parts: List[str] = []
+            for page in reader.pages:
+                parts.append(page.extract_text() or "")
+            return {"text": "\n".join(parts).strip()}
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Could not read PDF: {e}") from e
+
+    # Raster image: try OCR if Pillow (+ optional Tesseract) available
+    try:
+        from PIL import Image
+
+        img = Image.open(io.BytesIO(raw))
+        if img.mode not in ("RGB", "L"):
+            img = img.convert("RGB")
+        try:
+            import pytesseract
+
+            text = pytesseract.image_to_string(img) or ""
+            return {"text": text.strip()}
+        except ImportError:
+            # Pillow without Tesseract — no OCR on server
+            return {"text": ""}
+    except Exception:
+        return {"text": ""}
+
+
+class EvidenceAnalyzeRequest(BaseModel):
+    """OCR or pasted text from a screenshot / document for domain classification."""
+    text: str = Field(..., min_length=1)
+
+
+class EvidenceAnalyzeResponse(BaseModel):
+    classified_domain: str
+    tags: List[str]
+    relevant_laws: List[str]
+    summary: str = ""
+
+
+def _parse_llm_json_object(raw: str) -> Optional[Dict[str, Any]]:
+    """Best-effort parse of JSON from an LLM reply (may include markdown fences)."""
+    t = (raw or "").strip()
+    if not t:
+        return None
+    if t.startswith("```"):
+        lines = t.split("\n")
+        if len(lines) >= 2:
+            inner = "\n".join(lines[1:])
+            if inner.rstrip().endswith("```"):
+                inner = inner.rstrip()[:-3].rstrip()
+            t = inner.strip()
+    try:
+        obj = json.loads(t)
+        return obj if isinstance(obj, dict) else None
+    except json.JSONDecodeError:
+        pass
+    m = re.search(r"\{[\s\S]*\}", t)
+    if m:
+        try:
+            obj = json.loads(m.group(0))
+            return obj if isinstance(obj, dict) else None
+        except json.JSONDecodeError:
+            return None
+    return None
+
+
+def _fallback_evidence_analysis(text: str) -> EvidenceAnalyzeResponse:
+    lower = (text or "").lower()
+    domain = "General legal / administrative document"
+    tags = ["Extracted text", "Review recommended"]
+    laws: List[str] = [
+        "Cross-check facts with the applicable Act, Rules, or notification in force.",
+        "For Pakistan: verify provincial labour / cyber / criminal statutes as relevant.",
+    ]
+    if any(k in lower for k in ("salary", "wage", "payroll", "overtime", "leave", "employer", "termination")):
+        domain = "Labour / employment-related"
+        tags = ["Employment", "Workplace", "Wages or terms"]
+        laws = [
+            "Provincial Shops and Establishments / Industrial Relations laws (as applicable).",
+            "Payment of Wages and minimum wage notifications — confirm current rates.",
+        ]
+    elif any(k in lower for k in ("peca", "cyber", "online", "facebook", "whatsapp", "harass", "blackmail", "fia")):
+        domain = "Cyber law / online conduct"
+        tags = ["Digital evidence", "PECA context"]
+        laws = [
+            "Prevention of Electronic Crimes Act, 2016 (PECA) — relevant sections depend on facts.",
+        ]
+    elif any(k in lower for k in ("traffic", "challan", "license", "motor vehicle")):
+        domain = "Road / motor vehicle matter"
+        tags = ["Traffic", "Regulatory"]
+        laws = [
+            "Provincial Motor Vehicles Ordinance / rules — verify against the alleged violation.",
+        ]
+    elif any(k in lower for k in ("harassment", "workplace", "committee", "complaint", "female")):
+        domain = "Workplace conduct / harassment (context-dependent)"
+        tags = ["Workplace", "Conduct"]
+        laws = [
+            "Protection Against Harassment of Women at the Workplace Act, 2010 — if applicable.",
+        ]
+    snippet = text.strip().replace("\n", " ")
+    if len(snippet) > 220:
+        snippet = snippet[:217] + "..."
+    summary = f"Heuristic classification from extracted text. Preview: {snippet}"
+    return EvidenceAnalyzeResponse(
+        classified_domain=domain,
+        tags=tags[:8],
+        relevant_laws=laws[:6],
+        summary=summary,
+    )
+
+
+@app.post("/api/evidence/analyze-text", response_model=EvidenceAnalyzeResponse)
+async def analyze_evidence_text(request: EvidenceAnalyzeRequest):
+    """
+    Classify OCR text from a screenshot: legal domain, tags, and indicative laws (not legal advice).
+    Uses Groq when configured; otherwise keyword fallback.
+    """
+    text = request.text.strip()
+    if len(text) < 15:
+        raise HTTPException(
+            status_code=400,
+            detail="Extracted text is too short. Provide a clearer image or paste text.",
+        )
+
+    if groq_client and GROQ_API_KEY:
+        try:
+            response = groq_client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """You analyze short text extracted from screenshots or documents for a Pakistani legal assistance app.
+Respond with ONE JSON object only, no markdown, no extra text. Keys:
+- "classified_domain": string, a short label (e.g. "Labour - wage dispute", "Cyber - online harassment").
+- "tags": array of 2-6 short strings for UI chips.
+- "relevant_laws": array of 2-5 strings naming relevant Pakistani laws, acts, or topics (e.g. PECA 2016, provincial labour law). Be conservative; say "verify with current statute" if unsure.
+- "summary": one or two sentences describing what the excerpt suggests.
+
+Rules: Output valid JSON only. English. Not legal advice — indicative references only.""",
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Extracted text follows:\n\n{text[:8000]}",
+                    },
+                ],
+                temperature=0.2,
+                max_tokens=700,
+            )
+            raw = (response.choices[0].message.content or "").strip()
+            parsed = _parse_llm_json_object(raw)
+            if parsed:
+                domain = str(parsed.get("classified_domain") or "").strip() or "Unclassified document"
+                tags = parsed.get("tags") or []
+                laws = parsed.get("relevant_laws") or []
+                summary = str(parsed.get("summary") or "").strip()
+                if not isinstance(tags, list):
+                    tags = []
+                if not isinstance(laws, list):
+                    laws = []
+                tags = [str(x).strip() for x in tags if str(x).strip()][:8]
+                laws = [str(x).strip() for x in laws if str(x).strip()][:8]
+                if not laws:
+                    laws = ["Verify applicable statute with a qualified lawyer or official source."]
+                return EvidenceAnalyzeResponse(
+                    classified_domain=domain,
+                    tags=tags if tags else ["Document review"],
+                    relevant_laws=laws,
+                    summary=summary,
+                )
+        except Exception as exc:
+            print(f"⚠️ evidence analyze LLM failed, using fallback: {exc}")
+
+    return _fallback_evidence_analysis(text)
+
 
 @app.post("/api/ask", response_model=Union[AgentAnswerResponse, AnswerResponse])
 async def ask_question(request: QuestionRequest):

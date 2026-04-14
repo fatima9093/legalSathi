@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import '../screen_with_nav.dart';
 import 'evidence_extractor_screen.dart';
+import 'fia_complaint_generator.dart';
 
 class ExtractedEvidenceResultsScreen extends StatefulWidget {
   final List<EvidenceFile> uploadedFiles;
+  final ExtractedEvidence? extractedEvidence;
 
   const ExtractedEvidenceResultsScreen({
     super.key,
     required this.uploadedFiles,
+    this.extractedEvidence,
   });
 
   @override
@@ -23,7 +29,7 @@ class _ExtractedEvidenceResultsScreenState
   @override
   void initState() {
     super.initState();
-    _extractedEvidence = _generateMockExtraction();
+    _extractedEvidence = widget.extractedEvidence ?? _generateMockExtraction();
   }
 
   // Generate dynamic mock extraction based on uploaded files
@@ -74,33 +80,64 @@ class _ExtractedEvidenceResultsScreenState
   }
 
   void _useInFIAComplaint() {
-    // Navigate to FIA complaint generation with extracted data
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Opening FIA Complaint with evidence...'),
-        duration: Duration(seconds: 2),
-        backgroundColor: Color(0xFF00401A),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FIAComplaintGeneratorScreen(),
       ),
     );
-
-    // In a real implementation, this would navigate to a complaint form
-    // pre-populated with the extracted evidence data
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    });
   }
 
-  void _exportAsPDF() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Exporting evidence as PDF...'),
-        duration: Duration(seconds: 2),
-        backgroundColor: Color(0xFF00401A),
+  Future<void> _exportAsPDF() async {
+    final pdf = pw.Document();
+    final summary = StringBuffer()
+      ..writeln('Threat Message Evidence Report')
+      ..writeln('Files analyzed: ${_extractedEvidence.totalFilesAnalyzed}')
+      ..writeln('')
+      ..writeln('Threat Classifications:');
+    for (final t in _extractedEvidence.threats) {
+      summary.writeln('- ${t.type} (${t.severity}, ${t.confidence}% confidence)');
+    }
+    summary
+      ..writeln('')
+      ..writeln('Timestamps:');
+    for (final x in _extractedEvidence.timestamps) {
+      summary.writeln('- $x');
+    }
+    summary
+      ..writeln('')
+      ..writeln('Phone Numbers:');
+    for (final x in _extractedEvidence.phoneNumbers) {
+      summary.writeln('- $x');
+    }
+    summary
+      ..writeln('')
+      ..writeln('URLs:');
+    for (final x in _extractedEvidence.urls) {
+      summary.writeln('- $x');
+    }
+    summary
+      ..writeln('')
+      ..writeln('Key Phrases:');
+    for (final x in _extractedEvidence.keyPhrases) {
+      summary.writeln('- $x');
+    }
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) => [
+          pw.Text(
+            summary.toString(),
+            style: const pw.TextStyle(fontSize: 11, lineSpacing: 1.4),
+          ),
+        ],
       ),
     );
-    // In a real app, this would generate and share a PDF
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
   }
 
   @override

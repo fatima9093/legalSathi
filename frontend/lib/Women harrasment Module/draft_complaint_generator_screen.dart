@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'draft_complaint_form_data.dart';
 import 'generated_complaint_screen.dart';
 import '../utils/validators.dart';
 
@@ -553,6 +554,54 @@ class _DraftComplaintGeneratorScreenState
     }
   }
 
+  DraftComplaintFormData _captureFormData() {
+    final selectedRelief = reliefOptions.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+    return DraftComplaintFormData(
+      currentStep: currentStep,
+      fullName: fullNameController.text,
+      cnic: cnicController.text,
+      phone: phoneController.text,
+      email: emailController.text,
+      designation: designationController.text,
+      workplace: workplaceController.text,
+      address: addressController.text,
+      dateOfIncident: dateController.text,
+      description: descriptionController.text,
+      evidence: evidenceController.text,
+      witnesses: witnessController.text,
+      mentalImpact: mentalImpactController.text,
+      emotionalImpact: emotionalImpactController.text,
+      safetyConcerns: safetyConcernsController.text,
+      reliefSought: selectedRelief,
+    );
+  }
+
+  void _applyFormData(DraftComplaintFormData d) {
+    setState(() {
+      currentStep = d.currentStep.clamp(0, 3);
+      fullNameController.text = d.fullName;
+      cnicController.text = d.cnic;
+      phoneController.text = d.phone;
+      emailController.text = d.email;
+      designationController.text = d.designation;
+      workplaceController.text = d.workplace;
+      addressController.text = d.address;
+      dateController.text = d.dateOfIncident;
+      descriptionController.text = d.description;
+      evidenceController.text = d.evidence;
+      witnessController.text = d.witnesses;
+      mentalImpactController.text = d.mentalImpact;
+      emotionalImpactController.text = d.emotionalImpact;
+      safetyConcernsController.text = d.safetyConcerns;
+      for (final key in reliefOptions.keys) {
+        reliefOptions[key] = d.reliefSought.contains(key);
+      }
+    });
+  }
+
   void _generateComplaint() {
     // Validate relief selection
     List<String> selectedRelief = reliefOptions.entries
@@ -568,28 +617,16 @@ class _DraftComplaintGeneratorScreenState
       return;
     }
 
-    // Navigate to generated complaint screen
-    Navigator.push(
+    final snapshot = _captureFormData();
+    Navigator.push<DraftComplaintFormData?>(
       context,
       MaterialPageRoute(
-        builder: (context) => GeneratedComplaintScreen(
-          fullName: fullNameController.text,
-          cnic: cnicController.text,
-          phone: phoneController.text,
-          email: emailController.text,
-          designation: designationController.text,
-          workplace: workplaceController.text,
-          address: addressController.text,
-          dateOfIncident: dateController.text,
-          description: descriptionController.text,
-          evidence: evidenceController.text,
-          witnesses: witnessController.text,
-          mentalImpact: mentalImpactController.text,
-          emotionalImpact: emotionalImpactController.text,
-          safetyConcerns: safetyConcernsController.text,
-          reliefSought: selectedRelief,
-        ),
+        builder: (context) =>
+            GeneratedComplaintScreen.fromFormData(snapshot),
       ),
-    );
+    ).then((data) {
+      if (!mounted || data == null) return;
+      _applyFormData(data);
+    });
   }
 }

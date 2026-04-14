@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'police_immediate_steps_screen.dart';
+
 import 'police_complaint_filing_screen.dart';
+import 'police_immediate_steps_screen.dart';
+import 'traffic_contact_launcher.dart';
+import 'traffic_police_contacts.dart';
 
 class PoliceMisbehaviorGuideScreen extends StatelessWidget {
   const PoliceMisbehaviorGuideScreen({super.key});
@@ -25,13 +28,16 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
 
               // Know Your Rights card
               Container(
@@ -241,10 +247,58 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 24),
-            ],
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => TrafficContactLauncher.dial(
+                        context,
+                        TrafficPoliceContacts.helpline1915,
+                      ),
+                      icon: const Icon(Icons.phone, size: 20),
+                      label: const Text('Call 1915'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF00401A),
+                        side: const BorderSide(color: Color(0xFF00401A)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const PoliceComplaintFilingScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.route, size: 20),
+                      label: const Text('Complaint paths'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00401A),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

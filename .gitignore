@@ -1,12 +1,17 @@
 # Python
+Backend/.venv/
+Backend/venv/
+.venv/
 venv/
 env/
 __pycache__/
+**/__pycache__/
 *.pyc
+*.pyo
 
 # Flutter
-.build/
-.dart_tool/
+**/.dart_tool/
+**/build/
 .packages
 pubspec.lock
 
@@ -17,5 +22,10 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+*.iml
 
-Backend/venvsrrsrsr/
+# Secrets
+*.env
+.env
+Backend/.env
+frontend/.env

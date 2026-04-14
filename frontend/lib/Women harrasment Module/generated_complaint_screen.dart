@@ -6,6 +6,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+import 'draft_complaint_form_data.dart';
+
 class GeneratedComplaintScreen extends StatelessWidget {
   final String fullName;
   final String cnic;
@@ -22,6 +24,9 @@ class GeneratedComplaintScreen extends StatelessWidget {
   final String emotionalImpact;
   final String safetyConcerns;
   final List<String> reliefSought;
+
+  /// Step index on the draft wizard when this screen was opened (for restore).
+  final int draftStepWhenGenerated;
 
   const GeneratedComplaintScreen({
     super.key,
@@ -40,7 +45,29 @@ class GeneratedComplaintScreen extends StatelessWidget {
     required this.emotionalImpact,
     required this.safetyConcerns,
     required this.reliefSought,
+    this.draftStepWhenGenerated = 3,
   });
+
+  factory GeneratedComplaintScreen.fromFormData(DraftComplaintFormData d) {
+    return GeneratedComplaintScreen(
+      fullName: d.fullName,
+      cnic: d.cnic,
+      phone: d.phone,
+      email: d.email,
+      designation: d.designation,
+      workplace: d.workplace,
+      address: d.address,
+      dateOfIncident: d.dateOfIncident,
+      description: d.description,
+      evidence: d.evidence,
+      witnesses: d.witnesses,
+      mentalImpact: d.mentalImpact,
+      emotionalImpact: d.emotionalImpact,
+      safetyConcerns: d.safetyConcerns,
+      reliefSought: List<String>.from(d.reliefSought),
+      draftStepWhenGenerated: d.currentStep,
+    );
+  }
 
   String get complaintText {
     String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
@@ -123,16 +150,47 @@ Date: $currentDate''';
         .join('\n');
   }
 
+  DraftComplaintFormData _toReturnData() {
+    return DraftComplaintFormData(
+      currentStep: draftStepWhenGenerated,
+      fullName: fullName,
+      cnic: cnic,
+      phone: phone,
+      email: email,
+      designation: designation,
+      workplace: workplace,
+      address: address,
+      dateOfIncident: dateOfIncident,
+      description: description,
+      evidence: evidence,
+      witnesses: witnesses,
+      mentalImpact: mentalImpact,
+      emotionalImpact: emotionalImpact,
+      safetyConcerns: safetyConcerns,
+      reliefSought: List<String>.from(reliefSought),
+    );
+  }
+
+  void _popRestoringDraft(BuildContext context) {
+    Navigator.of(context).pop<DraftComplaintFormData>(_toReturnData());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) return;
+        _popRestoringDraft(context);
+      },
+      child: Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => _popRestoringDraft(context),
         ),
         title: const Text(
           'Generated Complaint',
@@ -259,10 +317,7 @@ Date: $currentDate''';
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () {
-                        // TODO: Implement edit functionality
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => _popRestoringDraft(context),
                       icon: const Icon(Icons.edit, size: 18),
                       label: const Text('Edit'),
                       style: OutlinedButton.styleFrom(
@@ -376,6 +431,7 @@ Date: $currentDate''';
           ],
         ),
       ),
+    ),
     );
   }
 

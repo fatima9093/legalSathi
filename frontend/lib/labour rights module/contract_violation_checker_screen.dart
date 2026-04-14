@@ -1,9 +1,16 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:image_picker/image_picker.dart';
-import '../screen_with_nav.dart';
+import 'package:image_picker/image_picker.dart' show XFile;
+
+import 'file_general_complaint_screen.dart';
 import 'file_labour_complaint_screen.dart';
+import '../screen_with_nav.dart';
 import '../utils/validators.dart';
+import 'package:front_end/services/challan_text_extraction_service.dart';
+import 'package:front_end/services/contract_analysis_service.dart';
 
 class ContractViolationCheckerScreen extends StatefulWidget {
   const ContractViolationCheckerScreen({super.key});
@@ -16,14 +23,18 @@ class ContractViolationCheckerScreen extends StatefulWidget {
 class _ContractViolationCheckerScreenState
     extends State<ContractViolationCheckerScreen> {
   final TextEditingController _contractTextController = TextEditingController();
-  File? _uploadedFile;
-  String? _filePath;
+
+  Uint8List? _pickedBytes;
+  String? _pickedFileName;
+  String _pickedKind = '';
+
+  bool _extracting = false;
+  bool _analyzing = false;
   bool _showResult = false;
 
-  List<Map<String, dynamic>> _violations = [];
-  List<String> _recommendations = [];
+  ContractAnalysisResult? _analysis;
 
-  final ImagePicker _picker = ImagePicker();
+  static const int _maxBytes = 10 * 1024 * 1024;
 
   @override
   void dispose() {
@@ -31,140 +42,170 @@ class _ContractViolationCheckerScreenState
     super.dispose();
   }
 
-  Future<void> _pickFile(bool isPdf) async {
+  Future<void> _pickPdf() async {
     try {
-      final XFile? result = await _picker.pickImage(
-        source: ImageSource.gallery,
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        withData: true,
       );
-
-      if (result != null) {
-        setState(() {
-          _uploadedFile = File(result.path);
-          _filePath = result.name;
-        });
+      if (result == null || result.files.isEmpty || !mounted) return;
+      final f = result.files.first;
+      Uint8List? bytes = f.bytes;
+      if (bytes == null && f.path != null && !kIsWeb) {
+        try {
+          bytes = await XFile(f.path!).readAsBytes();
+        } catch (_) {}
       }
+      if (bytes == null) {
+        _toast('Could not read the PDF.');
+        return;
+      }
+      if (bytes.length > _maxBytes) {
+        _toast('File exceeds 10 MB.');
+        return;
+      }
+      setState(() {
+        _pickedBytes = bytes;
+        _pickedFileName = f.name.isNotEmpty ? f.name : 'contract.pdf';
+        _pickedKind = 'pdf';
+      });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error picking file: $e')));
-      }
+      _toast('Error picking PDF: $e');
     }
   }
 
-  void _analyzeContract() {
-    final contractText = _contractTextController.text.trim();
-
-    if (!Validators.isNonEmpty(contractText) && _uploadedFile == null) {
-      Validators.showError(
-        context,
-        'Please paste contract text or upload a file.',
+  Future<void> _pickImageGallery() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
+        withData: true,
       );
-      return;
-    }
-
-    // Analyze contract text for common violations
-    _violations = [];
-    _recommendations = [];
-
-    // Check for common violations
-    final lowerText = contractText.toLowerCase();
-
-    // Violation 1: No overtime pay provision
-    if (!lowerText.contains('overtime') &&
-        !lowerText.contains('extra time') &&
-        !lowerText.contains('2x')) {
-      _violations.add({
-        'title': 'No overtime pay provision',
-        'description': 'Contract must specify overtime pay at 2x regular rate',
-        'severity': 'Serious',
-        'law': 'Factories Act 1934, Section 51',
+      if (result == null || result.files.isEmpty || !mounted) return;
+      final f = result.files.first;
+      Uint8List? bytes = f.bytes;
+      if (bytes == null && f.path != null && !kIsWeb) {
+        try {
+          bytes = await XFile(f.path!).readAsBytes();
+        } catch (_) {}
+      }
+      if (bytes == null) {
+        _toast('Could not read the image.');
+        return;
+      }
+      if (bytes.length > _maxBytes) {
+        _toast('File exceeds 10 MB.');
+        return;
+      }
+      setState(() {
+        _pickedBytes = bytes;
+        _pickedFileName = f.name.isNotEmpty ? f.name : 'contract.jpg';
+        _pickedKind = 'image';
       });
+    } catch (e) {
+      _toast('Error picking image: $e');
     }
+  }
 
-    // Violation 2: Unpaid leave for first 6 months
-    if (lowerText.contains('no leave') ||
-        (lowerText.contains('first') &&
-            lowerText.contains('6') &&
-            lowerText.contains('month') &&
-            !lowerText.contains('paid leave'))) {
-      _violations.add({
-        'title': 'Unpaid leave for first 6 months',
-        'description':
-            'Workers entitled to sick leave after 3 months under law',
-        'severity': 'Moderate',
-        'law': 'Shops & Establishments Act',
-      });
-    }
-
-    // Violation 3: Termination without notice
-    if ((lowerText.contains('terminate') ||
-            lowerText.contains('termination')) &&
-        !lowerText.contains('notice') &&
-        !lowerText.contains('30 day')) {
-      _violations.add({
-        'title': 'Termination without notice',
-        'description':
-            'Minimum 30 days notice or pay in lieu is required by law',
-        'severity': 'Serious',
-        'law': 'Industrial Relations Ordinance 2002',
-      });
-    }
-
-    // Violation 4: Excessive working hours
-    if (lowerText.contains('24/7') ||
-        lowerText.contains('unlimited') ||
-        lowerText.contains('as needed')) {
-      _violations.add({
-        'title': 'Excessive working hours',
-        'description': 'Standard work week is 48 hours. Cannot exceed 60 hours',
-        'severity': 'Serious',
-        'law': 'Factories Act 1934',
-      });
-    }
-
-    // Violation 5: No health and safety provisions
-    if (!lowerText.contains('health') &&
-        !lowerText.contains('safety') &&
-        !lowerText.contains('ppe') &&
-        !lowerText.contains('insurance')) {
-      _violations.add({
-        'title': 'No health and safety provisions',
-        'description': 'Contract must include workplace safety measures',
-        'severity': 'Moderate',
-        'law': 'Factories Act 1934, Part II',
-      });
-    }
-
-    // If no violations found
-    if (_violations.isEmpty) {
-      _violations.add({
-        'title': 'Contract appears compliant',
-        'description':
-            'No major violations detected in the provided contract text',
-        'severity': 'Info',
-        'law': 'Pakistani Labour Laws',
-      });
-    }
-
-    // Add recommendations
-    _recommendations = [
-      'Request contract revision to include legal protections',
-      'Do not sign until violations are corrected',
-      'Consult a labour lawyer for detailed review',
-      'Report to Labour Department if employer refuses changes',
-    ];
-
-    setState(() {
-      _showResult = true;
-    });
+  void _toast(String msg) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red.shade700),
+    );
   }
 
   void _removeFile() {
     setState(() {
-      _uploadedFile = null;
-      _filePath = null;
+      _pickedBytes = null;
+      _pickedFileName = null;
+      _pickedKind = '';
     });
+  }
+
+  Future<void> _analyzeContract() async {
+    var combined = _contractTextController.text.trim();
+
+    if (combined.isEmpty && _pickedBytes == null) {
+      Validators.showError(
+        context,
+        'Paste contract text or upload a PDF / image.',
+      );
+      return;
+    }
+
+    setState(() {
+      _extracting = _pickedBytes != null;
+      _analyzing = true;
+    });
+
+    if (_pickedBytes != null && _pickedFileName != null) {
+      final ft = _pickedKind == 'pdf' ? 'pdf' : 'image';
+      final extracted = await ChallanTextExtractionService.extractRawText(
+        bytes: _pickedBytes!,
+        fileName: _pickedFileName!,
+        fileType: ft,
+      );
+      if (!mounted) return;
+      if (extracted.isEmpty && combined.isEmpty) {
+        setState(() {
+          _extracting = false;
+          _analyzing = false;
+        });
+        Validators.showError(
+          context,
+          'Could not read text from the file. Try another scan, a text-based PDF, or paste the contract text. '
+          'If you use a PDF, ensure the backend extract service is running (for desktop builds) or use an image.',
+        );
+        return;
+      }
+      if (extracted.isNotEmpty) {
+        combined = combined.isEmpty
+            ? extracted
+            : '$combined\n\n--- Text extracted from document ---\n$extracted';
+        _contractTextController.text = combined;
+      }
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _extracting = false;
+    });
+
+    final result = ContractAnalysisService.analyze(combined);
+
+    if (!mounted) return;
+    if (result.insufficientText) {
+      setState(() {
+        _analyzing = false;
+      });
+      Validators.showError(
+        context,
+        result.insufficientMessage ?? 'More text needed.',
+      );
+      return;
+    }
+    setState(() {
+      _analyzing = false;
+      _analysis = result;
+      _showResult = true;
+    });
+  }
+
+  List<String> _recommendationsForResult(ContractAnalysisResult r) {
+    if (r.looksBroadlyCompliant) {
+      return [
+        'Keep a signed copy of the final contract and any amendments.',
+        'Confirm pay, hours, and leave match what you agreed verbally.',
+        'For disputes, document dates and communications with HR.',
+      ];
+    }
+    return [
+      'Ask the employer to revise unfair clauses before signing.',
+      'Do not sign under pressure — seek a labour lawyer if needed.',
+      'You may use Legal Sathi to draft a complaint or amendment request.',
+      'Report serious breaches to the relevant Labour Department.',
+    ];
   }
 
   @override
@@ -179,7 +220,7 @@ class _ContractViolationCheckerScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Contract Violation Checker',
+          'Contract Violation Explainer',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -198,7 +239,6 @@ class _ContractViolationCheckerScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Header Icon
           Container(
             width: 80,
             height: 80,
@@ -212,9 +252,7 @@ class _ContractViolationCheckerScreenState
               size: 40,
             ),
           ),
-
           const SizedBox(height: 20),
-
           const Text(
             'Upload or Paste Employment Contract',
             style: TextStyle(
@@ -223,24 +261,20 @@ class _ContractViolationCheckerScreenState
               color: Colors.black87,
             ),
           ),
-
           const SizedBox(height: 8),
-
           Text(
-            'Our AI will analyze for labour law violations',
+            'We extract text from PDFs and images (OCR), or use what you paste — then scan for common risky clauses.',
+            textAlign: TextAlign.center,
             style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
           ),
-
-          const SizedBox(height: 28),
-
-          // Upload Options
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
                 child: _buildUploadButton(
                   icon: Icons.picture_as_pdf_outlined,
                   label: 'Upload PDF',
-                  onTap: () => _pickFile(true),
+                  onTap: (_extracting || _analyzing) ? null : _pickPdf,
                 ),
               ),
               const SizedBox(width: 12),
@@ -248,13 +282,12 @@ class _ContractViolationCheckerScreenState
                 child: _buildUploadButton(
                   icon: Icons.image_outlined,
                   label: 'Upload Image',
-                  onTap: () => _pickFile(false),
+                  onTap: (_extracting || _analyzing) ? null : _pickImageGallery,
                 ),
               ),
             ],
           ),
-
-          if (_filePath != null) ...[
+          if (_pickedFileName != null) ...[
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -266,36 +299,29 @@ class _ContractViolationCheckerScreenState
               child: Row(
                 children: [
                   Icon(
-                    Icons.check_circle,
+                    _pickedKind == 'pdf'
+                        ? Icons.picture_as_pdf
+                        : Icons.image,
                     color: const Color(0xFF00401A),
                     size: 20,
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      _filePath!,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.black87,
-                      ),
+                      _pickedFileName!,
+                      style: const TextStyle(fontSize: 13, color: Colors.black87),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.grey.shade600,
-                      size: 18,
-                    ),
+                    icon: Icon(Icons.close, color: Colors.grey.shade600, size: 18),
                     onPressed: _removeFile,
                   ),
                 ],
               ),
             ),
           ],
-
           const SizedBox(height: 24),
-
           const Row(
             children: [
               Expanded(child: Divider()),
@@ -313,10 +339,7 @@ class _ContractViolationCheckerScreenState
               Expanded(child: Divider()),
             ],
           ),
-
           const SizedBox(height: 24),
-
-          // Paste Text Area
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -329,11 +352,7 @@ class _ContractViolationCheckerScreenState
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.edit_note,
-                      color: Colors.grey.shade700,
-                      size: 20,
-                    ),
+                    Icon(Icons.edit_note, color: Colors.grey.shade700, size: 20),
                     const SizedBox(width: 8),
                     const Text(
                       'Paste Contract Text',
@@ -350,11 +369,8 @@ class _ContractViolationCheckerScreenState
                   controller: _contractTextController,
                   maxLines: 10,
                   decoration: InputDecoration(
-                    hintText: 'Paste your employment contract here...',
-                    hintStyle: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade400,
-                    ),
+                    hintText: 'Paste your employment contract or key clauses here…',
+                    hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade400),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(color: Colors.grey.shade300),
@@ -374,32 +390,46 @@ class _ContractViolationCheckerScreenState
               ],
             ),
           ),
-
-          const SizedBox(height: 32),
-
-          // Analyze Button
+          const SizedBox(height: 28),
           SizedBox(
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF00401A),
+                disabledBackgroundColor: Colors.grey.shade400,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: _analyzeContract,
-              child: const Text(
-                'Analyze Contract',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
+              onPressed: (_extracting || _analyzing) ? null : _analyzeContract,
+              child: _analyzing || _extracting
+                  ? const SizedBox(
+                      height: 22,
+                      width: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(
+                      _extracting ? 'Reading file…' : 'Analyze Contract',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
             ),
           ),
-
+          const SizedBox(height: 12),
+          Text(
+            kIsWeb
+                ? 'PDF text extraction may use your backend (same as challan OCR). Images use the browser; for best OCR use the mobile app.'
+                : 'PDFs: server extract if configured; images: on-device OCR when available.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+          ),
           const SizedBox(height: 24),
         ],
       ),
@@ -407,48 +437,37 @@ class _ContractViolationCheckerScreenState
   }
 
   Widget _buildResultView() {
-    // Calculate risk level
-    int seriousCount = _violations
-        .where((v) => v['severity'] == 'Serious')
-        .length;
-    int moderateCount = _violations
-        .where((v) => v['severity'] == 'Moderate')
-        .length;
-
-    String riskLevel;
-    Color riskColor;
-
-    if (seriousCount >= 2) {
-      riskLevel = 'High Risk';
-      riskColor = Colors.red;
-    } else if (seriousCount == 1 || moderateCount >= 2) {
-      riskLevel = 'Medium Risk';
-      riskColor = Colors.orange;
-    } else if (_violations.isNotEmpty && _violations[0]['severity'] == 'Info') {
-      riskLevel = 'Low Risk';
-      riskColor = Colors.green;
-    } else {
-      riskLevel = 'Medium Risk';
-      riskColor = Colors.orange;
+    final r = _analysis;
+    if (r == null || r.insufficientText) {
+      return const SizedBox.shrink();
     }
+
+    final compliant = r.looksBroadlyCompliant;
+    final riskColor = compliant ? const Color(0xFF2E7D32) : Colors.orange.shade800;
+    final riskLabel = compliant ? 'Looks broadly compliant' : 'Review recommended';
+    final riskSub = compliant
+        ? 'No obvious red-flag wording found in this excerpt.'
+        : '${r.concerns.length} issue(s) worth a closer look';
+
+    final recs = _recommendationsForResult(r);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back button and title
           GestureDetector(
             onTap: () {
               setState(() {
                 _showResult = false;
+                _analysis = null;
               });
             },
-            child: Row(
+            child: const Row(
               children: [
-                const Icon(Icons.arrow_back, color: Colors.black, size: 24),
-                const SizedBox(width: 12),
-                const Text(
+                Icon(Icons.arrow_back, color: Colors.black, size: 24),
+                SizedBox(width: 12),
+                Text(
                   'Contract Analysis',
                   style: TextStyle(
                     fontSize: 18,
@@ -459,41 +478,39 @@ class _ContractViolationCheckerScreenState
               ],
             ),
           ),
-
-          const SizedBox(height: 24),
-
-          // Risk Alert Box
+          const SizedBox(height: 20),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: riskColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: riskColor.withOpacity(0.3), width: 1.5),
+              border: Border.all(color: riskColor.withOpacity(0.35), width: 1.5),
             ),
             child: Row(
               children: [
-                Icon(Icons.warning_amber_rounded, color: riskColor, size: 28),
+                Icon(
+                  compliant ? Icons.verified_outlined : Icons.warning_amber_rounded,
+                  color: riskColor,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        riskLevel,
+                        riskLabel,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: riskColor,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
-                        '${_violations.length} labour law ${_violations.length == 1 ? 'violation' : 'violations'} detected',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey.shade700,
-                        ),
+                        riskSub,
+                        style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                       ),
                     ],
                   ),
@@ -501,136 +518,165 @@ class _ContractViolationCheckerScreenState
               ],
             ),
           ),
-
-          const SizedBox(height: 24),
-
-          // Problematic Clauses Header
-          const Text(
-            'Problematic Clauses',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: Colors.black87,
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Text(
+              r.summary,
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade800,
+                height: 1.45,
+              ),
             ),
           ),
-
-          const SizedBox(height: 12),
-
-          // Violations List
-          ...(_violations.map((violation) {
-            // Determine icon and color based on severity
-            IconData severityIcon;
-            Color severityIconColor;
-
-            switch (violation['severity']) {
-              case 'Serious':
-                severityIcon = Icons.error;
-                severityIconColor = Colors.red;
-                break;
-              case 'Moderate':
-                severityIcon = Icons.warning_amber_rounded;
-                severityIconColor = Colors.orange;
-                break;
-              default:
-                severityIcon = Icons.info_outline;
-                severityIconColor = Colors.blue;
-            }
-
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
+          if (r.positiveNotes.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const Text(
+              'Positive signals in text',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(severityIcon, color: severityIconColor, size: 20),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          violation['title'],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
+            ),
+            const SizedBox(height: 10),
+            ...r.positiveNotes.map(
+              (n) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(Icons.add_circle_outline, size: 18, color: Color(0xFF00401A)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        n,
+                        style: TextStyle(fontSize: 13, color: Colors.grey.shade800, height: 1.35),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: severityIconColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          violation['severity'],
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: severityIconColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    violation['description'],
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade700,
-                      height: 1.4,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.description_outlined,
-                        color: Colors.grey.shade600,
-                        size: 14,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          violation['law'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade600,
-                            fontStyle: FontStyle.italic,
+                  ],
+                ),
+              ),
+            ),
+          ],
+          if (r.concerns.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Text(
+              compliant ? 'Minor notes' : 'Issues to review',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...r.concerns.map((violation) {
+              IconData severityIcon;
+              Color severityIconColor;
+              switch (violation.severity) {
+                case 'Serious':
+                  severityIcon = Icons.error;
+                  severityIconColor = Colors.red;
+                  break;
+                case 'Moderate':
+                  severityIcon = Icons.warning_amber_rounded;
+                  severityIconColor = Colors.orange;
+                  break;
+                default:
+                  severityIcon = Icons.info_outline;
+                  severityIconColor = Colors.blue;
+              }
+              return Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(severityIcon, color: severityIconColor, size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            violation.title,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
                           ),
                         ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: severityIconColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            violation.severity,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: severityIconColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      violation.description,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade700,
+                        height: 1.4,
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          })),
-
-          const SizedBox(height: 24),
-
-          // Recommended Actions
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.description_outlined, color: Colors.grey.shade600, size: 14),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            violation.law,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+          const SizedBox(height: 20),
           const Text(
-            'Recommended Actions',
+            'Suggested next steps',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: Colors.black87,
             ),
           ),
-
           const SizedBox(height: 12),
-
-          ...(_recommendations.asMap().entries.map((entry) {
+          ...recs.asMap().entries.map((entry) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Row(
@@ -671,11 +717,8 @@ class _ContractViolationCheckerScreenState
                 ],
               ),
             );
-          })),
-
-          const SizedBox(height: 20),
-
-          // Action Buttons
+          }),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -687,21 +730,28 @@ class _ContractViolationCheckerScreenState
                 ),
               ),
               onPressed: () {
-                // Draft amendment request
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (context) => FileGeneralComplaintScreen(
+                      complaintIssue:
+                          'Request regarding unfair or unclear terms in my employment contract. '
+                          'I seek written clarification and amendment of clauses that may not comply with applicable labour laws.',
+                    ),
+                  ),
+                );
               },
               child: const Text(
-                'Draft Contract Amendment Request',
+                'Draft amendment / complaint (general)',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
               ),
             ),
           ),
-
           const SizedBox(height: 12),
-
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -715,7 +765,7 @@ class _ContractViolationCheckerScreenState
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (context) => const FileLabourComplaintScreen(),
                   ),
                 );
@@ -730,7 +780,6 @@ class _ContractViolationCheckerScreenState
               ),
             ),
           ),
-
           const SizedBox(height: 24),
         ],
       ),
@@ -740,30 +789,34 @@ class _ContractViolationCheckerScreenState
   Widget _buildUploadButton({
     required IconData icon,
     required String label,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.black87, size: 32),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                color: onTap == null ? Colors.grey : Colors.black87,
+                size: 32,
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: onTap == null ? Colors.grey : Colors.black87,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

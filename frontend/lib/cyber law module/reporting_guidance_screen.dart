@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'fia_complaint_generator.dart';
+import 'package:front_end/services/challan_text_extraction_service.dart';
+import 'package:front_end/services/evidence_analysis_service.dart';
 
 class ReportingGuidanceScreen extends StatefulWidget {
   final String profileUrl;
   final String username;
   final String platform;
-  final List<String> uploadedFiles;
+  final List<PlatformFile> uploadedFiles;
+  final String? reportId;
 
   const ReportingGuidanceScreen({
     super.key,
@@ -13,6 +17,7 @@ class ReportingGuidanceScreen extends StatefulWidget {
     required this.username,
     required this.platform,
     required this.uploadedFiles,
+    this.reportId,
   });
 
   @override
@@ -22,17 +27,64 @@ class ReportingGuidanceScreen extends StatefulWidget {
 
 class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
   bool _isLoading = true;
+  String _analysisSummary = '';
+  List<String> _legalOptions = [];
+  List<String> _protectionTips = [];
+  List<String> _reportingSteps = [];
 
   @override
   void initState() {
     super.initState();
-    _simulateAnalysis();
+    _analyzeInput();
   }
 
-  Future<void> _simulateAnalysis() async {
-    await Future.delayed(const Duration(seconds: 3));
+  Future<void> _analyzeInput() async {
+    final platformSteps = _getPlatformSteps(widget.platform);
+    final tips = <String>[
+      'Save all screenshots with timestamps',
+      'Document all interactions with the fake account',
+      'Inform your contacts about the fake account',
+      'Enable privacy settings on your real accounts',
+    ];
+
+    final profileInfo = [
+      if (widget.profileUrl.trim().isNotEmpty) 'URL: ${widget.profileUrl.trim()}',
+      if (widget.username.trim().isNotEmpty) 'Username: ${widget.username.trim()}',
+      'Platform: ${widget.platform}',
+    ].join('\n');
+
+    final evidenceText = await _extractEvidenceText(widget.uploadedFiles);
+    final combined = [profileInfo, evidenceText]
+        .where((e) => e.trim().isNotEmpty)
+        .join('\n\n');
+
+    EvidenceAnalysisResult? analysis;
+    if (combined.trim().length >= 15) {
+      analysis = await EvidenceAnalysisService.analyze(combined);
+    }
+
+    final legal = <String>[
+      'File complaint with FIA Cyber Crime under PECA.',
+      'Report to PTA where applicable.',
+      'File FIR at local police station if harassment/fraud is involved.',
+      'Consider civil defamation case if reputation is damaged.',
+    ];
+    if (analysis != null) {
+      for (final law in analysis.relevantLaws) {
+        if (!legal.contains(law)) {
+          legal.add(law);
+        }
+      }
+    }
+
     if (mounted) {
       setState(() {
+        _analysisSummary = analysis?.summary.isNotEmpty == true
+            ? analysis!.summary
+            : 'Guidance prepared from profile details and uploaded screenshots.';
+        _reportingSteps = platformSteps;
+        _legalOptions = legal.take(6).toList();
+        _protectionTips = tips;
         _isLoading = false;
       });
     }
@@ -151,6 +203,57 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
             ),
           ),
 
+          if (widget.reportId != null) ...[
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Reference ID: ${widget.reportId}',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 20),
+
+          if (_analysisSummary.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'AI Summary',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _analysisSummary,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.blue.shade900,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
           const SizedBox(height: 20),
 
           // Platform-specific reporting guide
@@ -174,18 +277,10 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildStepItem(1, 'Go to the fake profile'),
-                  _buildStepItem(2, 'Click the three dots (...) icon'),
-                  _buildStepItem(3, 'Select "Report"'),
-                  _buildStepItem(
-                    4,
-                    'Choose "They\'re pretending to be me or someone else"',
-                  ),
-                  _buildStepItem(5, 'Follow the prompts to submit'),
-                  _buildStepItem(
-                    6,
-                    'Provide verification documents if requested',
-                  ),
+                  ..._reportingSteps
+                      .asMap()
+                      .entries
+                      .map((e) => _buildStepItem(e.key + 1, e.value)),
                 ],
               ),
             ),
@@ -223,21 +318,14 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                     padding: const EdgeInsets.all(12),
                     child: Column(
                       children: [
-                        _buildLegalOption(
-                          'File complaint with FIA Cyber Crime under PECA Section 24',
-                        ),
-                        const SizedBox(height: 12),
-                        _buildLegalOption(
-                          'Report to PTA (Pakistan Telecommunication Authority)',
-                        ),
-                        const SizedBox(height: 12),
-                        _buildLegalOption(
-                          'File FIR at local police station if harassment involved',
-                        ),
-                        const SizedBox(height: 12),
-                        _buildLegalOption(
-                          'Consider civil defamation case if reputation damaged',
-                        ),
+                        ..._legalOptions.asMap().entries.map((entry) {
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              bottom: entry.key == _legalOptions.length - 1 ? 0 : 12,
+                            ),
+                            child: _buildLegalOption(entry.value),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -269,21 +357,14 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildTipItem('Save all screenshots with timestamps'),
-                  const SizedBox(height: 8),
-                  _buildTipItem(
-                    'Document all interactions with the fake account',
-                  ),
-                  const SizedBox(height: 8),
-                  _buildTipItem('Inform your contacts about the fake account'),
-                  const SizedBox(height: 8),
-                  _buildTipItem('Monitor for fake accounts regularly'),
-                  const SizedBox(height: 8),
-                  _buildTipItem(
-                    'Enable privacy settings on your real accounts',
-                  ),
-                  const SizedBox(height: 8),
-                  _buildTipItem('Consider watermarking your photos'),
+                  ..._protectionTips.asMap().entries.map((entry) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: entry.key == _protectionTips.length - 1 ? 0 : 8,
+                      ),
+                      child: _buildTipItem(entry.value),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -403,6 +484,84 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
         ],
       ),
     );
+  }
+
+  List<String> _getPlatformSteps(String platform) {
+    final p = platform.toLowerCase();
+    if (p.contains('instagram')) {
+      return [
+        'Open the fake Instagram profile and tap the three dots.',
+        'Choose Report > It\'s pretending to be someone else.',
+        'Select me/another person and submit.',
+        'Add screenshots and profile details if prompted.',
+        'Monitor in-app support requests for updates.',
+      ];
+    }
+    if (p.contains('facebook')) {
+      return [
+        'Open the fake Facebook profile.',
+        'Tap the three dots and choose Find support or report profile.',
+        'Select Pretending to be someone.',
+        'Choose who is being impersonated and submit.',
+        'Check Support Inbox for response.',
+      ];
+    }
+    if (p.contains('tiktok')) {
+      return [
+        'Open fake TikTok profile and tap Share/Report.',
+        'Select Report account > Pretending to be someone.',
+        'Provide your real profile and evidence screenshots.',
+        'Submit and keep complaint reference.',
+      ];
+    }
+    if (p.contains('twitter') || p.contains('x')) {
+      return [
+        'Open the fake X/Twitter account profile.',
+        'Tap three dots > Report.',
+        'Select It\'s suspicious or spam / impersonation path.',
+        'Submit report with username/link evidence.',
+      ];
+    }
+    if (p.contains('linkedin')) {
+      return [
+        'Open fake LinkedIn profile.',
+        'Click More > Report/Block.',
+        'Choose impersonation reason and submit.',
+        'Use LinkedIn help center if additional proof is requested.',
+      ];
+    }
+    return [
+      'Open the fake profile on the platform.',
+      'Use the account\'s Report option.',
+      'Select impersonation/fake account reason.',
+      'Submit with username, URL, and screenshots.',
+      'Track response in platform help/support center.',
+    ];
+  }
+
+  Future<String> _extractEvidenceText(List<PlatformFile> files) async {
+    final chunks = <String>[];
+    for (final f in files.take(4)) {
+      final bytes = f.bytes;
+      if (bytes == null || bytes.isEmpty) continue;
+      final n = f.name.toLowerCase();
+      final isImage = n.endsWith('.jpg') ||
+          n.endsWith('.jpeg') ||
+          n.endsWith('.png') ||
+          n.endsWith('.webp');
+      if (!isImage) continue;
+      try {
+        final text = await ChallanTextExtractionService.extractRawText(
+          bytes: bytes,
+          fileName: f.name,
+          fileType: 'image',
+        );
+        if (text.trim().isNotEmpty) {
+          chunks.add(text.trim());
+        }
+      } catch (_) {}
+    }
+    return chunks.join('\n\n---\n\n');
   }
 
   Widget _buildLegalOption(String text) {

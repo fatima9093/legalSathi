@@ -45,8 +45,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          AppLocalizations.of(context)!.documents)
-          style: TextStyle(
+          AppLocalizations.of(context)!.documents,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -127,9 +127,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               onPressed: () {
                 // Download functionality - will be implemented later
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(AppLocalizations.of(context)!.downloadFeatureComingSoon)),
-                    duration: Duration(seconds: 1),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.downloadFeatureComingSoon),
+                    duration: const Duration(seconds: 1),
                   ),
                 );
               },

@@ -156,7 +156,12 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               title: 'Threat Message Evidence',
               subtitle: 'Preserve digital evidence',
               onTap: () {
-                // TODO: Navigate to Threat Message Evidence
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const EvidenceExtractorScreen(),
+                  ),
+                );
               },
             ),
 

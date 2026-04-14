@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'police_complaint_filing_screen.dart';
+import 'traffic_contact_launcher.dart';
+import 'traffic_police_contacts.dart';
 
 class PoliceImmediateStepsScreen extends StatelessWidget {
   const PoliceImmediateStepsScreen({super.key});
@@ -231,6 +234,49 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+
+              const SizedBox(height: 24),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => TrafficContactLauncher.dial(
+                        context,
+                        TrafficPoliceContacts.helpline1915,
+                      ),
+                      icon: const Icon(Icons.phone, size: 20),
+                      label: const Text('Call 1915'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF00401A),
+                        side: const BorderSide(color: Color(0xFF00401A)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const PoliceComplaintFilingScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.description_outlined, size: 20),
+                      label: const Text('File complaint'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00401A),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               const SizedBox(height: 24),

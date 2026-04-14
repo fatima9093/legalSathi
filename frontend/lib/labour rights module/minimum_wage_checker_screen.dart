@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
+import 'minimum_wage_data.dart';
 import 'minimum_wage_result_screen.dart';
 import '../utils/validators.dart';
 
@@ -17,23 +18,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
   String? selectedProvince;
   String? selectedWorkerType;
 
-  final List<String> provinces = [
-    'Punjab',
-    'Sindh',
-    'Khyber Pakhtunkhwa',
-    'Balochistan',
-    'Islamabad',
-    'Gilgit-Baltistan',
-    'Azad Jammu & Kashmir',
-  ];
-
-  final List<String> workerTypes = [
-    'Unskilled',
-    'Semi-skilled',
-    'Skilled',
-    'Highly skilled',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +34,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Dollar sign icon
               Container(
                 width: 60,
                 height: 60,
@@ -65,7 +48,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Title
               const Text(
                 'Check Your Wage',
                 style: TextStyle(
@@ -75,7 +57,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              // Subtitle
               const Text(
                 'Verify if your salary meets legal minimum wage',
                 textAlign: TextAlign.center,
@@ -86,7 +67,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              // Province dropdown
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -100,9 +80,9 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    initialValue: selectedProvince,
+                    value: selectedProvince,
                     hint: const Text('Select your province'),
-                    items: provinces
+                    items: MinimumWageData.provinces
                         .map(
                           (province) => DropdownMenuItem(
                             value: province,
@@ -148,7 +128,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              // Worker Type dropdown
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -162,9 +141,9 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                   ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
-                    initialValue: selectedWorkerType,
+                    value: selectedWorkerType,
                     hint: const Text('Select worker type'),
-                    items: workerTypes
+                    items: MinimumWageData.workerTypes
                         .map(
                           (type) =>
                               DropdownMenuItem(value: type, child: Text(type)),
@@ -208,7 +187,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              // Monthly Salary input
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -227,7 +205,7 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                       decimal: true,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Enter your monthly salary',
+                      hintText: 'e.g. 45000 or 45,000',
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -261,15 +239,12 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ],
               ),
               const SizedBox(height: 32),
-              // Check My Wage button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    _checkWage();
-                  },
+                  onPressed: _checkWage,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B9B7F),
+                    backgroundColor: const Color(0xFF00401A),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -286,7 +261,6 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Info box
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -320,77 +294,28 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
       Validators.showError(context, 'Please select province and worker type.');
       return;
     }
-    if (!Validators.isPositiveNumber(salaryController.text)) {
-      Validators.showError(context, 'Enter a valid salary amount.');
+    final parsed = MinimumWageData.tryParseSalary(salaryController.text);
+    if (parsed == null || parsed <= 0) {
+      Validators.showError(
+        context,
+        'Enter a valid salary (numbers only; commas are OK).',
+      );
       return;
     }
 
-    // Get user salary
-    double userSalary = double.parse(salaryController.text.trim());
+    final minimumWage = MinimumWageData.minimumMonthly(
+      selectedProvince!,
+      selectedWorkerType!,
+    );
 
-    // Sample minimum wage data (you can replace with actual API data)
-    Map<String, Map<String, double>> minimumWageData = {
-      'Punjab': {
-        'Unskilled': 32000,
-        'Semi-skilled': 36000,
-        'Skilled': 40000,
-        'Highly skilled': 45000,
-      },
-      'Sindh': {
-        'Unskilled': 33000,
-        'Semi-skilled': 37000,
-        'Skilled': 41000,
-        'Highly skilled': 46000,
-      },
-      'Khyber Pakhtunkhwa': {
-        'Unskilled': 31000,
-        'Semi-skilled': 35000,
-        'Skilled': 39000,
-        'Highly skilled': 44000,
-      },
-      'Balochistan': {
-        'Unskilled': 30000,
-        'Semi-skilled': 34000,
-        'Skilled': 38000,
-        'Highly skilled': 43000,
-      },
-      'Islamabad': {
-        'Unskilled': 34000,
-        'Semi-skilled': 38000,
-        'Skilled': 42000,
-        'Highly skilled': 47000,
-      },
-      'Gilgit-Baltistan': {
-        'Unskilled': 29000,
-        'Semi-skilled': 33000,
-        'Skilled': 37000,
-        'Highly skilled': 42000,
-      },
-      'Azad Jammu & Kashmir': {
-        'Unskilled': 29000,
-        'Semi-skilled': 33000,
-        'Skilled': 37000,
-        'Highly skilled': 42000,
-      },
-    };
-
-    // Get minimum wage for selected province and worker type
-    double minimumWage =
-        minimumWageData[selectedProvince]?[selectedWorkerType] ?? 30000;
-
-    // Check if wage meets requirements
-    bool meetsRequirements = userSalary >= minimumWage;
-
-    // Navigate to result screen
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MinimumWageResultScreen(
           province: selectedProvince!,
           workerType: selectedWorkerType!,
-          userSalary: userSalary,
+          userSalary: parsed,
           minimumWage: minimumWage,
-          meetsRequirements: meetsRequirements,
         ),
       ),
     );

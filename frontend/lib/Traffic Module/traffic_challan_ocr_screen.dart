@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'challan_processing_screen.dart';
-import 'challan_data_model.dart';
 
 class TrafficChallanOCRScreen extends StatefulWidget {
   const TrafficChallanOCRScreen({super.key});
@@ -14,6 +18,206 @@ class TrafficChallanOCRScreen extends StatefulWidget {
 
 class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
   final ImagePicker _picker = ImagePicker();
+
+  static const int _maxBytes = 10 * 1024 * 1024;
+
+  Future<void> _ensurePhotosPermission() async {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      final p = await Permission.photos.request();
+      if (!p.isGranted) {
+        await Permission.photosAddOnly.request();
+      }
+    } else {
+      await Permission.photos.request();
+    }
+  }
+
+  Future<void> _takePhoto() async {
+    final proceed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Camera access'),
+        content: Text(
+          kIsWeb
+              ? 'Your browser will ask to use the camera. After you take a photo, we extract text from the image.'
+              : 'Legal Sathi needs the camera to photograph your challan. '
+                  'Tap Continue, then tap Allow when your phone asks for camera permission. '
+                  'After you take the picture, we read the text from it.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF00401A),
+            ),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
+    );
+    if (proceed != true || !mounted) return;
+
+    if (!kIsWeb) {
+      final cam = await Permission.camera.request();
+      if (!cam.isGranted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                cam.isPermanentlyDenied
+                    ? 'Camera is blocked. Enable it in app settings, then try again.'
+                    : 'Camera permission is required to take a photo.',
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+    }
+
+    try {
+      final XFile? photo = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+        maxWidth: 2400,
+      );
+
+      if (photo == null || !mounted) return;
+
+      final bytes = await photo.readAsBytes();
+      if (!_checkSize(bytes)) return;
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Photo captured. Extracting text from your challan…'),
+            backgroundColor: Color(0xFF00401A),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+
+      _navigateToProcessing(
+        bytes,
+        _nameFromPath(photo.path, 'challan_camera.jpg'),
+        'image',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error taking photo: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _importFromGallery() async {
+    if (!kIsWeb) {
+      await _ensurePhotosPermission();
+    }
+
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        withData: true,
+      );
+
+      if (result == null || result.files.isEmpty || !mounted) return;
+
+      final f = result.files.first;
+      Uint8List? bytes = f.bytes;
+      if (bytes == null && f.path != null) {
+        // Some platforms return path only
+        try {
+          bytes = await XFile(f.path!).readAsBytes();
+        } catch (_) {}
+      }
+      if (bytes == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Could not read the selected file.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      if (f.size > _maxBytes) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('File exceeds 10 MB limit.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
+      final name = f.name.isNotEmpty
+          ? f.name
+          : _nameFromPath(f.path, 'challan_import');
+      final isPdf = name.toLowerCase().endsWith('.pdf');
+      _navigateToProcessing(bytes, name, isPdf ? 'pdf' : 'image');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking file: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  String _nameFromPath(String? path, String fallback) {
+    if (path == null || path.isEmpty) return fallback;
+    final i = path.replaceAll('\\', '/').lastIndexOf('/');
+    if (i < 0 || i >= path.length - 1) return fallback;
+    return path.substring(i + 1);
+  }
+
+  bool _checkSize(Uint8List bytes) {
+    if (bytes.length > _maxBytes) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Photo exceeds 10 MB limit.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
+
+  void _navigateToProcessing(
+    Uint8List bytes,
+    String fileName,
+    String fileType,
+  ) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChallanProcessingScreen(
+          bytes: bytes,
+          fileName: fileName,
+          fileType: fileType,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +245,6 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
           child: Column(
             children: [
               const SizedBox(height: 32),
-
-              // Camera icon
               Container(
                 width: 80,
                 height: 80,
@@ -56,10 +258,7 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
                   color: Color(0xFF00401A),
                 ),
               ),
-
               const SizedBox(height: 24),
-
-              // Title
               const Text(
                 'Upload Your Challan',
                 style: TextStyle(
@@ -68,18 +267,15 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
                   color: Colors.black87,
                 ),
               ),
-
               const SizedBox(height: 8),
-
-              // Subtitle
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   children: const [
-                    TextSpan(text: 'AI will '),
+                    TextSpan(text: 'We '),
                     TextSpan(
-                      text: 'extract details',
+                      text: 'extract text',
                       style: TextStyle(
                         color: Color(0xFF00401A),
                         fontWeight: FontWeight.w600,
@@ -96,40 +292,21 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
                   ],
                 ),
               ),
-
               const SizedBox(height: 32),
-
-              // Take Photo option
               _buildOptionCard(
                 icon: Icons.camera_alt,
                 title: 'Take Photo',
-                subtitle: 'Capture challan with camera',
-                onTap: () => _takePhoto(),
+                subtitle: 'Open camera and capture your challan',
+                onTap: _takePhoto,
               ),
-
               const SizedBox(height: 16),
-
-              // Import from Gallery option
               _buildOptionCard(
                 icon: Icons.photo_library_outlined,
-                title: 'Import from Gallery',
-                subtitle: 'Select existing image',
-                onTap: () => _pickFromGallery(),
+                title: 'Import from gallery',
+                subtitle: 'JPG, PNG, or PDF (max 10 MB)',
+                onTap: _importFromGallery,
               ),
-
-              const SizedBox(height: 16),
-
-              // Upload PDF option
-              _buildOptionCard(
-                icon: Icons.picture_as_pdf_outlined,
-                title: 'Upload PDF',
-                subtitle: 'Select PDF challan',
-                onTap: () => _pickPDF(),
-              ),
-
               const SizedBox(height: 24),
-
-              // Supported formats info
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -138,7 +315,8 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Supported formats: JPG, PNG, PDF • Max size: 10MB',
+                  'Tip: For PDFs and web, keep the Legal Sathi backend running '
+                  '(localhost:8000) so text can be extracted.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
@@ -208,93 +386,6 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Future<void> _takePhoto() async {
-    try {
-      final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 85,
-      );
-
-      if (photo != null && mounted) {
-        _navigateToProcessing(photo.path, 'image');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error taking photo: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _pickFromGallery() async {
-    try {
-      final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
-
-      if (image != null && mounted) {
-        _navigateToProcessing(image.path, 'image');
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error picking image: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  Future<void> _pickPDF() async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['pdf'],
-      );
-
-      if (result != null && mounted) {
-        PlatformFile file = result.files.first;
-        if (file.size <= 10 * 1024 * 1024) {
-          // 10MB limit
-          _navigateToProcessing(file.path ?? '', 'pdf');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('File exceeds 10MB limit'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error picking PDF: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  void _navigateToProcessing(String filePath, String fileType) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            ChallanProcessingScreen(filePath: filePath, fileType: fileType),
       ),
     );
   }

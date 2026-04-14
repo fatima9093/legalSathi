@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
+import 'challan_appeal_guide_screen.dart';
 import 'challan_data_model.dart';
+import 'challan_pay_online_screen.dart';
 
 class ChallanExplanationScreen extends StatelessWidget {
   final ChallanData challanData;
@@ -172,10 +175,12 @@ class ChallanExplanationScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Opening payment portal...'),
-                          backgroundColor: Color(0xFF00401A),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => ChallanPayOnlineScreen(
+                            challanData: challanData,
+                          ),
                         ),
                       );
                     },
@@ -199,10 +204,12 @@ class ChallanExplanationScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Opening appeal form...'),
-                          backgroundColor: Color(0xFF00401A),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => ChallanAppealGuideScreen(
+                            challanData: challanData,
+                          ),
                         ),
                       );
                     },

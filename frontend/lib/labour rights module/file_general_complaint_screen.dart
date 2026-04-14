@@ -2,17 +2,32 @@ import 'package:flutter/material.dart';
 import 'generated_complaint_screen.dart';
 import '../screen_with_nav.dart';
 import '../utils/validators.dart';
+import 'package:front_end/models/overtime_context.dart';
+import 'package:front_end/models/wage_check_context.dart';
+import 'package:front_end/services/labour_wage_record_service.dart';
 
 class FileGeneralComplaintScreen extends StatefulWidget {
   final String? employerName;
   final String? complaintIssue;
   final DateTime? incidentDate;
 
+  /// When opened from minimum wage results, saved with the complaint to Supabase.
+  final WageCheckContext? wageCheckContext;
+
+  /// When opened from overtime calculator; same complaint flow + DB row type `overtime_complaint`.
+  final OvertimeContext? overtimeContext;
+
+  /// When opened after [FileDeniedLeaveComplaintScreen] (tags DB row `denied_leave_complaint`).
+  final bool fromDeniedLeaveFlow;
+
   const FileGeneralComplaintScreen({
     super.key,
     this.employerName,
     this.complaintIssue,
     this.incidentDate,
+    this.wageCheckContext,
+    this.overtimeContext,
+    this.fromDeniedLeaveFlow = false,
   });
 
   @override
@@ -27,6 +42,7 @@ class _FileGeneralComplaintScreenState
       TextEditingController();
   final TextEditingController _yourNameController = TextEditingController();
   final TextEditingController _contactController = TextEditingController();
+  final LabourWageRecordService _labourWageService = LabourWageRecordService();
 
   DateTime? _selectedDate;
 
@@ -45,7 +61,7 @@ class _FileGeneralComplaintScreenState
     if (widget.employerName != null) {
       _employerNameController.text = widget.employerName!;
     }
-    if (widget.complaintIssue != null) {
+    if (widget.complaintIssue != null && widget.complaintIssue!.isNotEmpty) {
       _complaintIssueController.text = widget.complaintIssue!;
     }
     if (widget.incidentDate != null) {
@@ -64,6 +80,33 @@ class _FileGeneralComplaintScreenState
     _yourNameController.dispose();
     _contactController.dispose();
     super.dispose();
+  }
+
+  void _showLabourRecordSaveFeedback(Map<String, dynamic> res) {
+    if (res['success'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Complaint details saved to your account.'),
+          backgroundColor: Color(0xFF00401A),
+        ),
+      );
+    } else if (res['needAuth'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign in to save this complaint to your account.'),
+          backgroundColor: Color(0xFFD97706),
+        ),
+      );
+    } else if (res['missingTable'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Run supabase_labour_wage_records_complete.sql in Supabase SQL Editor (Dashboard).',
+          ),
+          backgroundColor: Color(0xFFD97706),
+        ),
+      );
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -88,7 +131,7 @@ class _FileGeneralComplaintScreenState
     }
   }
 
-  void _generateComplaint() {
+  Future<void> _generateComplaint() async {
     if (!_isFormComplete) {
       Validators.showError(context, 'Please fill all required fields.');
       return;
@@ -98,7 +141,41 @@ class _FileGeneralComplaintScreenState
       return;
     }
 
-    // Navigate to generated complaint screen
+    final wageCtx = widget.wageCheckContext;
+    final otCtx = widget.overtimeContext;
+    if (wageCtx != null) {
+      final res = await _labourWageService.saveWageComplaint(
+        ctx: wageCtx,
+        employerName: _employerNameController.text.trim(),
+        complaintIssue: _complaintIssueController.text.trim(),
+      );
+      if (!mounted) return;
+      _showLabourRecordSaveFeedback(res);
+    } else if (otCtx != null) {
+      final res = await _labourWageService.saveOvertimeComplaint(
+        ctx: otCtx,
+        employerName: _employerNameController.text.trim(),
+        complaintIssue: _complaintIssueController.text.trim(),
+      );
+      if (!mounted) return;
+      _showLabourRecordSaveFeedback(res);
+    } else if (widget.fromDeniedLeaveFlow) {
+      final res = await _labourWageService.saveDeniedLeaveComplaint(
+        employerName: _employerNameController.text.trim(),
+        complaintIssue: _complaintIssueController.text.trim(),
+      );
+      if (!mounted) return;
+      _showLabourRecordSaveFeedback(res);
+    } else {
+      final res = await _labourWageService.saveGeneralLabourComplaint(
+        employerName: _employerNameController.text.trim(),
+        complaintIssue: _complaintIssueController.text.trim(),
+      );
+      if (!mounted) return;
+      _showLabourRecordSaveFeedback(res);
+    }
+
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(

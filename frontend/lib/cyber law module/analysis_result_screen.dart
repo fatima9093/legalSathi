@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../labour rights module/file_general_complaint_screen.dart';
 import '../screen_with_nav.dart';
-import 'draft_document_type_screen.dart';
 
 class AnalysisResultScreen extends StatefulWidget {
   final String? filePath;
@@ -9,14 +11,20 @@ class AnalysisResultScreen extends StatefulWidget {
   final String? extractedText;
   final List<String>? tags;
   final List<String>? relevantLaws;
+  final String? summary;
+
+  /// Sample salary-slip style content when no OCR pipeline ran.
+  final bool demoMode;
 
   const AnalysisResultScreen({
     super.key,
     this.filePath,
-    this.classifiedDomain = 'Labour Document - Salary Slip',
+    this.classifiedDomain,
     this.extractedText,
     this.tags,
     this.relevantLaws,
+    this.summary,
+    this.demoMode = false,
   });
 
   @override
@@ -27,13 +35,15 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
   late String _extractedText;
   late List<String> _tags;
   late List<String> _relevantLaws;
+  late String _classifiedDomain;
+  late String _summary;
 
   @override
   void initState() {
     super.initState();
-    _extractedText =
-        widget.extractedText ??
-        '''Employee Name: Muhammad Ali
+    if (widget.demoMode) {
+      _extractedText =
+          '''Employee Name: Muhammad Ali
 CNIC: 00000-0000000-0
 Position: Software Engineer
 Department: IT
@@ -44,16 +54,33 @@ Net Salary: 55,000 PKR
 Payment Date: February 2026
 
 The salary slip confirms employment with monthly compensation. This document can be used as proof of employment and income for legal purposes.''';
-
-    _tags = widget.tags ?? ['Salary Slip', 'Employment Proof'];
-
-    _relevantLaws =
-        widget.relevantLaws ??
-        [
-          'Labour Code Section 85 - Minimum wage requirements',
-          'Payment of Wages Act - Timely payment of wages mandatory',
-          'Allowances and deductions must comply with labour law',
-        ];
+      _tags = const ['Salary Slip', 'Employment Proof'];
+      _relevantLaws = const [
+        'Labour Code / minimum wage rules — verify current provincial notification.',
+        'Payment of Wages — timely payment and authorised deductions.',
+        'Cross-check allowances and deductions with your appointment terms.',
+      ];
+      _classifiedDomain = 'Labour — sample salary slip (demo)';
+      _summary =
+          'Demo only: replace with a real screenshot upload for OCR and analysis.';
+    } else {
+      _extractedText = widget.extractedText?.trim().isNotEmpty == true
+          ? widget.extractedText!.trim()
+          : 'No text was extracted.';
+      _tags = widget.tags != null && widget.tags!.isNotEmpty
+          ? List<String>.from(widget.tags!)
+          : ['Document'];
+      _relevantLaws = widget.relevantLaws != null &&
+              widget.relevantLaws!.isNotEmpty
+          ? List<String>.from(widget.relevantLaws!)
+          : [
+              'Review the applicable Pakistani statute with a lawyer or official source.',
+            ];
+      _classifiedDomain = widget.classifiedDomain?.trim().isNotEmpty == true
+          ? widget.classifiedDomain!.trim()
+          : 'Unclassified document';
+      _summary = widget.summary?.trim() ?? '';
+    }
   }
 
   void _copyToClipboard() {
@@ -68,24 +95,56 @@ The salary slip confirms employment with monthly compensation. This document can
   }
 
   void _generateComplaint() {
+    final issue = StringBuffer()
+      ..writeln('Issue inferred from screenshot evidence')
+      ..writeln('Domain: $_classifiedDomain');
+    if (_tags.isNotEmpty) {
+      issue.writeln('Tags: ${_tags.join(', ')}');
+    }
+    issue
+      ..writeln('')
+      ..writeln('Summary:')
+      ..writeln(_summary.isNotEmpty ? _summary : 'User requests legal action based on extracted evidence.')
+      ..writeln('')
+      ..writeln('Extracted evidence text:')
+      ..writeln(_extractedText);
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DraftDocumentTypeScreen(
-          extractedText: _extractedText,
-          classifiedDomain: widget.classifiedDomain ?? 'Cyber Law - PECA 2016',
-          tags: _tags,
+        builder: (context) => FileGeneralComplaintScreen(
+          complaintIssue: issue.toString(),
         ),
       ),
     );
   }
 
-  void _shareAnalysis() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Share feature coming soon'),
-        duration: Duration(seconds: 2),
-      ),
+  Future<void> _shareAnalysis() async {
+    final shareText = StringBuffer()
+      ..writeln('Legal Sathi - Evidence Analysis')
+      ..writeln('Domain: $_classifiedDomain')
+      ..writeln('Tags: ${_tags.join(', ')}')
+      ..writeln('');
+    if (_summary.isNotEmpty) {
+      shareText
+        ..writeln('Summary:')
+        ..writeln(_summary)
+        ..writeln('');
+    }
+    if (_relevantLaws.isNotEmpty) {
+      shareText.writeln('Relevant Laws:');
+      for (final law in _relevantLaws) {
+        shareText.writeln('- $law');
+      }
+      shareText.writeln('');
+    }
+    shareText
+      ..writeln('Extracted Text:')
+      ..writeln(_extractedText);
+
+    await Share.share(
+      shareText.toString(),
+      subject: 'Legal Sathi Evidence Analysis',
     );
   }
 
@@ -194,7 +253,7 @@ The salary slip confirms employment with monthly compensation. This document can
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.classifiedDomain ?? 'Cyber Law - PECA 2016',
+                          _classifiedDomain,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -207,6 +266,41 @@ The salary slip confirms employment with monthly compensation. This document can
                 ],
               ),
             ),
+
+            if (_summary.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00401A).withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF00401A).withOpacity(0.2)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Summary',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _summary,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        height: 1.45,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             const SizedBox(height: 16),
 

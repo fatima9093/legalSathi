@@ -349,4 +349,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get areYouSureYouWantToLogout => 'کیا آپ کو یقین ہے کہ آپ لاگ آؤٹ کرنا چاہتے ہیں؟';
+
+  @override
+  String get downloadFeatureComingSoon => 'ڈاؤن لوڈ جلد دستیاب ہو گا۔';
 }

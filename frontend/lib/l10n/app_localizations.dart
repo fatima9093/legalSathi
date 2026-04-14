@@ -780,6 +780,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to logout?'**
   String get areYouSureYouWantToLogout;
+
+  /// No description provided for @downloadFeatureComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Download will be available soon.'**
+  String get downloadFeatureComingSoon;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

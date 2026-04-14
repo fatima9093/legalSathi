@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+
 import '../screen_with_nav.dart';
 
 class GeneratedApplicationScreen extends StatefulWidget {
   final String employerName;
+  final String employeeName;
+  final String employeeContact;
   final String issueDescription;
   final String relevantDates;
 
   const GeneratedApplicationScreen({
     super.key,
     required this.employerName,
+    required this.employeeName,
+    required this.employeeContact,
     required this.issueDescription,
     required this.relevantDates,
   });
@@ -53,8 +61,8 @@ I am available to provide any additional information or documentation required f
 Thank you for your attention to this serious matter.
 
 Yours faithfully,
-[Employee Name]
-[Contact Information]''';
+${widget.employeeName.trim()}
+${widget.employeeContact.trim()}''';
   }
 
   void _copyToClipboard() {
@@ -68,13 +76,22 @@ Yours faithfully,
     );
   }
 
-  void _downloadAsPDF() {
-    // Placeholder for PDF download functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Download PDF feature coming soon'),
-        duration: Duration(seconds: 2),
+  Future<void> _downloadAsPDF() async {
+    final pdf = pw.Document();
+    final body = _generateApplicationText();
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) => [
+          pw.Text(
+            body,
+            style: const pw.TextStyle(fontSize: 11, lineSpacing: 1.45),
+          ),
+        ],
       ),
+    );
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
     );
   }
 

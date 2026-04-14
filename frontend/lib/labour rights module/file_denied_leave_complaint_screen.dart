@@ -82,6 +82,7 @@ class _FileDeniedLeaveComplaintScreenState
           complaintIssue:
               'Denied $_selectedLeaveType - ${_reasonController.text.trim()}',
           incidentDate: _selectedDate!,
+          fromDeniedLeaveFlow: true,
         ),
       ),
     );

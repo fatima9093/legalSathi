@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
 import 'generated_fia_complaint_screen.dart';
 import '../utils/validators.dart';
+import 'package:front_end/services/fia_complaint_service.dart';
 
 class FIAComplaintGeneratorScreen extends StatefulWidget {
   const FIAComplaintGeneratorScreen({super.key});
@@ -22,9 +23,34 @@ class _FIAComplaintGeneratorScreenState
   final _incidentController = TextEditingController();
   final _suspectController = TextEditingController();
   final _evidenceController = TextEditingController();
+  final FIAComplaintService _fiaComplaintService = FIAComplaintService();
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fullNameController.addListener(_onFormChanged);
+    _cnicController.addListener(_onFormChanged);
+    _phoneController.addListener(_onFormChanged);
+    _emailController.addListener(_onFormChanged);
+    _dateController.addListener(_onFormChanged);
+    _incidentController.addListener(_onFormChanged);
+  }
+
+  void _onFormChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   void dispose() {
+    _fullNameController.removeListener(_onFormChanged);
+    _cnicController.removeListener(_onFormChanged);
+    _phoneController.removeListener(_onFormChanged);
+    _emailController.removeListener(_onFormChanged);
+    _dateController.removeListener(_onFormChanged);
+    _incidentController.removeListener(_onFormChanged);
     _fullNameController.dispose();
     _cnicController.dispose();
     _phoneController.dispose();
@@ -70,7 +96,7 @@ class _FIAComplaintGeneratorScreenState
     }
   }
 
-  void _generateComplaint() {
+  Future<void> _generateComplaint() async {
     if (!_isFormComplete) {
       Validators.showError(context, 'Please fill all required fields.');
       return;
@@ -86,6 +112,51 @@ class _FIAComplaintGeneratorScreenState
     if (!Validators.isValidEmail(_emailController.text)) {
       Validators.showError(context, 'Enter a valid email address.');
       return;
+    }
+
+    setState(() {
+      _isSaving = true;
+    });
+    final saveResult = await _fiaComplaintService.saveComplaint(
+      fullName: _fullNameController.text.trim(),
+      cnic: _cnicController.text.trim(),
+      phone: _phoneController.text.trim(),
+      email: _emailController.text.trim(),
+      address: _addressController.text.trim(),
+      dateOfIncident: _dateController.text.trim(),
+      incidentDescription: _incidentController.text.trim(),
+      suspectInfo: _suspectController.text.trim(),
+      evidenceAvailable: _evidenceController.text.trim(),
+    );
+    if (!mounted) return;
+    setState(() {
+      _isSaving = false;
+    });
+
+    if (!(saveResult['success'] as bool? ?? false)) {
+      Validators.showError(
+        context,
+        saveResult['message'] as String? ?? 'Could not save complaint.',
+      );
+      return;
+    }
+
+    if (saveResult['cloudSaved'] == false) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Complaint generated. To store in DB, run supabase_fia_complaints.sql in Supabase SQL Editor.',
+          ),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Complaint saved to your account.'),
+          backgroundColor: Color(0xFF00401A),
+        ),
+      );
     }
 
     Navigator.push(
@@ -286,11 +357,13 @@ class _FIAComplaintGeneratorScreenState
                           ),
                           const SizedBox(height: 16),
 
-                          _buildLabel('Date of Incident'),
+                          _buildLabel('Date of Incident *'),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _dateController,
                             hint: '2026-01-15',
+                            readOnly: true,
+                            onTap: _selectDate,
                           ),
 
                           const SizedBox(height: 16),
@@ -417,9 +490,11 @@ class _FIAComplaintGeneratorScreenState
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _isFormComplete ? _generateComplaint : null,
+                        onPressed: (_isFormComplete && !_isSaving)
+                            ? _generateComplaint
+                            : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _isFormComplete
+                          backgroundColor: (_isFormComplete && !_isSaving)
                               ? const Color(0xFF00401A)
                               : Colors.grey.shade400,
                           foregroundColor: Colors.white,
@@ -428,13 +503,22 @@ class _FIAComplaintGeneratorScreenState
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text(
-                          'Generate FIA Complaint',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                        child: _isSaving
+                            ? const SizedBox(
+                                height: 18,
+                                width: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text(
+                                'Generate FIA Complaint',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
                     ),
 
@@ -483,10 +567,15 @@ class _FIAComplaintGeneratorScreenState
     required TextEditingController controller,
     required String hint,
     TextInputType? keyboardType,
+    bool readOnly = false,
+    VoidCallback? onTap,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      readOnly: readOnly,
+      onTap: onTap,
+      onChanged: (_) => _onFormChanged(),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),

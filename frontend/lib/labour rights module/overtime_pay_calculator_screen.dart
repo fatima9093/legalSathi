@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
-import 'file_labour_complaint_screen.dart';
+import 'file_general_complaint_screen.dart';
+import 'minimum_wage_data.dart';
+import 'overtime_demand_letter_screen.dart';
+import 'package:front_end/models/overtime_context.dart';
 import '../utils/validators.dart';
 
 class OvertimePayCalculatorScreen extends StatefulWidget {
@@ -23,7 +26,40 @@ class _OvertimePayCalculatorScreenState
   double? _hourlyRate;
   double? _legalOvertimeRate;
   double? _overtimeHours;
+  double? _parsedMonthlySalary;
+  double? _parsedWeeklyHours;
   bool _showResult = false;
+
+  OvertimeContext? get _overtimeContext {
+    if (!_showResult ||
+        _parsedMonthlySalary == null ||
+        _parsedWeeklyHours == null ||
+        _hourlyRate == null ||
+        _legalOvertimeRate == null ||
+        _overtimeHours == null ||
+        _overtimePayResult == null) {
+      return null;
+    }
+    return OvertimeContext(
+      monthlySalary: _parsedMonthlySalary!,
+      weeklyHours: _parsedWeeklyHours!,
+      overtimeHoursPerMonth: _overtimeHours!,
+      hourlyRate: _hourlyRate!,
+      legalOvertimeHourlyRate: _legalOvertimeRate!,
+      totalOvertimePayOwed: _overtimePayResult!,
+    );
+  }
+
+  String _overtimeComplaintPrefill() {
+    final c = _overtimeContext;
+    if (c == null) return '';
+    return 'Non-payment of overtime wages: Based on my monthly salary of Rs. '
+        '${c.monthlySalary.toStringAsFixed(0)}, weekly hours ${c.weeklyHours.toStringAsFixed(0)}, '
+        'and ${c.overtimeHoursPerMonth.toStringAsFixed(0)} overtime hours in the period, '
+        'the legal overtime rate is Rs. ${c.legalOvertimeHourlyRate.toStringAsFixed(2)} per hour '
+        'and total unpaid overtime is approximately Rs. ${c.totalOvertimePayOwed.toStringAsFixed(0)}. '
+        'I request payment of all overtime due under the Factories Act and applicable rules.';
+  }
 
   @override
   void dispose() {
@@ -34,26 +70,32 @@ class _OvertimePayCalculatorScreenState
   }
 
   void _calculateOvertimePay() {
-    if (!Validators.isPositiveNumber(_monthlySalaryController.text) ||
-        !Validators.isPositiveNumber(_weeklyHoursController.text) ||
-        !Validators.isPositiveNumber(_overtimeHoursController.text)) {
-      Validators.showError(context, 'Enter valid positive numbers.');
+    final monthlySalary = MinimumWageData.tryParseSalary(
+      _monthlySalaryController.text,
+    );
+    final weeklyHours = double.tryParse(_weeklyHoursController.text.trim());
+    final overtimeHours = double.tryParse(_overtimeHoursController.text.trim());
+
+    if (monthlySalary == null ||
+        monthlySalary <= 0 ||
+        weeklyHours == null ||
+        weeklyHours <= 0 ||
+        overtimeHours == null ||
+        overtimeHours <= 0) {
+      Validators.showError(
+        context,
+        'Enter valid salary (commas OK) and positive hours.',
+      );
       return;
     }
 
-    final monthlySalary = double.parse(_monthlySalaryController.text.trim());
-    final weeklyHours = double.parse(_weeklyHoursController.text.trim());
-    final overtimeHours = double.parse(_overtimeHoursController.text.trim());
-
-    // Calculate hourly rate based on monthly salary
-    // Assuming 4.33 weeks per month (average)
     final hourlyRate = monthlySalary / (weeklyHours * 4.33);
-
-    // Overtime pay is 2x the regular hourly rate
     final legalOvertimeRate = hourlyRate * 2;
     final overtimePay = overtimeHours * legalOvertimeRate;
 
     setState(() {
+      _parsedMonthlySalary = monthlySalary;
+      _parsedWeeklyHours = weeklyHours;
       _hourlyRate = hourlyRate;
       _legalOvertimeRate = legalOvertimeRate;
       _overtimeHours = overtimeHours;
@@ -133,7 +175,6 @@ class _OvertimePayCalculatorScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Header Icon
           Container(
             width: 80,
             height: 80,
@@ -147,10 +188,7 @@ class _OvertimePayCalculatorScreenState
               size: 40,
             ),
           ),
-
           const SizedBox(height: 20),
-
-          // Title
           const Text(
             'Calculate Overtime Pay',
             style: TextStyle(
@@ -159,49 +197,34 @@ class _OvertimePayCalculatorScreenState
               color: Colors.black87,
             ),
           ),
-
           const SizedBox(height: 8),
-
-          // Subtitle
           Text(
             'Check if you\'re being paid correctly for overtime',
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
-
           const SizedBox(height: 24),
-
-          // Monthly Salary Field
           _buildTextField(
             label: 'Monthly Salary (Rs.) *',
-            hintText: 'Enter your monthly salary',
+            hintText: 'e.g. 45000 or 45,000',
             controller: _monthlySalaryController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
-
           const SizedBox(height: 16),
-
-          // Weekly Working Hours Field
           _buildTextField(
             label: 'Weekly Working Hours *',
             hintText: 'e.g., 48 hours',
             controller: _weeklyHoursController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
-
           const SizedBox(height: 16),
-
-          // Overtime Hours Field
           _buildTextField(
             label: 'Overtime Hours (per month) *',
             hintText: 'Total overtime hours worked',
             controller: _overtimeHoursController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
-
           const SizedBox(height: 24),
-
-          // Info Box
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -226,10 +249,7 @@ class _OvertimePayCalculatorScreenState
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Calculate Button
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -251,10 +271,7 @@ class _OvertimePayCalculatorScreenState
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Warning Box
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -283,7 +300,6 @@ class _OvertimePayCalculatorScreenState
               ],
             ),
           ),
-
           const SizedBox(height: 24),
         ],
       ),
@@ -291,12 +307,12 @@ class _OvertimePayCalculatorScreenState
   }
 
   Widget _buildResultView() {
+    final ctx = _overtimeContext;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back button and title
           Row(
             children: [
               GestureDetector(
@@ -322,10 +338,7 @@ class _OvertimePayCalculatorScreenState
               ),
             ],
           ),
-
           const SizedBox(height: 20),
-
-          // Result Card
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
@@ -336,15 +349,12 @@ class _OvertimePayCalculatorScreenState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  '\$',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+                const Icon(
+                  Icons.account_balance_wallet_outlined,
+                  size: 40,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 Text(
                   'Rs. ${_overtimePayResult!.toStringAsFixed(0)}',
                   style: const TextStyle(
@@ -365,10 +375,7 @@ class _OvertimePayCalculatorScreenState
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Calculation Breakdown
           const Text(
             'Calculation Breakdown',
             style: TextStyle(
@@ -377,9 +384,7 @@ class _OvertimePayCalculatorScreenState
               color: Colors.black87,
             ),
           ),
-
           const SizedBox(height: 12),
-
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -415,10 +420,7 @@ class _OvertimePayCalculatorScreenState
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Legal Reference
           const Text(
             'Legal Reference',
             style: TextStyle(
@@ -427,9 +429,7 @@ class _OvertimePayCalculatorScreenState
               color: Colors.black87,
             ),
           ),
-
           const SizedBox(height: 12),
-
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -472,10 +472,7 @@ class _OvertimePayCalculatorScreenState
               ],
             ),
           ),
-
           const SizedBox(height: 24),
-
-          // Recommended Next Steps
           const Text(
             'Recommended Next Steps',
             style: TextStyle(
@@ -484,9 +481,7 @@ class _OvertimePayCalculatorScreenState
               color: Colors.black87,
             ),
           ),
-
           const SizedBox(height: 12),
-
           _buildStepItem(
             1,
             'Keep detailed records of all overtime hours worked',
@@ -506,10 +501,7 @@ class _OvertimePayCalculatorScreenState
             4,
             'You can claim unpaid overtime for up to 3 years back',
           ),
-
           const SizedBox(height: 24),
-
-          // Action Buttons
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -520,14 +512,19 @@ class _OvertimePayCalculatorScreenState
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FileLabourComplaintScreen(),
-                  ),
-                );
-              },
+              onPressed: ctx == null
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => FileGeneralComplaintScreen(
+                            complaintIssue: _overtimeComplaintPrefill(),
+                            overtimeContext: ctx,
+                          ),
+                        ),
+                      );
+                    },
               child: const Text(
                 'File Labour Complaint',
                 style: TextStyle(
@@ -538,9 +535,7 @@ class _OvertimePayCalculatorScreenState
               ),
             ),
           ),
-
           const SizedBox(height: 12),
-
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -551,9 +546,18 @@ class _OvertimePayCalculatorScreenState
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              onPressed: () {
-                // Draft demand letter
-              },
+              onPressed: ctx == null
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => OvertimeDemandLetterScreen(
+                            contextData: ctx,
+                          ),
+                        ),
+                      );
+                    },
               child: const Text(
                 'Draft Demand Letter',
                 style: TextStyle(
@@ -564,7 +568,6 @@ class _OvertimePayCalculatorScreenState
               ),
             ),
           ),
-
           const SizedBox(height: 20),
         ],
       ),

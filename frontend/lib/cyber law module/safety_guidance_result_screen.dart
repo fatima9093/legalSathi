@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/services/blackmail_guidance_service.dart';
 import '../screen_with_nav.dart';
 
 class SafetyGuidanceResultsScreen extends StatelessWidget {
   final String blackmailId;
   final String situation;
+  final BlackmailGuidanceResult? guidance;
 
   const SafetyGuidanceResultsScreen({
     super.key,
     required this.blackmailId,
     required this.situation,
+    this.guidance,
   });
 
   List<String> _getImmediateActions() {
@@ -201,6 +204,40 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     const SizedBox(height: 24),
 
+                    if (guidance != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.blue.shade100),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'AI Summary',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.blue.shade900,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              guidance!.analysisSummary,
+                              style: TextStyle(
+                                fontSize: 13,
+                                height: 1.4,
+                                color: Colors.blue.shade900,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+
                     // Immediate Actions
                     const Text(
                       'Immediate Actions',
@@ -213,7 +250,7 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    _buildActionsList(_getImmediateActions()),
+                    _buildActionsList(guidance?.immediateActions ?? _getImmediateActions()),
 
                     const SizedBox(height: 24),
 
@@ -229,7 +266,7 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    _buildChecklistCard(_getEvidencePreservation()),
+                    _buildChecklistCard(guidance?.evidenceChecklist ?? _getEvidencePreservation()),
 
                     const SizedBox(height: 24),
 
@@ -245,7 +282,7 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    _buildReportingSteps(_getReportingSteps()),
+                    _buildReportingSteps(guidance?.reportingSteps ?? _getReportingSteps()),
 
                     const SizedBox(height: 24),
 
@@ -296,21 +333,53 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 12),
-                          _buildBulletPoint(
-                            'PECA Section 20: Cyber Extortion (up to 14 years imprisonment)',
-                          ),
-                          _buildBulletPoint(
-                            'PECA Section 21: Unauthorized access (up to 7 years)',
-                          ),
-                          _buildBulletPoint(
-                            'Pakistan Penal Code Section 384: Extortion',
-                          ),
-                          _buildBulletPoint(
-                            'This is a cognizable, non-bailable offense',
-                          ),
+                          ...((guidance?.legalOptions ??
+                                  [
+                                    'PECA Section 20: Cyber Extortion (up to 14 years imprisonment)',
+                                    'PECA Section 21: Unauthorized access (up to 7 years)',
+                                    'Pakistan Penal Code Section 384: Extortion',
+                                    'This is a cognizable, non-bailable offense',
+                                  ])
+                              .map(_buildBulletPoint)),
                         ],
                       ),
                     ),
+
+                    if (guidance != null) ...[
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Extracted Evidence Preview',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          guidance!.extractedEvidencePreview,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade800,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                    ],
 
                     const SizedBox(height: 120),
                   ],

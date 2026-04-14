@@ -120,6 +120,7 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
               builder: (context) => SafetyGuidanceLoadingScreen(
                 blackmailId: _blackmailId!,
                 situation: _descriptionController.text.trim(),
+                evidenceFiles: List<EvidenceFile>.from(_evidenceFiles ?? const []),
               ),
             ),
           );

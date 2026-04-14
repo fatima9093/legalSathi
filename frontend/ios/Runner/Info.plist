@@ -45,5 +45,16 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Legal Sathi needs camera access to photograph your traffic challan for text recognition.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Legal Sathi needs photo library access to import challan images or PDFs.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tel</string>
+		<string>https</string>
+		<string>http</string>
+		<string>sms</string>
+	</array>
 </dict>
 </plist>

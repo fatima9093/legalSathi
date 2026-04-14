@@ -1,14 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'challan_details_screen.dart';
+
 import 'challan_data_model.dart';
+import 'challan_details_screen.dart';
 
 class ChallanProcessingScreen extends StatefulWidget {
-  final String filePath;
+  final Uint8List bytes;
+  final String fileName;
   final String fileType;
 
   const ChallanProcessingScreen({
     super.key,
-    required this.filePath,
+    required this.bytes,
+    required this.fileName,
     required this.fileType,
   });
 
@@ -21,20 +26,23 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   double _progress = 0.0;
+  String _statusLabel = 'Reading document…';
 
   @override
   void initState() {
     super.initState();
     _controller =
-        AnimationController(duration: const Duration(seconds: 3), vsync: this)
+        AnimationController(duration: const Duration(seconds: 8), vsync: this)
           ..addListener(() {
-            setState(() {
-              _progress = _controller.value;
-            });
+            if (mounted) {
+              setState(() {
+                _progress = _controller.value;
+              });
+            }
           });
 
     _controller.forward();
-    _simulateProcessing();
+    _runExtraction();
   }
 
   @override
@@ -43,17 +51,41 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
     super.dispose();
   }
 
-  Future<void> _simulateProcessing() async {
-    // Extract challan data from the uploaded file
-    final challanData = await ChallanData.extractFromImage(widget.filePath);
+  Future<void> _runExtraction() async {
+    try {
+      if (mounted) {
+        setState(() {
+          _statusLabel = widget.fileType == 'pdf'
+              ? 'Extracting text from PDF…'
+              : 'Running OCR on image…';
+        });
+      }
 
-    if (mounted) {
+      final challanData = await ChallanData.extractFromDocument(
+        bytes: widget.bytes,
+        fileName: widget.fileName,
+        fileType: widget.fileType,
+      );
+
+      if (!mounted) return;
+
+      _controller.value = 1.0;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => ChallanDetailsScreen(challanData: challanData),
         ),
       );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Could not process challan: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      Navigator.pop(context);
     }
   }
 
@@ -83,7 +115,6 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Circular progress indicator
               SizedBox(
                 width: 80,
                 height: 80,
@@ -96,10 +127,7 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                   backgroundColor: Colors.grey.shade200,
                 ),
               ),
-
               const SizedBox(height: 32),
-
-              // Title
               const Text(
                 'Extracting Challan Details',
                 style: TextStyle(
@@ -108,10 +136,7 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                   color: Colors.black87,
                 ),
               ),
-
               const SizedBox(height: 12),
-
-              // Subtitle
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
@@ -129,10 +154,7 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                   ],
                 ),
               ),
-
               const SizedBox(height: 32),
-
-              // Progress bar
               Container(
                 width: double.infinity,
                 height: 8,
@@ -151,10 +173,7 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                   ),
                 ),
               ),
-
               const SizedBox(height: 24),
-
-              // Status text
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -166,11 +185,13 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                   children: [
                     Icon(Icons.search, size: 16, color: Colors.grey.shade600),
                     const SizedBox(width: 8),
-                    Text(
-                      'Scanning challan image...',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
+                    Flexible(
+                      child: Text(
+                        _statusLabel,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ),
                   ],

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
+import 'back_pay_calculator_screen.dart';
+import 'file_general_complaint_screen.dart';
+import 'package:front_end/models/wage_check_context.dart';
 
 class MinimumWageResultScreen extends StatelessWidget {
   final String province;
   final String workerType;
   final double userSalary;
   final double minimumWage;
-  final bool meetsRequirements;
 
   const MinimumWageResultScreen({
     super.key,
@@ -14,13 +16,24 @@ class MinimumWageResultScreen extends StatelessWidget {
     required this.workerType,
     required this.userSalary,
     required this.minimumWage,
-    required this.meetsRequirements,
   });
+
+  String _prefillComplaintIssue() {
+    if (userSalary < minimumWage) {
+      return 'Minimum wage violation: I work as a $workerType employee in $province. '
+          'My current monthly salary is Rs. ${userSalary.toStringAsFixed(0)} while the '
+          'notified minimum wage for my category is Rs. ${minimumWage.toStringAsFixed(0)}. '
+          'I request that the competent authority direct my employer to pay the legal minimum '
+          'and any arrears owed.';
+    }
+    return 'Request for clarification on wage classification and applicable minimum wage '
+        'for my role ($workerType) in $province.';
+  }
 
   @override
   Widget build(BuildContext context) {
-    double difference = userSalary - minimumWage;
-    bool isUnderpaid = difference < 0;
+    final difference = userSalary - minimumWage;
+    final isUnderpaid = difference < 0;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -36,12 +49,13 @@ class MinimumWageResultScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Status Card
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isUnderpaid ? const Color(0xFFFFE5E5) : const Color(0xFFE8F1EB),
+                  color: isUnderpaid
+                      ? const Color(0xFFFFE5E5)
+                      : const Color(0xFFE8F1EB),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -50,8 +64,12 @@ class MinimumWageResultScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.error_outline,
-                          color: isUnderpaid ? const Color(0xFFC41C3B) : const Color(0xFF4A7C5C),
+                          isUnderpaid
+                              ? Icons.warning_amber_rounded
+                              : Icons.check_circle,
+                          color: isUnderpaid
+                              ? const Color(0xFFC41C3B)
+                              : const Color(0xFF4A7C5C),
                           size: 28,
                         ),
                         const SizedBox(width: 8),
@@ -60,7 +78,9 @@ class MinimumWageResultScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: isUnderpaid ? const Color(0xFFC41C3B) : const Color(0xFF4A7C5C),
+                            color: isUnderpaid
+                                ? const Color(0xFFC41C3B)
+                                : const Color(0xFF4A7C5C),
                           ),
                         ),
                       ],
@@ -81,7 +101,6 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              // Wage Breakdown Section
               const Text(
                 'Wage Breakdown',
                 style: TextStyle(
@@ -93,7 +112,8 @@ class MinimumWageResultScreen extends StatelessWidget {
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -115,18 +135,22 @@ class MinimumWageResultScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     _buildBreakdownRow(
-                      icon: Icons.error_outline,
-                      iconColor: isUnderpaid ? const Color(0xFFC41C3B) : const Color(0xFF4A7C5C),
+                      icon: Icons.trending_flat,
+                      iconColor: isUnderpaid
+                          ? const Color(0xFFC41C3B)
+                          : const Color(0xFF4A7C5C),
                       label: 'Difference',
-                      value: '${isUnderpaid ? '- ' : ''}Rs. ${difference.abs().toStringAsFixed(0)}',
-                      valueColor: isUnderpaid ? const Color(0xFFC41C3B) : const Color(0xFF4A7C5C),
+                      value:
+                          '${isUnderpaid ? '- ' : '+ '}Rs. ${difference.abs().toStringAsFixed(0)}',
+                      valueColor: isUnderpaid
+                          ? const Color(0xFFC41C3B)
+                          : const Color(0xFF4A7C5C),
                       isBold: true,
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 28),
-              // Explanation Section
               const Text(
                 'Explanation',
                 style: TextStyle(
@@ -145,8 +169,8 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
                 child: Text(
                   isUnderpaid
-                      ? 'Your monthly salary of Rs. ${userSalary.toStringAsFixed(0)} is below the legal minimum wage of Rs. ${minimumWage.toStringAsFixed(0)} for $workerType Worker in $province. Your employer is legally required to pay you at least the minimum wage.\n\nYou are being underpaid by Rs. ${difference.abs().toStringAsFixed(0)} per month. This is a violation of labour laws and you have the right to claim the difference.'
-                      : 'Your monthly salary of Rs. ${userSalary.toStringAsFixed(0)} meets the legal minimum wage of Rs. ${minimumWage.toStringAsFixed(0)} for $workerType Worker in $province. Your employer is complying with the legal requirement.\n\nYou are being paid Rs. ${difference.abs().toStringAsFixed(0)} above the minimum wage per month. Ensure you keep records of your salary payments for future reference.',
+                      ? 'Your monthly salary of Rs. ${userSalary.toStringAsFixed(0)} is below the legal minimum wage of Rs. ${minimumWage.toStringAsFixed(0)} for $workerType workers in $province. Your employer is legally required to pay you at least the minimum wage.\n\nYou are being underpaid by Rs. ${difference.abs().toStringAsFixed(0)} per month. This may violate labour laws and you may claim the difference subject to proof and process.'
+                      : 'Your monthly salary of Rs. ${userSalary.toStringAsFixed(0)} is at or above the reference minimum of Rs. ${minimumWage.toStringAsFixed(0)} for $workerType workers in $province.\n\nYou are Rs. ${difference.abs().toStringAsFixed(0)} above the reference minimum per month. Keep salary slips and bank records as evidence.',
                   style: const TextStyle(
                     fontSize: 13,
                     color: Colors.grey,
@@ -156,7 +180,6 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              // Legal Reference Section
               const Text(
                 'Legal Reference',
                 style: TextStyle(
@@ -208,15 +231,22 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              // Action Buttons
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // TODO: Navigate to complaint filing
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Opening complaint form...'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => FileGeneralComplaintScreen(
+                          complaintIssue: _prefillComplaintIssue(),
+                          wageCheckContext: WageCheckContext(
+                            province: province,
+                            workerType: workerType,
+                            userSalary: userSalary,
+                            legalMinimum: minimumWage,
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -249,10 +279,15 @@ class MinimumWageResultScreen extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    // TODO: Navigate to back pay calculator
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Opening back pay calculator...'),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => BackPayCalculatorScreen(
+                          province: province,
+                          workerType: workerType,
+                          userSalary: userSalary,
+                          minimumWage: minimumWage,
+                        ),
                       ),
                     );
                   },

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/cyber%20law%20module/safety_guidance_result_screen.dart';
+import 'package:front_end/models/blackmail_model.dart';
+import 'package:front_end/services/blackmail_guidance_service.dart';
 
 class SafetyGuidanceLoadingScreen extends StatefulWidget {
   final String blackmailId;
   final String situation;
+  final List<EvidenceFile> evidenceFiles;
 
   const SafetyGuidanceLoadingScreen({
     super.key,
     required this.blackmailId,
     required this.situation,
+    required this.evidenceFiles,
   });
 
   @override
@@ -18,23 +22,49 @@ class SafetyGuidanceLoadingScreen extends StatefulWidget {
 
 class _SafetyGuidanceLoadingScreenState
     extends State<SafetyGuidanceLoadingScreen> {
+  String _status = 'Preparing safety guidance...';
+
   @override
   void initState() {
     super.initState();
-    // Simulate loading and navigate to next screen after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    _runGuidancePipeline();
+  }
+
+  Future<void> _runGuidancePipeline() async {
+    try {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SafetyGuidanceResultsScreen(
-              blackmailId: widget.blackmailId,
-              situation: widget.situation,
-            ),
-          ),
-        );
+        setState(() => _status = 'Reading uploaded evidence...');
       }
-    });
+      final guidance = await BlackmailGuidanceService.buildGuidance(
+        situation: widget.situation,
+        evidenceFiles: widget.evidenceFiles,
+      );
+      if (!mounted) return;
+      setState(() => _status = 'Generating personalized guidance...');
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SafetyGuidanceResultsScreen(
+            blackmailId: widget.blackmailId,
+            situation: widget.situation,
+            guidance: guidance,
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SafetyGuidanceResultsScreen(
+            blackmailId: widget.blackmailId,
+            situation: widget.situation,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -77,7 +107,7 @@ class _SafetyGuidanceLoadingScreenState
 
             // Loading text
             Text(
-              'Preparing safety guidance...',
+              _status,
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.grey.shade700,

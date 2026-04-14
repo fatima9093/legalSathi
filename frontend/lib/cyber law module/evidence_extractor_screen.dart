@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../screen_with_nav.dart';
 import 'extracted_evidence_results_screen.dart';
+import 'package:front_end/services/challan_text_extraction_service.dart';
 
 class EvidenceExtractorScreen extends StatefulWidget {
   const EvidenceExtractorScreen({super.key});
@@ -364,6 +367,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
         type: FileType.image,
         allowMultiple: true,
         allowCompression: true,
+        withData: true,
       );
 
       if (result == null) {
@@ -384,6 +388,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
         type: FileType.custom,
         allowedExtensions: ['txt', 'pdf'],
         allowMultiple: true,
+        withData: true,
       );
 
       if (result == null) {
@@ -420,8 +425,8 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
         continue;
       }
 
-      // Get file path (may be null on web platform)
-      final filePath = file.path ?? file.name;
+      // On web, accessing `path` throws. Use name as logical path.
+      final filePath = kIsWeb ? file.name : (file.path ?? file.name);
 
       validFiles.add(
         EvidenceFile(
@@ -429,6 +434,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
           filePath: filePath,
           fileType: fileType,
           fileSize: fileSize,
+          fileBytes: file.bytes,
         ),
       );
     }
@@ -495,12 +501,14 @@ class EvidenceFile {
   final String filePath;
   final String fileType; // 'image' or 'text'
   final int fileSize;
+  final Uint8List? fileBytes;
 
   EvidenceFile({
     required this.fileName,
     required this.filePath,
     required this.fileType,
     required this.fileSize,
+    this.fileBytes,
   });
 }
 
@@ -519,26 +527,119 @@ class ExtractingEvidenceLoadingScreen extends StatefulWidget {
 
 class _ExtractingEvidenceLoadingScreenState
     extends State<ExtractingEvidenceLoadingScreen> {
+  String _status = 'Extracting data from evidence...';
+
   @override
   void initState() {
     super.initState();
-    _simulateExtraction();
+    _runExtraction();
   }
 
-  void _simulateExtraction() async {
-    // Simulate AI extraction process
-    await Future.delayed(const Duration(seconds: 4));
-
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ExtractedEvidenceResultsScreen(
-            uploadedFiles: widget.uploadedFiles,
-          ),
+  Future<void> _runExtraction() async {
+    final extracted = await _extractEvidenceData(widget.uploadedFiles);
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ExtractedEvidenceResultsScreen(
+          uploadedFiles: widget.uploadedFiles,
+          extractedEvidence: extracted,
         ),
-      );
+      ),
+    );
+  }
+
+  Future<ExtractedEvidence> _extractEvidenceData(List<EvidenceFile> files) async {
+    if (mounted) setState(() => _status = 'Reading files...');
+    final chunks = <String>[];
+
+    for (final f in files.take(8)) {
+      final bytes = f.fileBytes;
+      if (bytes == null || bytes.isEmpty) continue;
+      final name = f.fileName.toLowerCase();
+      try {
+        if (f.fileType == 'image') {
+          final text = await ChallanTextExtractionService.extractRawText(
+            bytes: bytes,
+            fileName: f.fileName,
+            fileType: 'image',
+          );
+          if (text.trim().isNotEmpty) chunks.add(text.trim());
+        } else {
+          if (name.endsWith('.txt')) {
+            final text = utf8.decode(bytes, allowMalformed: true).trim();
+            if (text.isNotEmpty) chunks.add(text);
+          } else if (name.endsWith('.pdf')) {
+            final text = await ChallanTextExtractionService.extractRawText(
+              bytes: bytes,
+              fileName: f.fileName,
+              fileType: 'pdf',
+            );
+            if (text.trim().isNotEmpty) chunks.add(text.trim());
+          }
+        }
+      } catch (_) {}
     }
+
+    if (mounted) setState(() => _status = 'Classifying threats...');
+    final combined = chunks.join('\n\n---\n\n');
+    return _buildExtractionFromText(combined, files.length);
+  }
+
+  ExtractedEvidence _buildExtractionFromText(String text, int totalFiles) {
+    final timestamps = RegExp(
+      r'(\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b|\b\d{4}[/-]\d{1,2}[/-]\d{1,2}\b|\b\d{1,2}:\d{2}(?::\d{2})?\s?(?:am|pm)?\b)',
+      caseSensitive: false,
+    ).allMatches(text).map((m) => m.group(0)!).toSet().take(12).toList();
+
+    final phoneNumbers = RegExp(
+      r'(\+92[-\s]?\d{3}[-\s]?\d{7}|\b03\d{2}[-\s]?\d{7}\b)',
+      caseSensitive: false,
+    ).allMatches(text).map((m) => m.group(0)!).toSet().take(10).toList();
+
+    final urls = RegExp(
+      r'(https?:\/\/[^\s]+|www\.[^\s]+)',
+      caseSensitive: false,
+    ).allMatches(text).map((m) => m.group(0)!).toSet().take(10).toList();
+
+    final lower = text.toLowerCase();
+    final threats = <ThreatClassification>[];
+    if (_hasAny(lower, ['pay', 'money', 'transfer', 'send me', 'bitcoin', 'easypaisa'])) {
+      threats.add(ThreatClassification(type: 'Blackmail / Extortion', confidence: 90, severity: 'High'));
+    }
+    if (_hasAny(lower, ['kill', 'hurt', 'attack', 'violence', 'acid'])) {
+      threats.add(ThreatClassification(type: 'Violence Threat', confidence: 88, severity: 'High'));
+    }
+    if (_hasAny(lower, ['leak', 'share your photo', 'viral', 'expose'])) {
+      threats.add(ThreatClassification(type: 'Privacy Violation Threat', confidence: 86, severity: 'High'));
+    }
+    if (_hasAny(lower, ['abuse', 'harass', 'stalk', 'threat'])) {
+      threats.add(ThreatClassification(type: 'Online Harassment', confidence: 82, severity: 'Medium'));
+    }
+    if (threats.isEmpty && text.trim().isNotEmpty) {
+      threats.add(ThreatClassification(type: 'Suspicious / abusive communication', confidence: 68, severity: 'Medium'));
+    }
+
+    final phraseMatches = RegExp(
+      r'''("[^"]{6,80}"|'[^']{6,80}'|(?:pay|send|leak|kill|hurt|viral|share)[^\n\r]{0,80})''',
+      caseSensitive: false,
+    ).allMatches(text).map((m) => m.group(0)!.trim()).where((s) => s.length > 6).toSet().take(8).toList();
+
+    return ExtractedEvidence(
+      timestamps: timestamps,
+      phoneNumbers: phoneNumbers,
+      urls: urls,
+      threats: threats,
+      keyPhrases: phraseMatches,
+      totalFilesAnalyzed: totalFiles,
+    );
+  }
+
+  bool _hasAny(String lower, List<String> terms) {
+    for (final t in terms) {
+      if (lower.contains(t)) return true;
+    }
+    return false;
   }
 
   @override
@@ -569,12 +670,18 @@ class _ExtractingEvidenceLoadingScreenState
               ),
               const SizedBox(height: 32),
               const Text(
-                'Extracting data from evidence...',
+                'Threat evidence analysis',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey,
                 ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                _status,
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                 textAlign: TextAlign.center,
               ),
             ],

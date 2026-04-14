@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart' show XFile;
+
 import '../screen_with_nav.dart';
 import 'analyzing_document_screen.dart';
 
@@ -13,66 +16,80 @@ class ScreenshotEvidenceReaderScreen extends StatefulWidget {
 
 class _ScreenshotEvidenceReaderScreenState
     extends State<ScreenshotEvidenceReaderScreen> {
+  static const int _maxBytes = 10 * 1024 * 1024;
+
   Future<void> _uploadScreenshot() async {
     try {
-      // Allow user to select image from device
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         allowMultiple: false,
-        allowCompression: true,
+        withData: true,
       );
 
-      if (result == null) {
-        // User cancelled the picker
-        return;
-      }
-
-      if (result.files.isEmpty) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No file selected. Please select an image.'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
+      if (result == null || result.files.isEmpty) {
         return;
       }
 
       final file = result.files.single;
-      String? filePath = file.path ?? file.name;
+      Uint8List? bytes = file.bytes;
+      if (bytes == null && file.path != null && !kIsWeb) {
+        try {
+          bytes = await XFile(file.path!).readAsBytes();
+        } catch (_) {}
+      }
 
-      // Ensure we have a valid path
-      if (filePath == null || filePath.isEmpty) {
+      if (bytes == null || bytes.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Could not determine file path. Please try again.'),
-              duration: Duration(seconds: 2),
+              content: Text('Could not read the image. On web, try another browser or smaller file.'),
+              duration: Duration(seconds: 3),
             ),
           );
         }
         return;
       }
 
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AnalyzingDocumentScreen(filePath: filePath),
-          ),
-        );
+      if (bytes.length > _maxBytes) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Image must be under 10 MB.')),
+          );
+        }
+        return;
       }
+
+      final name = file.name.isNotEmpty ? file.name : 'screenshot.jpg';
+
+      if (!mounted) return;
+      await Navigator.push<void>(
+        context,
+        MaterialPageRoute<void>(
+          builder: (context) => AnalyzingDocumentScreen(
+            imageBytes: bytes,
+            fileName: name,
+          ),
+        ),
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('Error: $e'),
             duration: const Duration(seconds: 3),
           ),
         );
       }
     }
+  }
+
+  void _openDemo() {
+    Navigator.push<void>(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => const AnalyzingDocumentScreen(isDemo: true),
+      ),
+    );
   }
 
   @override
@@ -104,7 +121,6 @@ class _ScreenshotEvidenceReaderScreenState
             children: [
               const SizedBox(height: 40),
 
-              // Illustration
               Container(
                 width: 150,
                 height: 150,
@@ -121,7 +137,6 @@ class _ScreenshotEvidenceReaderScreenState
 
               const SizedBox(height: 32),
 
-              // Title
               const Text(
                 'Upload Screenshot',
                 style: TextStyle(
@@ -133,67 +148,69 @@ class _ScreenshotEvidenceReaderScreenState
 
               const SizedBox(height: 12),
 
-              // Subtitle
-              const Text(
-                'Upload an image of your evidence to extract and analyze legal information',
-                style: TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
+              Text(
+                kIsWeb
+                    ? 'We read text from your image, classify the legal area, suggest relevant laws, then you can generate a draft document. Keep the backend running on port 8000 for best results.'
+                    : 'Text is read on-device when possible, then analyzed via the Legal Sathi backend.',
+                style: const TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
                 textAlign: TextAlign.center,
               ),
 
               const SizedBox(height: 48),
 
-              // Upload button
-              GestureDetector(
-                onTap: _uploadScreenshot,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 48),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: const Color(0xFF00401A),
-                      width: 2,
-                      style: BorderStyle.solid,
+              Material(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: _uploadScreenshot,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 48),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color(0xFF00401A),
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF00401A).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00401A).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.cloud_upload_outlined,
+                            size: 32,
+                            color: Color(0xFF00401A),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.cloud_upload_outlined,
-                          size: 32,
-                          color: Color(0xFF00401A),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Tap to upload',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Click to upload or drag and drop',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                        const SizedBox(height: 8),
+                        const Text(
+                          'PNG, JPG, WebP — up to 10 MB',
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'PNG, JPG up to 10MB',
-                        style: TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // Demo/Fallback button
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -204,21 +221,9 @@ class _ScreenshotEvidenceReaderScreenState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () {
-                    // Demo mode - navigate directly with a demo file path
-                    if (mounted) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AnalyzingDocumentScreen(
-                            filePath: 'demo_salary_slip.jpg',
-                          ),
-                        ),
-                      );
-                    }
-                  },
+                  onPressed: _openDemo,
                   child: const Text(
-                    'Try Demo (Sample Salary Slip)',
+                    'Try demo (sample analysis)',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -230,7 +235,6 @@ class _ScreenshotEvidenceReaderScreenState
 
               const SizedBox(height: 40),
 
-              // Info card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -242,7 +246,7 @@ class _ScreenshotEvidenceReaderScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'What we analyze:',
+                      'What we do:',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -250,13 +254,13 @@ class _ScreenshotEvidenceReaderScreenState
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _buildInfoItem('📋', 'Extract text from images'),
+                    _buildInfoItem(Icons.text_fields, 'Extract text (OCR)'),
                     const SizedBox(height: 8),
-                    _buildInfoItem('🔍', 'Identify legal domains'),
+                    _buildInfoItem(Icons.category, 'Identify legal domain'),
                     const SizedBox(height: 8),
-                    _buildInfoItem('⚖️', 'Find relevant laws'),
+                    _buildInfoItem(Icons.menu_book, 'Suggest relevant laws (indicative)'),
                     const SizedBox(height: 8),
-                    _buildInfoItem('📄', 'Generate legal documents'),
+                    _buildInfoItem(Icons.description, 'Generate a draft document in the next step'),
                   ],
                 ),
               ),
@@ -269,10 +273,10 @@ class _ScreenshotEvidenceReaderScreenState
     );
   }
 
-  Widget _buildInfoItem(String emoji, String text) {
+  Widget _buildInfoItem(IconData icon, String text) {
     return Row(
       children: [
-        Text(emoji, style: const TextStyle(fontSize: 16)),
+        Icon(icon, size: 20, color: const Color(0xFF00401A)),
         const SizedBox(width: 12),
         Expanded(
           child: Text(
