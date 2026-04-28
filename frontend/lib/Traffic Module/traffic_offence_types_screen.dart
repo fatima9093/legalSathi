@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 
 class TrafficOffenceTypesScreen extends StatelessWidget {
@@ -6,8 +7,10 @@ class TrafficOffenceTypesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -15,9 +18,9 @@ class TrafficOffenceTypesScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Traffic Offence Types',
-          style: TextStyle(
+        title: Text(
+          loc.trafficOffenceTypes,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -26,13 +29,12 @@ class TrafficOffenceTypesScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Header subtitle
           Container(
             width: double.infinity,
             color: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
             child: Text(
-              'Common traffic violations and penalties',
+              loc.commonViolationsSubtitle,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             ),
@@ -45,79 +47,55 @@ class TrafficOffenceTypesScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     _buildOffenceCard(
-                      number: '01',
-                      title: 'Over Speeding',
-                      fine: 'Rs. 1,000 - 2,000',
-                      severity: 'Medium',
-                      severityColor: Colors.yellow.shade700,
-                      severityBg: Colors.yellow.shade100,
+                      loc.overSpeeding,
+                      'Rs. 1,000 - 2,000',
+                      loc.medium,
                     ),
                     const SizedBox(height: 12),
                     _buildOffenceCard(
-                      number: '02',
-                      title: 'No Helmet',
-                      fine: 'Rs. 500',
-                      severity: 'Low',
-                      severityColor: Colors.green.shade700,
-                      severityBg: Colors.green.shade100,
+                      loc.noHelmet,
+                      'Rs. 500',
+                      loc.low,
                     ),
                     const SizedBox(height: 12),
                     _buildOffenceCard(
-                      number: '03',
-                      title: 'Red Light Violation',
-                      fine: 'Rs. 1,000',
-                      severity: 'High',
-                      severityColor: Colors.red.shade700,
-                      severityBg: Colors.red.shade100,
+                      loc.redLightViolation,
+                      'Rs. 1,000',
+                      loc.high,
                     ),
                     const SizedBox(height: 12),
                     _buildOffenceCard(
-                      number: '04',
-                      title: 'Wrong Way Driving',
-                      fine: 'Rs. 2,000',
-                      severity: 'High',
-                      severityColor: Colors.red.shade700,
-                      severityBg: Colors.red.shade100,
+                      loc.wrongWayDriving,
+                      'Rs. 2,000',
+                      loc.high,
                     ),
                     const SizedBox(height: 12),
                     _buildOffenceCard(
-                      number: '05',
-                      title: 'No Seat Belt',
-                      fine: 'Rs. 500',
-                      severity: 'Low',
-                      severityColor: Colors.green.shade700,
-                      severityBg: Colors.green.shade100,
+                      loc.noSeatBelt,
+                      'Rs. 500',
+                      loc.low,
                     ),
                     const SizedBox(height: 12),
                     _buildOffenceCard(
-                      number: '06',
-                      title: 'Mobile Phone Use',
-                      fine: 'Rs. 1,000',
-                      severity: 'Medium',
-                      severityColor: Colors.yellow.shade700,
-                      severityBg: Colors.yellow.shade100,
+                      loc.mobileUse,
+                      'Rs. 1,000',
+                      loc.medium,
                     ),
                     const SizedBox(height: 12),
                     _buildOffenceCard(
-                      number: '07',
-                      title: 'No License',
-                      fine: 'Rs. 5,000',
-                      severity: 'High',
-                      severityColor: Colors.red.shade700,
-                      severityBg: Colors.red.shade100,
+                      loc.noLicense,
+                      'Rs. 5,000',
+                      loc.high,
                     ),
                     const SizedBox(height: 12),
                     _buildOffenceCard(
-                      number: '08',
-                      title: 'Parking Violation',
-                      fine: 'Rs. 200 - 500',
-                      severity: 'Low',
-                      severityColor: Colors.green.shade700,
-                      severityBg: Colors.green.shade100,
+                      loc.parkingViolation,
+                      'Rs. 200 - 500',
+                      loc.low,
                     ),
+
                     const SizedBox(height: 16),
 
-                    // Info box at bottom
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -126,17 +104,13 @@ class TrafficOffenceTypesScreen extends StatelessWidget {
                         border: Border.all(color: Colors.amber.shade200),
                       ),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.info_outline,
-                            color: Colors.amber.shade800,
-                            size: 20,
-                          ),
+                          Icon(Icons.info_outline,
+                              color: Colors.amber.shade800, size: 20),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Fines may vary by province. Repeat offences carry higher penalties.',
+                              loc.finesVariationNote,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.amber.shade900,
@@ -160,30 +134,21 @@ class TrafficOffenceTypesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOffenceCard({
-    required String number,
-    required String title,
-    required String fine,
-    required String severity,
-    required Color severityColor,
-    required Color severityBg,
-  }) {
+  Widget _buildOffenceCard(String title, String fine, String severity) {
+    Color color = severity == "High"
+        ? Colors.red
+        : severity == "Medium"
+            ? Colors.orange
+            : Colors.green;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Row(
         children: [
-          // Number badge
           Container(
             width: 44,
             height: 44,
@@ -191,70 +156,46 @@ class TrafficOffenceTypesScreen extends StatelessWidget {
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Center(
-              child: Text(
-                number,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-            ),
+            child: const Icon(Icons.gavel),
           ),
-
           const SizedBox(width: 16),
-
-          // Text content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(
-                  'Fine:  $fine',
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
-                ),
+                Text('${fine}',
+                    style: TextStyle(
+                        fontSize: 13, color: Colors.grey.shade700)),
                 const SizedBox(height: 8),
                 Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: severityBg,
+                        color: color.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         severity,
                         style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: severityColor,
-                        ),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: color),
                       ),
                     ),
                     const SizedBox(width: 6),
-                    Text(
-                      'Severity',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: severityColor,
-                      ),
-                    ),
+                    Text("Severity",
+                        style: TextStyle(
+                            fontSize: 11,
+                            color: color,
+                            fontWeight: FontWeight.w600)),
                   ],
-                ),
+                )
               ],
             ),
           ),

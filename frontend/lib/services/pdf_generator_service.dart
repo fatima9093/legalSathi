@@ -315,5 +315,7 @@ class PdfGeneratorService {
       ],
     );
   }
+
+  Future<dynamic> generateTemplatePdf(String title, String body) async {}
 }
 

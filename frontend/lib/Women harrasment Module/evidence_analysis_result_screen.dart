@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'draft_complaint_generator_screen.dart';
 
 class EvidenceAnalysisResultScreen extends StatelessWidget {
@@ -17,8 +18,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'AI Evidence Review',
+        title: Text(AppLocalizations.of(context)!.aiEvidenceReview,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -51,8 +51,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Upload Your Evidence',
+                  Text(AppLocalizations.of(context)!.uploadYourEvidence,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -61,7 +60,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'AI will analyze strength and provide suggestions',
+                     AppLocalizations.of(context)!.aiAnalyzeText,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
@@ -105,8 +104,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Medium Evidence',
+                              Text(AppLocalizations.of(context)!.mediumEvidence,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -115,7 +113,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Based on $evidenceCount pieces of evidence',
+                                 AppLocalizations.of(context)!.basedOnEvidence(evidenceCount),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey.shade700,
@@ -128,9 +126,8 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Your evidence is adequate but could be strengthened. You have some key evidence, but additional supporting materials would make your case more robust.',
-                      style: TextStyle(
-                        fontSize: 14,
+                       AppLocalizations.of(context)!.evidenceStrengthDescription,
+                        style:TextStyle(fontSize: 14,
                         color: Colors.grey.shade800,
                         height: 1.5,
                       ),
@@ -148,8 +145,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'AI Suggestions to Improve',
+                  Text(AppLocalizations.of(context)!.aiSuggestionsTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -161,23 +157,23 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                   // Suggestions list
                   _buildSuggestionItem(
                     number: 1,
-                    text: 'Add more screenshots of communications',
+                    text: AppLocalizations.of(context)!.suggestion1,
                   ),
                   _buildSuggestionItem(
                     number: 2,
-                    text: 'Get written witness statements',
+                    text: AppLocalizations.of(context)!.suggestion2,
                   ),
                   _buildSuggestionItem(
                     number: 3,
-                    text: 'Include any HR correspondence',
+                    text: AppLocalizations.of(context)!.suggestion3,
                   ),
                   _buildSuggestionItem(
                     number: 4,
-                    text: 'Document pattern of behavior with dates',
+                    text:  AppLocalizations.of(context)!.suggestion4,
                   ),
                   _buildSuggestionItem(
                     number: 5,
-                    text: 'Add contemporaneous diary entries if available',
+                    text: AppLocalizations.of(context)!.suggestion5,
                   ),
                 ],
               ),
@@ -210,8 +206,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Continue to Draft Complaint',
+                    child: Text(AppLocalizations.of(context)!.continueToDraft,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -236,8 +231,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Upload More Evidence',
+                    child: Text(AppLocalizations.of(context)!.uploadMoreEvidence,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

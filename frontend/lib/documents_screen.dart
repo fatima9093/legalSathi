@@ -9,36 +9,38 @@ class DocumentsScreen extends StatefulWidget {
 }
 
 class _DocumentsScreenState extends State<DocumentsScreen> {
-  // Static data for now - will be dynamic in future
-  final List<DocumentItem> _documents = [
-    DocumentItem(
-      title: 'FIR Draft - Harassment',
-      fileType: 'PDF',
-      fileSize: '245 KB',
-      date: 'Jan 15, 2024',
-    ),
-    DocumentItem(
-      title: 'PECA Complaint',
-      fileType: 'PDF',
-      fileSize: '189 KB',
-      date: 'Jan 12, 2024',
-    ),
-    DocumentItem(
-      title: 'Labour Request',
-      fileType: 'PDF',
-      fileSize: '156 KB',
-      date: 'Jan 10, 2024',
-    ),
-    DocumentItem(
-      title: 'Evidence Analysis',
-      fileType: 'PDF',
-      fileSize: '312 KB',
-      date: 'Jan 8, 2024',
-    ),
-  ];
+  List<DocumentItem> _getDocuments(BuildContext context) {
+    return [
+      DocumentItem(
+        title: AppLocalizations.of(context)!.firDraftHarassmentDoc,
+        fileType: 'PDF',
+        fileSize: '245 KB',
+        date: 'Jan 15, 2024',
+      ),
+      DocumentItem(
+        title: AppLocalizations.of(context)!.pecaComplaintDoc,
+        fileType: 'PDF',
+        fileSize: '189 KB',
+        date: 'Jan 12, 2024',
+      ),
+      DocumentItem(
+        title: AppLocalizations.of(context)!.labourRequestDoc,
+        fileType: 'PDF',
+        fileSize: '156 KB',
+        date: 'Jan 10, 2024',
+      ),
+      DocumentItem(
+        title: AppLocalizations.of(context)!.evidenceAnalysisDoc,
+        fileType: 'PDF',
+        fileSize: '312 KB',
+        date: 'Jan 8, 2024',
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final documents = _getDocuments(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -63,13 +65,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: _documents.length,
+        itemCount: documents.length,
         itemBuilder: (context, index) {
-          final doc = _documents[index];
+          final doc = documents[index];
           return _buildDocumentCard(doc);
         },
       ),
-      bottomNavigationBar: _buildBottomNavBar(),
+      bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
 
@@ -152,8 +154,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Document'),
-          content: Text('Are you sure you want to delete "${doc.title}"?'),
+          title: Text(AppLocalizations.of(context)!.delete),
+          content: Text('${AppLocalizations.of(context)!.areYouSureYouWantToDelete} "${doc.title}"?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -177,7 +179,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     );
   }
 
-  Widget _buildBottomNavBar() {
+  Widget _buildBottomNavBar(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: 2, // Documents tab is selected
       onTap: (index) {
@@ -196,19 +198,22 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             break;
         }
       },
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat_bubble_outline),
-          label: 'Chat',
+          icon: const Icon(Icons.home),
+          label: AppLocalizations.of(context)!.bottomNavHome,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.folder_outlined),
-          label: 'Documents',
+          icon: const Icon(Icons.chat_bubble_outline),
+          label: AppLocalizations.of(context)!.bottomNavChat,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          label: 'Profile',
+          icon: const Icon(Icons.folder_outlined),
+          label: AppLocalizations.of(context)!.bottomNavDocuments,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.person_outline),
+          label: AppLocalizations.of(context)!.bottomNavProfile,
         ),
       ],
       type: BottomNavigationBarType.fixed,

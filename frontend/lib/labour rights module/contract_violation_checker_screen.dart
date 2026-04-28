@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' show XFile;
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'file_general_complaint_screen.dart';
 import 'file_labour_complaint_screen.dart';
@@ -219,9 +220,9 @@ class _ContractViolationCheckerScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Contract Violation Explainer',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.contractViolationTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,

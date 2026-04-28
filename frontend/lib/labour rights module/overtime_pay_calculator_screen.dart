@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'file_general_complaint_screen.dart';
 import 'minimum_wage_data.dart';
@@ -115,9 +116,9 @@ class _OvertimePayCalculatorScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Overtime & Pay Calculator',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.calculateOvertimePayTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -189,9 +190,9 @@ class _OvertimePayCalculatorScreenState
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Calculate Overtime Pay',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.calculateOvertimePayTitle,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Colors.black87,
@@ -199,28 +200,28 @@ class _OvertimePayCalculatorScreenState
           ),
           const SizedBox(height: 8),
           Text(
-            'Check if you\'re being paid correctly for overtime',
+            AppLocalizations.of(context)!.checkIfYouArePaidCorrectlyForOvertime,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           _buildTextField(
-            label: 'Monthly Salary (Rs.) *',
-            hintText: 'e.g. 45000 or 45,000',
+            label: AppLocalizations.of(context)!.monthlySalaryLabel,
+            hintText: AppLocalizations.of(context)!.monthlySalaryHint,
             controller: _monthlySalaryController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
           const SizedBox(height: 16),
           _buildTextField(
-            label: 'Weekly Working Hours *',
-            hintText: 'e.g., 48 hours',
+            label: AppLocalizations.of(context)!.weeklyWorkingHoursLabel,
+            hintText: AppLocalizations.of(context)!.weeklyWorkingHoursHint,
             controller: _weeklyHoursController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
           const SizedBox(height: 16),
           _buildTextField(
-            label: 'Overtime Hours (per month) *',
-            hintText: 'Total overtime hours worked',
+            label: AppLocalizations.of(context)!.overtimeHoursPerMonthLabel,
+            hintText: AppLocalizations.of(context)!.overtimeHoursPerMonthHint,
             controller: _overtimeHoursController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
           ),
@@ -238,7 +239,7 @@ class _OvertimePayCalculatorScreenState
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Legal Overtime Rate\nUnder Pakistani labour law, overtime must be paid at 2x your regular hourly rate. Standard work week is 48 hours.',
+                    '${AppLocalizations.of(context)!.legalOvertimeRateTitle}\n${AppLocalizations.of(context)!.legalOvertimeRateDescription}',
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.blue.shade900,
@@ -261,9 +262,9 @@ class _OvertimePayCalculatorScreenState
                 ),
               ),
               onPressed: _calculateOvertimePay,
-              child: const Text(
-                'Calculate Overtime Pay',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.calculateOvertimePayButton,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -289,7 +290,7 @@ class _OvertimePayCalculatorScreenState
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Keep records of all overtime hours worked for accurate claims',
+                    AppLocalizations.of(context)!.keepRecordsWarningText,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.amber.shade900,
@@ -328,9 +329,9 @@ class _OvertimePayCalculatorScreenState
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
-                'Overtime Calculation',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.overtimeCalculationTitle,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,

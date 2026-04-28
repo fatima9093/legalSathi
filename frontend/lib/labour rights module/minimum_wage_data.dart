@@ -1,25 +1,28 @@
+import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
+
 /// Representative monthly minimum wages (PKR) used for in-app comparison.
 /// Rates follow provincial tier ordering: Unskilled < Semi-skilled < Skilled < Highly skilled.
 /// Update when governments notify new figures.
 class MinimumWageData {
   MinimumWageData._();
 
-  static const List<String> provinces = [
-    'Punjab',
-    'Sindh',
-    'Khyber Pakhtunkhwa',
-    'Balochistan',
-    'Islamabad',
-    'Gilgit-Baltistan',
-    'Azad Jammu & Kashmir',
-  ];
+  static List<String> provinces(BuildContext context) => [
+        AppLocalizations.of(context)!.mwProvincePunjab,
+        AppLocalizations.of(context)!.mwProvinceSindh,
+        AppLocalizations.of(context)!.mwProvinceKPK,
+        AppLocalizations.of(context)!.mwProvinceBalochistan,
+        AppLocalizations.of(context)!.mwProvinceIslamabad,
+        AppLocalizations.of(context)!.mwProvinceGB,
+        AppLocalizations.of(context)!.mwProvinceAJK,
+      ];
 
-  static const List<String> workerTypes = [
-    'Unskilled',
-    'Semi-skilled',
-    'Skilled',
-    'Highly skilled',
-  ];
+  static List<String> workerTypes(BuildContext context) => [
+        AppLocalizations.of(context)!.mwWorkerUnskilled,
+        AppLocalizations.of(context)!.mwWorkerSemiskilled,
+        AppLocalizations.of(context)!.mwWorkerSkilled,
+        AppLocalizations.of(context)!.mwWorkerHighlySkilled,
+      ];
 
   static const Map<String, Map<String, double>> _monthlyMinimumByProvince = {
     'Punjab': {
@@ -73,7 +76,6 @@ class MinimumWageData {
     'Highly skilled': 47500,
   };
 
-  /// Legal monthly minimum for [province] and [workerType] (PKR).
   static double minimumMonthly(String province, String workerType) {
     final row = _monthlyMinimumByProvince[province];
     if (row == null) {
@@ -82,12 +84,10 @@ class MinimumWageData {
     return row[workerType] ?? _fallbackByWorkerType[workerType] ?? 35000;
   }
 
-  /// Parses salary from user input: strips commas, "Rs", spaces; keeps digits and one decimal.
   static double? tryParseSalary(String raw) {
     var s = raw.trim();
     if (s.isEmpty) return null;
     s = s.replaceAll(',', '');
-    // caseSensitive: false — (?i) is invalid on JS RegExp (Flutter web)
     s = s.replaceAll(RegExp(r'rs\.?', caseSensitive: false), '');
     s = s.replaceAll(RegExp(r'\s+'), '');
     s = s.replaceAll(RegExp(r'[^\d.]'), '');

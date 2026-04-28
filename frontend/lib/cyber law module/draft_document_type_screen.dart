@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
+
 import '../screen_with_nav.dart';
 import 'draft_document_details_screen.dart';
 
@@ -20,39 +22,34 @@ class DraftDocumentTypeScreen extends StatefulWidget {
 }
 
 class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
-  late String _selectedType;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedType = '';
-  }
+  String _selectedType = '';
 
   void _selectDocumentType(String type) {
     setState(() {
       _selectedType = type;
     });
 
-    // Navigate to details screen after a brief delay for visual feedback
     Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DraftDocumentDetailsScreen(
-              documentType: type,
-              extractedText: widget.extractedText,
-              classifiedDomain: widget.classifiedDomain,
-              tags: widget.tags,
-            ),
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DraftDocumentDetailsScreen(
+            documentType: type,
+            extractedText: widget.extractedText,
+            classifiedDomain: widget.classifiedDomain,
+            tags: widget.tags,
           ),
-        );
-      }
+        ),
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -62,9 +59,9 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Draft Document',
-          style: TextStyle(
+        title: Text(
+          l10n.reviewTitle, // you can change to documentTitle if you want
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -78,41 +75,12 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Progress Steps
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Row(
-                  children: [
-                    _buildProgressStep(
-                      number: 1,
-                      label: 'Type',
-                      isActive: true,
-                      isCompleted: false,
-                    ),
-                    _buildProgressLine(false),
-                    _buildProgressStep(
-                      number: 2,
-                      label: 'Details',
-                      isActive: false,
-                      isCompleted: false,
-                    ),
-                    _buildProgressLine(false),
-                    _buildProgressStep(
-                      number: 3,
-                      label: 'Review',
-                      isActive: false,
-                      isCompleted: false,
-                    ),
-                  ],
-                ),
-              ),
 
               const SizedBox(height: 16),
 
-              // Title
-              const Text(
-                'Select Document Type',
-                style: TextStyle(
+              Text(
+                l10n.selectDocumentType,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -121,11 +89,10 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
 
               const SizedBox(height: 24),
 
-              // Document Type Options
               _buildDocumentTypeCard(
                 icon: Icons.description,
-                title: 'FIR Draft',
-                subtitle: 'First Information Report',
+                title: l10n.firDraft,
+                subtitle: l10n.firSubtitle,
                 type: 'FIR',
                 onTap: () => _selectDocumentType('FIR'),
               ),
@@ -134,8 +101,8 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
 
               _buildDocumentTypeCard(
                 icon: Icons.security,
-                title: 'PECA Complaint',
-                subtitle: 'Cyber crime complaint',
+                title: l10n.pecaComplaint,
+                subtitle: l10n.pecaSubtitle,
                 type: 'PECA',
                 onTap: () => _selectDocumentType('PECA'),
               ),
@@ -144,8 +111,8 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
 
               _buildDocumentTypeCard(
                 icon: Icons.warning,
-                title: 'Harassment Complaint',
-                subtitle: 'Workplace/online harassment',
+                title: l10n.harassmentComplaint,
+                subtitle: l10n.harassmentSubtitle,
                 type: 'Harassment',
                 onTap: () => _selectDocumentType('Harassment'),
               ),
@@ -154,8 +121,8 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
 
               _buildDocumentTypeCard(
                 icon: Icons.business,
-                title: 'Labour Request',
-                subtitle: 'Employment dispute',
+                title: l10n.labourRequest,
+                subtitle: l10n.labourSubtitle,
                 type: 'Labour',
                 onTap: () => _selectDocumentType('Labour'),
               ),
@@ -168,66 +135,6 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
     );
   }
 
-  Widget _buildProgressStep({
-    required int number,
-    required String label,
-    required bool isActive,
-    required bool isCompleted,
-  }) {
-    return Expanded(
-      child: Column(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isCompleted || isActive
-                  ? const Color(0xFF00401A)
-                  : Colors.grey.shade300,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: isCompleted
-                  ? const Icon(Icons.check, color: Colors.white, size: 24)
-                  : Text(
-                      '$number',
-                      style: TextStyle(
-                        color: isActive || isCompleted
-                            ? Colors.white
-                            : Colors.grey.shade600,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: isActive || isCompleted
-                  ? Colors.black
-                  : Colors.grey.shade500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressLine(bool isCompleted) {
-    return Expanded(
-      child: Container(
-        height: 2,
-        color: isCompleted ? const Color(0xFF00401A) : Colors.grey.shade300,
-        margin: const EdgeInsets.only(top: 24),
-      ),
-    );
-  }
-
   Widget _buildDocumentTypeCard({
     required IconData icon,
     required String title,
@@ -235,6 +142,8 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
     required String type,
     required VoidCallback onTap,
   }) {
+    final isSelected = _selectedType == type;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -244,12 +153,12 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: _selectedType == type
+            color: isSelected
                 ? const Color(0xFF00401A)
                 : Colors.grey.shade200,
-            width: _selectedType == type ? 2 : 1,
+            width: isSelected ? 2 : 1,
           ),
-          boxShadow: _selectedType == type
+          boxShadow: isSelected
               ? [
                   BoxShadow(
                     color: const Color(0xFF00401A).withOpacity(0.1),
@@ -286,14 +195,17 @@ class _DraftDocumentTypeScreenState extends State<DraftDocumentTypeScreen> {
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                    ),
                   ),
                 ],
               ),
             ),
             Icon(
               Icons.chevron_right,
-              color: _selectedType == type
+              color: isSelected
                   ? const Color(0xFF00401A)
                   : Colors.grey,
             ),

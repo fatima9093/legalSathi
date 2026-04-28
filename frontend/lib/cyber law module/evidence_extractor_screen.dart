@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../screen_with_nav.dart';
 import 'extracted_evidence_results_screen.dart';
 import 'package:front_end/services/challan_text_extraction_service.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class EvidenceExtractorScreen extends StatefulWidget {
   const EvidenceExtractorScreen({super.key});
@@ -29,9 +30,9 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Evidence Extractor',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.evidenceExtractor,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -66,9 +67,9 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'Upload Threat Evidence',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.uploadThreatEvidence,
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: Colors.black,
@@ -76,7 +77,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'AI will extract timestamps, numbers, URLs, and classify threats',
+                      AppLocalizations.of(context)!.aiWillExtractTimestamps,
                       style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       textAlign: TextAlign.center,
                     ),
@@ -98,7 +99,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                     Icon(Icons.upload_file, size: 48, color: Colors.grey[400]),
                     const SizedBox(height: 16),
                     Text(
-                      'Upload screenshots, messages, or text logs',
+                      AppLocalizations.of(context)!.uploadScreenshotsMessages,
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                       textAlign: TextAlign.center,
                     ),
@@ -109,7 +110,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                         Expanded(
                           child: _buildUploadButton(
                             icon: Icons.image,
-                            label: 'Screenshots',
+                            label: AppLocalizations.of(context)!.screenshots,
                             onPressed: _uploadScreenshots,
                           ),
                         ),
@@ -117,7 +118,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                         Expanded(
                           child: _buildUploadButton(
                             icon: Icons.description,
-                            label: 'Text Logs',
+                            label: AppLocalizations.of(context)!.textLogs,
                             onPressed: _uploadTextLogs,
                           ),
                         ),
@@ -133,7 +134,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
                   child: Text(
-                    'Uploaded Evidence (${_uploadedFiles.length})',
+                    '${AppLocalizations.of(context)!.uploadedEvidenceLabel} (${_uploadedFiles.length})',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -167,14 +168,14 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.auto_awesome),
-                        SizedBox(width: 8),
+                        const Icon(Icons.auto_awesome),
+                        const SizedBox(width: 8),
                         Text(
-                          'Extract Data with AI',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.extractDataWithAi,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -197,22 +198,22 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'What AI Extracts:',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.whatAiExtracts,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF1976D2),
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _buildInfoBullet('Timestamps and dates'),
-                    _buildInfoBullet('Phone numbers and email addresses'),
-                    _buildInfoBullet('URLs and social media links'),
+                    _buildInfoBullet(AppLocalizations.of(context)!.timestampsAndDates),
+                    _buildInfoBullet(AppLocalizations.of(context)!.phoneNumbersAndEmails),
+                    _buildInfoBullet(AppLocalizations.of(context)!.urlsAndSocialMedia),
                     _buildInfoBullet(
-                      'Threat classification (harassment, blackmail, violence)',
+                      AppLocalizations.of(context)!.threatClassificationLabel,
                     ),
-                    _buildInfoBullet('Key phrases and evidence markers'),
+                    _buildInfoBullet(AppLocalizations.of(context)!.keyPhrasesAndEvidence),
                   ],
                 ),
               ),
@@ -227,7 +228,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
                 ),
                 padding: const EdgeInsets.all(16),
                 child: Text(
-                  'Supported formats: JPG, PNG, PDF, TXT (max 10MB each)',
+                  AppLocalizations.of(context)!.supportedFormatsMessage,
                   style: TextStyle(
                     fontSize: 13,
                     color: Colors.orange[800],
@@ -371,13 +372,13 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
       );
 
       if (result == null) {
-        _showErrorSnackBar('No images selected');
+        _showErrorSnackBar(AppLocalizations.of(context)!.noImagesSelected);
         return;
       }
 
       _processPickedFiles(result, 'image');
     } catch (e) {
-      _showErrorSnackBar('Error uploading screenshots: ${e.toString()}');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.errorUploadingScreenshots}: ${e.toString()}');
       debugPrint('Screenshot upload error: $e');
     }
   }
@@ -392,20 +393,20 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
       );
 
       if (result == null) {
-        _showErrorSnackBar('No files selected');
+        _showErrorSnackBar(AppLocalizations.of(context)!.noFilesSelectedTryAgain);
         return;
       }
 
       _processPickedFiles(result, 'text');
     } catch (e) {
-      _showErrorSnackBar('Error uploading text logs: ${e.toString()}');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.errorUploadingTextLogs}: ${e.toString()}');
       debugPrint('Text log upload error: $e');
     }
   }
 
   void _processPickedFiles(FilePickerResult result, String fileType) {
     if (result.files.isEmpty) {
-      _showErrorSnackBar('No files selected. Please try again.');
+      _showErrorSnackBar(AppLocalizations.of(context)!.noFilesSelectedTryAgain);
       return;
     }
 
@@ -414,14 +415,14 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
     for (var file in result.files) {
       // Check if file has valid data
       if (file.name.isEmpty) {
-        _showErrorSnackBar('Invalid file detected. Please try again.');
+        _showErrorSnackBar(AppLocalizations.of(context)!.invalidFileDetected);
         continue;
       }
 
       // Check file size (max 10MB)
       final fileSize = file.size;
       if (fileSize > (_maxFileSizeInMB * 1024 * 1024)) {
-        _showErrorSnackBar('File ${file.name} exceeds 10MB limit');
+        _showErrorSnackBar(AppLocalizations.of(context)!.fileExceedsLimitMB(file.name));
         continue;
       }
 
@@ -440,16 +441,12 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
     }
 
     if (validFiles.isEmpty) {
-      _showErrorSnackBar(
-        'No valid files to add. Please check file size and format.',
-      );
+      _showErrorSnackBar(AppLocalizations.of(context)!.noValidFilesCheck);
       return;
     }
 
     if (validFiles.length + _uploadedFiles.length > 10) {
-      _showErrorSnackBar(
-        'Maximum 10 files allowed. You can add ${10 - _uploadedFiles.length} more file(s).',
-      );
+      _showErrorSnackBar(AppLocalizations.of(context)!.maximumFilesAllowed(10 - _uploadedFiles.length));
       return;
     }
 
@@ -457,12 +454,12 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
       _uploadedFiles.addAll(validFiles);
     });
 
-    _showSuccessSnackBar('${validFiles.length} file(s) added successfully');
+    _showSuccessSnackBar(AppLocalizations.of(context)!.filesAddedSuccessfullyCount(validFiles.length));
   }
 
   void _extractEvidence() {
     if (_uploadedFiles.isEmpty) {
-      _showErrorSnackBar('Please upload at least one file');
+      _showErrorSnackBar(AppLocalizations.of(context)!.pleaseUploadAtLeastOneFile);
       return;
     }
 

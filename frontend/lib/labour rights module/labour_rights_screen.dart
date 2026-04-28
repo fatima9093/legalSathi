@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'minimum_wage_checker_screen.dart';
 import 'overtime_pay_calculator_screen.dart';
@@ -37,9 +38,9 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Labour Rights',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.labourRightsTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -74,7 +75,7 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search sections...',
+                  hintText: AppLocalizations.of(context)!.searchSectionsHint,
                   hintStyle: TextStyle(
                     color: Colors.grey.shade400,
                     fontSize: 14,
@@ -101,8 +102,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.table_chart,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Minimum Wage Table',
-              subtitle: 'Current wage rates by province',
+              title: AppLocalizations.of(context)!.minimumWageTableTitle,
+              subtitle: AppLocalizations.of(context)!.minimumWageTableSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -119,8 +120,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.access_time,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Overtime Rules',
-              subtitle: 'Overtime pay calculations',
+              title: AppLocalizations.of(context)!.overtimeRulesTitle,
+              subtitle: AppLocalizations.of(context)!.overtimeRulesSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -137,8 +138,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.calendar_today,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Paid Leave Rules',
-              subtitle: 'Annual, sick, and casual leave',
+              title: AppLocalizations.of(context)!.paidLeaveRulesTitle,
+              subtitle: AppLocalizations.of(context)!.paidLeaveRulesSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -155,8 +156,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.info_outline,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Contract Violation\nExplainer',
-              subtitle: 'Identify contract breaches',
+              title: AppLocalizations.of(context)!.contractViolationTitle,
+              subtitle: AppLocalizations.of(context)!.contractViolationSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -174,8 +175,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.description_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Complaint Filing Steps',
-              subtitle: 'How to file labour complaint',
+              title: AppLocalizations.of(context)!.complaintFilingStepsTitle,
+              subtitle: AppLocalizations.of(context)!.complaintFilingStepsSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -192,8 +193,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.edit_document,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Application Draft\nGenerator',
-              subtitle: 'Generate labour applications',
+              title: AppLocalizations.of(context)!.applicationDraftGeneratorTitle,
+              subtitle: AppLocalizations.of(context)!.applicationDraftGeneratorSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -210,8 +211,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.image_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Screenshot Evidence\nReader',
-              subtitle: 'Extract salary slip data',
+              title: AppLocalizations.of(context)!.screenshotEvidenceReaderTitle,
+              subtitle: AppLocalizations.of(context)!.screenshotEvidenceReaderSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -229,8 +230,8 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
               icon: Icons.play_circle_outline,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Scenario Simulator',
-              subtitle: 'Learn labour-related scenarios',
+              title: AppLocalizations.of(context)!.labourScenarioSimulatorTitle,
+              subtitle: AppLocalizations.of(context)!.labourScenarioSimulatorSubtitle,
               onTap: () {
                 Navigator.push(
                   context,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_end/models/scenario_model.dart';
 import 'package:front_end/services/scenario_service.dart';
 import 'package:front_end/chat_screen.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 // Primary green color matching the app theme
 const Color appPrimaryGreen = Color(0xFF00401A);
@@ -201,9 +202,9 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'AI Legal Advisor',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+        title: Text(
+          AppLocalizations.of(context)!.simulate,
+          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,

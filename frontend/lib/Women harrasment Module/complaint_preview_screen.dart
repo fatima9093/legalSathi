@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'internal_complaint_submission_screen.dart';
 
 class ComplaintPreviewScreen extends StatelessWidget {
@@ -35,6 +36,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -44,9 +46,9 @@ class ComplaintPreviewScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Internal Complaint',
-          style: TextStyle(
+        title: Text(
+          loc.internalComplaint,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -61,8 +63,8 @@ class ComplaintPreviewScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Complaint Preview',
+                   Text(
+                     loc.complaintPreview,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -88,8 +90,8 @@ class ComplaintPreviewScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'INTERNAL HARASSMENT COMPLAINT',
+                         Text(
+                           loc.internalComplaint,
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -111,8 +113,8 @@ class ComplaintPreviewScreen extends StatelessWidget {
                         const SizedBox(height: 20),
 
                         // Complainant Details
-                        const Text(
-                          'COMPLAINANT DETAILS:',
+                         Text(
+                          loc.complainantDetails,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -121,24 +123,24 @@ class ComplaintPreviewScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         _buildDetailRow(
-                          'Name:',
+                          loc.name,
                           fullName.isEmpty ? 'Not provided' : fullName,
                         ),
                         const SizedBox(height: 4),
                         _buildDetailRow(
-                          'Department:',
+                          loc.department,
                           department.isEmpty ? 'Not provided' : department,
                         ),
                         const SizedBox(height: 4),
                         _buildDetailRow(
-                          'Designation:',
+                          loc.designation,
                           designation.isEmpty ? 'Not provided' : designation,
                         ),
                         const SizedBox(height: 20),
 
                         // Incident Details
-                        const Text(
-                          'INCIDENT DETAILS:',
+                        Text(
+                          loc.incidentDetails,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -147,19 +149,19 @@ class ComplaintPreviewScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         _buildDetailRow(
-                          'Date:',
+                          loc.date,
                           incidentDate.isEmpty ? 'Not provided' : incidentDate,
                         ),
                         const SizedBox(height: 4),
                         _buildDetailRow(
-                          'Type:',
+                          loc.type,
                           harassmentTypes.isEmpty
                               ? 'Not provided'
                               : harassmentTypes.join(', '),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'Description:',
+                         Text(
+                          loc.description,
                           style: TextStyle(fontSize: 13, color: Colors.black87),
                         ),
                         const SizedBox(height: 4),
@@ -173,8 +175,8 @@ class ComplaintPreviewScreen extends StatelessWidget {
                         const SizedBox(height: 20),
 
                         // Accused
-                        const Text(
-                          'ACCUSED:',
+                        Text(
+                          loc.accused,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -183,12 +185,12 @@ class ComplaintPreviewScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         _buildDetailRow(
-                          'Name:',
+                          loc.name,
                           accusedName.isEmpty ? 'Not provided' : accusedName,
                         ),
                         const SizedBox(height: 4),
                         _buildDetailRow(
-                          'Designation:',
+                          loc.designation,
                           accusedDesignation.isEmpty
                               ? 'Not provided'
                               : accusedDesignation,
@@ -196,8 +198,8 @@ class ComplaintPreviewScreen extends StatelessWidget {
                         const SizedBox(height: 20),
 
                         // Requested Action
-                        const Text(
-                          'REQUESTED ACTION:',
+                         Text(
+                          loc.requestedAction,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -240,7 +242,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
                             size: 18,
                             color: Color(0xFF00401A),
                           ),
-                          label: const Text('Edit'),
+                          label: Text(loc.edit),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: const Color(0xFF00401A),
                             side: const BorderSide(
@@ -271,7 +273,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text('Regenerate'),
+                          child:  Text(loc.regenerate),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -291,7 +293,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text('Download'),
+                          child: Text(loc.download),
                         ),
                       ),
                     ],

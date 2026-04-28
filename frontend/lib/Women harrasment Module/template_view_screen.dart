@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/pdf_generator_service.dart';
 import 'package:printing/printing.dart';
+
 import 'package:front_end/utils/web_download.dart'
     if (dart.library.io) 'package:front_end/utils/web_download_stub.dart';
 
-/// Standard templates for workplace harassment escalation (Pakistan – PAHAW 2010 / FOSPAH).
 class EscalationTemplates {
   static const String committeeReconstitutionTitle =
       'Request for Reconstitution of Inquiry Committee';
@@ -25,7 +26,7 @@ Dear Sir/Madam,
 I am writing to formally request the reconstitution of the Inquiry Committee constituted to hear my complaint of harassment at the workplace.
 
 REASONS FOR REQUEST:
-The current committee has failed to conduct a fair and impartial inquiry as required under the Act. [Specify: bias, delay beyond 30 days, failure to follow procedure, conflict of interest, or other grounds.]
+The current committee has failed to conduct a fair and impartial inquiry as required under the Act.
 
 I request that a new committee be formed within seven (7) days with:
 • At least three (3) members
@@ -33,7 +34,7 @@ I request that a new committee be formed within seven (7) days with:
 • A senior management representative
 • Members with no conflict of interest in this matter
 
-Under the Protection Against Harassment of Women at the Workplace Act, 2010, I reserve my right to approach the Federal Ombudsperson if the committee is not reconstituted or if the inquiry is not completed within 30 days.
+Under the Act, I reserve my right to approach the Federal Ombudsperson if the committee is not reconstituted or if the inquiry is not completed within 30 days.
 
 I request a written acknowledgment of this letter and the steps taken.
 
@@ -50,9 +51,7 @@ Yours sincerely,
 
   static const String escalationLetterBody = '''
 To,
-The Federal Ombudsperson
-Secretariat for Protection Against Harassment of Women at the Workplace (FOSPAH)
-Islamabad, Pakistan
+The Federal Ombudsperson Secretariat for Protection Against Harassment of Women at the Workplace (FOSPAH) Islamabad, Pakistan
 
 Date: _______________
 
@@ -62,29 +61,23 @@ Dear Sir/Madam,
 
 I wish to escalate my complaint of workplace harassment to your office for inquiry and redress.
 
-BACKGROUND:
-[Briefly state: your workplace, designation, and that you had filed an internal complaint with the workplace Inquiry Committee / or that no committee was formed.]
-
+BACKGROUND: [Briefly state: your workplace, designation, and that you had filed an internal complaint with the workplace Inquiry Committee / or that no committee was formed.] 
 REASONS FOR ESCALATION:
-[Choose as applicable:]
-• The workplace did not constitute an Inquiry Committee within the required time.
-• The Inquiry Committee did not complete the inquiry within 30 days.
-• The inquiry was biased or the procedure was not followed.
-• The recommendations of the committee were not implemented.
-• I faced retaliation after filing the complaint.
-• The accused is my employer, so I am filing directly with the Ombudsperson as provided under the Act.
-
-I request that my complaint be inquired into by your office and appropriate relief be granted under the law.
-
-I am ready to provide further details, documents, and evidence as required.
+ [Choose as applicable:] 
+ • The workplace did not constitute an Inquiry Committee within the required time. 
+ • The Inquiry Committee did not complete the inquiry within 30 days. 
+ • The inquiry was biased or the procedure was not followed. 
+ • The recommendations of the committee were not implemented. 
+ • I faced retaliation after filing the complaint. 
+ • The accused is my employer, so I am filing directly with the Ombudsperson as provided under the Act. I request that my complaint be inquired into by your office and appropriate relief be granted under the law. I am ready to provide further details, documents, and evidence as required.
 
 Yours sincerely,
-
-[Your Full Name]
-[CNIC]
+[Your Full Name] 
+[CNIC] 
 [Contact Number]
-[Email]
+[Email] 
 [Workplace Name & Address]
+
 ''';
 }
 
@@ -109,6 +102,8 @@ class _TemplateViewScreenState extends State<TemplateViewScreen> {
   bool _isDownloading = false;
 
   Future<void> _downloadPdf() async {
+    final loc = AppLocalizations.of(context)!;
+
     setState(() => _isDownloading = true);
     try {
       final pdfData = await _pdfService.generateTemplatePdf(
@@ -125,8 +120,8 @@ class _TemplateViewScreenState extends State<TemplateViewScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Template downloaded successfully'),
+        SnackBar(
+          content: Text(loc.templateDownloaded),
           backgroundColor: Colors.green,
         ),
       );
@@ -134,7 +129,7 @@ class _TemplateViewScreenState extends State<TemplateViewScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text('${loc.error}: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -145,6 +140,8 @@ class _TemplateViewScreenState extends State<TemplateViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -213,7 +210,9 @@ class _TemplateViewScreenState extends State<TemplateViewScreen> {
                       )
                     : const Icon(Icons.download, color: Colors.white, size: 22),
                 label: Text(
-                  _isDownloading ? 'Downloading...' : 'Download as PDF',
+                  _isDownloading
+                      ? loc.downloading
+                      : loc.downloadAsPDF,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

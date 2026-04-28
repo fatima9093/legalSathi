@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -32,6 +33,7 @@ class _SubmissionInstructionsScreenState
   bool _isSubmitting = false;
 
   Future<void> _downloadPDF() async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _isDownloading = true);
 
     try {
@@ -48,17 +50,17 @@ class _SubmissionInstructionsScreenState
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('PDF downloaded successfully!'),
+        SnackBar(
+          content: Text(loc.pdfDownloaded),
           backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+          content: Text('${loc.error}: ${e.toString()}'),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 4),
         ),
@@ -71,6 +73,7 @@ class _SubmissionInstructionsScreenState
   }
 
   Future<void> _submitComplaint() async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _isSubmitting = true);
 
     final result = await _complaintService.submitComplaint(widget.complaintId);
@@ -87,15 +90,15 @@ class _SubmissionInstructionsScreenState
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.check_circle, color: Color(0xFF00401A), size: 32),
-              SizedBox(width: 12),
-              Text('Success!'),
+              const Icon(Icons.check_circle, color: Color(0xFF00401A), size: 32),
+              const SizedBox(width: 12),
+              Text(loc.success),
             ],
           ),
-          content: const Text(
-            'Your complaint has been submitted successfully. You will receive further instructions via email.',
+          content: Text(
+            loc.complaintSubmittedMsg,
           ),
           actions: [
             ElevatedButton(
@@ -105,7 +108,7 @@ class _SubmissionInstructionsScreenState
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF00401A),
               ),
-              child: const Text('Go to Home'),
+              child: Text(loc.goHome),
             ),
           ],
         ),
@@ -122,6 +125,7 @@ class _SubmissionInstructionsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: PreferredSize(
@@ -142,10 +146,10 @@ class _SubmissionInstructionsScreenState
                         icon: const Icon(Icons.arrow_back, color: Colors.black),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Submission Instructions',
-                          style: TextStyle(
+                         loc.submissionInstructions,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -160,27 +164,27 @@ class _SubmissionInstructionsScreenState
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   child: Row(
                     children: [
-                      _buildStep(number: '1', label: 'Info', isCompleted: true),
+                      _buildStep(number: '1', label: loc.stepInfo, isCompleted: true),
                       _buildStepLine(),
                       _buildStep(
                         number: '2',
-                        label: 'Incident',
+                        label: loc.stepIncident,
                         isCompleted: true,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '3',
-                        label: 'Evidence',
+                        label: loc.stepEvidence,
                         isCompleted: true,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '4',
-                        label: 'Preview',
+                        label: loc.stepPreview,
                         isCompleted: true,
                       ),
                       _buildStepLine(),
-                      _buildStep(number: '5', label: 'Submit', isActive: true),
+                      _buildStep(number: '5', label: loc.stepSubmit, isActive: true),
                     ],
                   ),
                 ),
@@ -221,8 +225,8 @@ class _SubmissionInstructionsScreenState
 
                     const SizedBox(height: 24),
 
-                    const Text(
-                      'Ready to Submit!',
+                     Text(
+                      loc.readyToSubmit,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 24,
@@ -234,7 +238,7 @@ class _SubmissionInstructionsScreenState
                     const SizedBox(height: 8),
 
                     Text(
-                      'Follow these instructions to file your complaint',
+                      loc.followInstructions,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -261,8 +265,8 @@ class _SubmissionInstructionsScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Provincial Ombudsperson Punjab',
+                           Text(
+                            loc.ombudspersonPunjab,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -297,8 +301,8 @@ class _SubmissionInstructionsScreenState
                     const SizedBox(height: 24),
 
                     // How to Submit section
-                    const Text(
-                      'How to Submit',
+                     Text(
+                      loc.howToSubmit,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -310,34 +314,34 @@ class _SubmissionInstructionsScreenState
 
                     _buildSubmissionMethod(
                       number: '1',
-                      title: 'Email Submission',
+                      title: loc.emailSubmission,
                       description:
-                          'Send your complaint PDF to the email address above with subject: "Harassment Complaint - [Your Name]"',
+                         loc.emailSubmissionDesc,
                     ),
 
                     const SizedBox(height: 16),
 
                     _buildSubmissionMethod(
                       number: '2',
-                      title: 'In-Person Submission',
+                      title: loc.inPersonSubmission,
                       description:
-                          'Visit the office address above and submit printed complaint with evidence',
+                          loc.inPersonDesc,
                     ),
 
                     const SizedBox(height: 16),
 
                     _buildSubmissionMethod(
                       number: '3',
-                      title: 'Online Portal',
+                      title: loc.onlinePortal,
                       description:
-                          'Visit the website and use the online complaint submission form',
+                          loc.onlinePortalDesc,
                     ),
 
                     const SizedBox(height: 24),
 
                     // Expected Timeline section
-                    const Text(
-                      'Expected Timeline',
+                    Text(
+                      loc.expectedTimeline,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -363,13 +367,13 @@ class _SubmissionInstructionsScreenState
                       child: Column(
                         children: [
                           _buildTimelineItem(
-                            title: 'Inquiry Process',
-                            subtitle: 'Decision within 90 days of filing',
+                            title: loc.inquiryProcess,
+                            subtitle:loc.inquiryDesc,
                           ),
                           const SizedBox(height: 16),
                           _buildTimelineItem(
-                            title: 'Implementation',
-                            subtitle: 'Organization must comply within 30 days',
+                            title: loc.implementation,
+                            subtitle: loc.implementationDesc,
                           ),
                         ],
                       ),
@@ -407,14 +411,14 @@ class _SubmissionInstructionsScreenState
                             strokeWidth: 2,
                           ),
                         )
-                      : const Row(
+                      : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.download, size: 20),
-                            SizedBox(width: 8),
+                            const Icon(Icons.download, size: 20),
+                            const SizedBox(width: 8),
                             Text(
-                              'Download Complaint PDF',
-                              style: TextStyle(
+                              loc.downloadComplaintPDF,
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
@@ -434,9 +438,9 @@ class _SubmissionInstructionsScreenState
                       ),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Email address copied to clipboard'),
-                        duration: Duration(seconds: 2),
+                      SnackBar(
+                        content: Text( loc.emailCopied),
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   },
@@ -448,14 +452,14 @@ class _SubmissionInstructionsScreenState
                     ),
                     minimumSize: const Size(double.infinity, 0),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.copy, size: 20, color: Colors.black87),
-                      SizedBox(width: 8),
+                      const Icon(Icons.copy, size: 20, color: Colors.black87),
+                      const SizedBox(width: 8),
                       Text(
-                        'Copy Email Address',
-                        style: TextStyle(
+                        loc.copyEmail,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
@@ -478,8 +482,8 @@ class _SubmissionInstructionsScreenState
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text(
-                          'Mark as Submitted',
+                      :  Text(
+                          loc.markSubmitted,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -497,7 +501,7 @@ class _SubmissionInstructionsScreenState
                   ),
 
                   child: Text(
-                    'Keep a copy of your complaint and all evidence for your records',
+                    loc.keepCopy,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,

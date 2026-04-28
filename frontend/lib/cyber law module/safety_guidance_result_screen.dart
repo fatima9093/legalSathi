@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/blackmail_guidance_service.dart';
 import '../screen_with_nav.dart';
 
@@ -14,89 +15,86 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
     this.guidance,
   });
 
-  List<String> _getImmediateActions() {
+  List<String> _getImmediateActions(AppLocalizations loc) {
     List<String> actions = [
-      'DO NOT pay any money or comply with demands',
-      'DO NOT delete any messages or evidence',
-      'Stop all communication with the blackmailer immediately',
-      'Block the person on all platforms',
-      'Change your passwords on all accounts',
-      'Enable two-factor authentication everywhere',
+      loc.actionDoNotPay,
+      loc.actionDoNotDelete,
+      loc.actionStopCommunication,
+      loc.actionBlockPerson,
+      loc.actionChangePasswords,
+      loc.actionEnable2FA,
     ];
 
-    // Personalize based on situation keywords
     String lowerSituation = situation.toLowerCase();
 
     if (lowerSituation.contains('photo') ||
         lowerSituation.contains('image') ||
         lowerSituation.contains('picture') ||
         lowerSituation.contains('video')) {
-      actions.add(
-          'Report intimate images to platform immediately (they have takedown policies)');
-      actions.add('Document all platforms where content may be shared');
+      actions.add(loc.actionReportImages);
+      actions.add(loc.actionDocumentPlatforms);
     }
 
     if (lowerSituation.contains('money') ||
         lowerSituation.contains('payment') ||
         lowerSituation.contains('bank') ||
         lowerSituation.contains('account')) {
-      actions.add('Alert your bank about potential fraud');
-      actions.add('Monitor your financial accounts closely');
+      actions.add(loc.actionAlertBank);
+      actions.add(loc.actionMonitorAccounts);
     }
 
     if (lowerSituation.contains('social media') ||
         lowerSituation.contains('facebook') ||
         lowerSituation.contains('instagram') ||
         lowerSituation.contains('whatsapp')) {
-      actions.add('Set all social media accounts to private');
-      actions.add('Review and limit who can see your friend list');
+      actions.add(loc.actionPrivateAccounts);
+      actions.add(loc.actionLimitFriends);
     }
 
     return actions;
   }
 
-  List<String> _getEvidencePreservation() {
+  List<String> _getEvidencePreservation(AppLocalizations loc) {
     List<String> checklist = [
-      'Screenshot all threatening messages with timestamps',
-      'Save phone numbers, email addresses, social media profiles',
-      'Document dates, times, and methods of contact',
-      'Keep original files/messages (do not edit)',
-      'Inform trusted family member or friend',
-      'Consider deactivating social media temporarily',
+      loc.evidenceScreenshot,
+      loc.evidenceSaveContacts,
+      loc.evidenceDocumentDetails,
+      loc.evidenceKeepOriginal,
+      loc.evidenceInformTrusted,
+      loc.evidenceDeactivateSocial,
     ];
 
     String lowerSituation = situation.toLowerCase();
 
     if (lowerSituation.contains('email')) {
-      checklist.add('Save email headers (View > Show Original in Gmail)');
-      checklist.add('Do not mark emails as spam - keep them as evidence');
+      checklist.add(loc.evidenceEmailHeaders);
+      checklist.add(loc.evidenceKeepEmails);
     }
 
     if (lowerSituation.contains('call') ||
         lowerSituation.contains('phone') ||
         lowerSituation.contains('voice')) {
-      checklist.add('Check call logs and take screenshots');
-      checklist.add('If possible, record future calls (legal in Pakistan)');
+      checklist.add(loc.evidenceCallLogs);
+      checklist.add(loc.evidenceRecordCalls);
     }
 
     if (lowerSituation.contains('threat') ||
         lowerSituation.contains('harm') ||
         lowerSituation.contains('violence')) {
-      checklist
-          .add('Document any physical threats separately for police report');
-      checklist.add('Consider informing local police immediately');
+      checklist.add(loc.evidencePhysicalThreats);
+      checklist.add(loc.evidenceInformPolice);
     }
 
     return checklist;
   }
 
-  List<String> _getReportingSteps() {
+  List<String> _getReportingSteps(AppLocalizations loc) {
     List<String> steps = [
-      'File complaint with FIA Cyber Crime Wing (online or in person)',
-      'Visit nearest police station to file FIR',
-      'Report to platform (Facebook, Instagram, WhatsApp, etc.)',
-      'Contact National Commission for Human Rights if needed',
-      'Consider consulting a lawyer for legal advice',
+      loc.reportFIA,
+      loc.reportPolice,
+      loc.reportPlatform,
+      loc.reportHumanRights,
+      loc.reportLawyer,
     ];
 
     String lowerSituation = situation.toLowerCase();
@@ -105,26 +103,23 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
         lowerSituation.contains('intimate') ||
         lowerSituation.contains('nude') ||
         lowerSituation.contains('private')) {
-      steps.insert(
-          0, 'URGENT: Report to FIA Cyber Crime immediately - this is priority');
-      steps.add(
-          'Contact helpline 1991 (FIA Cyber Crime) for immediate assistance');
+      steps.insert(0, loc.reportUrgentFIA);
+      steps.add(loc.reportHelpline);
     }
 
     if (lowerSituation.contains('minor') ||
         lowerSituation.contains('child') ||
         lowerSituation.contains('underage')) {
-      steps.insert(0,
-          'CRITICAL: Contact Child Protection Bureau immediately at 1121');
-      steps.add('Report to NCRC (National Commission on Rights of Child)');
+      steps.insert(0, loc.reportChildProtection);
+      steps.add(loc.reportNCRC);
     }
 
     if (lowerSituation.contains('workplace') ||
         lowerSituation.contains('colleague') ||
         lowerSituation.contains('boss') ||
         lowerSituation.contains('office')) {
-      steps.add('Report to HR department with documented evidence');
-      steps.add('File complaint with Provincial Ombudsperson if applicable');
+      steps.add(loc.reportHR);
+      steps.add(loc.reportOmbudsperson);
     }
 
     return steps;
@@ -132,8 +127,10 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -141,9 +138,9 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Safety Guidance',
-          style: TextStyle(
+        title: Text(
+          loc.safetyGuidance,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -159,7 +156,6 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Critical warning card
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -180,7 +176,7 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Critical: Do Not Pay',
+                                  loc.criticalDoNotPay,
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -189,7 +185,7 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Follow these steps immediately',
+                                  loc.followStepsImmediately,
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.red.shade700,
@@ -216,7 +212,7 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'AI Summary',
+                              loc.aiSummary,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
@@ -238,10 +234,9 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                       const SizedBox(height: 24),
                     ],
 
-                    // Immediate Actions
-                    const Text(
-                      'Immediate Actions',
-                      style: TextStyle(
+                    Text(
+                      loc.immediateActions,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -250,14 +245,16 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    _buildActionsList(guidance?.immediateActions ?? _getImmediateActions()),
+                    _buildActionsList(
+                      guidance?.immediateActions ??
+                          _getImmediateActions(loc),
+                    ),
 
                     const SizedBox(height: 24),
 
-                    // Evidence Preservation Checklist
-                    const Text(
-                      'Evidence Preservation Checklist',
-                      style: TextStyle(
+                    Text(
+                      loc.evidenceChecklist,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -266,14 +263,16 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    _buildChecklistCard(guidance?.evidenceChecklist ?? _getEvidencePreservation()),
+                    _buildChecklistCard(
+                      guidance?.evidenceChecklist ??
+                          _getEvidencePreservation(loc),
+                    ),
 
                     const SizedBox(height: 24),
 
-                    // Reporting Steps
-                    const Text(
-                      'Reporting Steps',
-                      style: TextStyle(
+                    Text(
+                      loc.reportingSteps,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -282,14 +281,16 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     const SizedBox(height: 12),
 
-                    _buildReportingSteps(guidance?.reportingSteps ?? _getReportingSteps()),
+                    _buildReportingSteps(
+                      guidance?.reportingSteps ??
+                          _getReportingSteps(loc),
+                    ),
 
                     const SizedBox(height: 24),
 
-                    // Legal Options
-                    const Text(
-                      'Legal Options',
-                      style: TextStyle(
+                    Text(
+                      loc.legalOptions,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -323,7 +324,7 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'This is a serious crime with severe penalties',
+                                loc.seriousCrimeNotice,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -335,10 +336,10 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           ...((guidance?.legalOptions ??
                                   [
-                                    'PECA Section 20: Cyber Extortion (up to 14 years imprisonment)',
-                                    'PECA Section 21: Unauthorized access (up to 7 years)',
-                                    'Pakistan Penal Code Section 384: Extortion',
-                                    'This is a cognizable, non-bailable offense',
+                                    loc.legalPeca20,
+                                    loc.legalPeca21,
+                                    loc.legalPpc384,
+                                    loc.legalNonBailable,
                                   ])
                               .map(_buildBulletPoint)),
                         ],
@@ -347,9 +348,9 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
 
                     if (guidance != null) ...[
                       const SizedBox(height: 24),
-                      const Text(
-                        'Extracted Evidence Preview',
-                        style: TextStyle(
+                      Text(
+                        loc.extractedEvidencePreview,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
@@ -399,13 +400,6 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         children: actions.asMap().entries.map((entry) {
@@ -459,49 +453,9 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
-        children: items.asMap().entries.map((entry) {
-          // Remove checkmark if already in text
-          String displayText = entry.value;
-          if (displayText.startsWith('✓ ')) {
-            displayText = displayText.substring(2);
-          }
-
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: entry.key < items.length - 1 ? 12 : 0,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.check_circle,
-                  color: Colors.green.shade700,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    displayText,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade800,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+        children: items.map((item) => _buildBulletPoint(item)).toList(),
       ),
     );
   }
@@ -512,56 +466,9 @@ class SafetyGuidanceResultsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
-        children: steps.asMap().entries.map((entry) {
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: entry.key < steps.length - 1 ? 12 : 0,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF00401A),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${entry.key + 1}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade800,
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+        children: steps.map((step) => _buildBulletPoint(step)).toList(),
       ),
     );
   }

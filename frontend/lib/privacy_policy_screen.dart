@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -14,9 +15,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Privacy Policy',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.privacy,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -51,22 +52,22 @@ class PrivacyPolicyScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Your Privacy Matters',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.yourPrivacyMatters,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'How we protect your information',
-                          style: TextStyle(fontSize: 13, color: Colors.black54),
+                          AppLocalizations.of(context)!.howWeProtect,
+                          style: const TextStyle(fontSize: 13, color: Colors.black54),
                         ),
                       ],
                     ),
@@ -79,45 +80,40 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
             // Data Usage Section
             _buildSection(
-              title: 'Data Usage',
-              content:
-                  'Legal Sathi collects minimal personal information necessary to provide legal assistance. Your data is used solely for generating legal documents, analyzing evidence, and providing AI-powered legal guidance. We do not sell or share your personal information with third parties.',
+              title: AppLocalizations.of(context)!.dataUsage,
+              content: AppLocalizations.of(context)!.dataUsageDesc,
             ),
 
             const SizedBox(height: 16),
 
             // Evidence Handling Section
             _buildSection(
-              title: 'Evidence Handling',
-              content:
-                  'All uploaded evidence (photos, documents, screenshots) is processed securely and stored with encryption. Evidence files are automatically deleted after 90 days unless saved to your account. We recommend keeping original copies of all evidence separately.',
+              title: AppLocalizations.of(context)!.evidenceHandlingTitle,
+              content: AppLocalizations.of(context)!.evidenceHandlingDesc,
             ),
 
             const SizedBox(height: 16),
 
             // User Identity Protection Section
             _buildSection(
-              title: 'User Identity Protection',
-              content:
-                  'Your identity and case details are kept confidential. We use industry-standard encryption for data transmission and storage. Account information is protected with secure authentication. You can request deletion of your data at any time.',
+              title: AppLocalizations.of(context)!.userIdentityProtection,
+              content: AppLocalizations.of(context)!.userIdentityProtectionDesc,
             ),
 
             const SizedBox(height: 16),
 
             // AI Response Limitations Section
             _buildSection(
-              title: 'AI Response Limitations',
-              content:
-                  'Legal Sathi provides general legal information and document drafting assistance. AI responses are not legal advice and should not replace consultation with a qualified lawyer. Always verify information with legal professionals before taking action.',
+              title: AppLocalizations.of(context)!.aiResponseLimitations,
+              content: AppLocalizations.of(context)!.aiResponseLimitationsDesc,
             ),
 
             const SizedBox(height: 16),
 
             // Contact for Complaints Section
             _buildSection(
-              title: 'Contact for Complaints',
-              content:
-                  'For privacy concerns or data-related complaints, contact us at privacy@legalsathi.pk. We respond to all inquiries within 7 business days. You have the right to access, correct, or delete your personal information.',
+              title: AppLocalizations.of(context)!.contactForComplaints,
+              content: AppLocalizations.of(context)!.contactForComplaintsDesc,
             ),
 
             const SizedBox(height: 24),
@@ -130,10 +126,10 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 color: const Color(0xFFE8F5E9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Last updated: January 2026 • Version 1.0',
+              child: Text(
+                AppLocalizations.of(context)!.privacyFooter,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.black54),
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
               ),
             ),
 

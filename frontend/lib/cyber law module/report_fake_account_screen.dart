@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'reporting_guidance_screen.dart';
 import 'package:front_end/services/fake_account_report_service.dart';
 import '../utils/validators.dart';
@@ -35,6 +36,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
   }
 
   Future<void> _uploadScreenshots() async {
+    final loc = AppLocalizations.of(context)!;
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
@@ -48,9 +50,9 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
       if (result.files.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No files selected.'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+               content: Text(loc.noFilesSelected),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -65,7 +67,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '${_uploadedFiles.length} file(s) uploaded successfully',
+             '${_uploadedFiles.length} ${loc.filesUploadedSuccess}',
             ),
             duration: const Duration(seconds: 2),
           ),
@@ -75,7 +77,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${e.toString()}'),
+            content: Text('${loc.error}: ${e.toString()}'),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -84,6 +86,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
   }
 
   Future<void> _proceedToGuidance() async {
+    final loc = AppLocalizations.of(context)!;
     if (!_isFormComplete) {
       Validators.showError(
         context,
@@ -94,11 +97,11 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
     final url = _profileUrlController.text.trim();
     final username = _usernameController.text.trim();
     if (url.isNotEmpty && !Validators.isValidUrl(url)) {
-      Validators.showError(context, 'Enter a valid profile URL.');
+       Validators.showError(context, loc.invalidUrl);
       return;
     }
     if (url.isEmpty && username.isEmpty) {
-      Validators.showError(context, 'Provide profile URL or username.');
+      Validators.showError(context, loc.provideUrlOrUsername);
       return;
     }
 
@@ -121,7 +124,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
     if (!(save['success'] as bool? ?? false)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(save['message'] as String? ?? 'Could not save report.'),
+          content: Text(save['message'] as String? ?? loc.couldNotSaveReport),
           backgroundColor: Colors.red.shade700,
         ),
       );
@@ -144,6 +147,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -153,8 +158,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Report Fake Account',
+         title: Text(
+          loc.reportFakeAccount,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -190,8 +195,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  const Text(
-                    'Report Fake or Impersonating Account',
+                  Text(
+                    loc.reportFakeOrImpersonating,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -201,7 +206,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Get platform-specific reporting guidance',
+                    loc.platformSpecificGuidance,
                     style: TextStyle(fontSize: 14, color: Colors.blue.shade600),
                     textAlign: TextAlign.center,
                   ),
@@ -223,8 +228,9 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Account Details',
+                    Text(
+                      loc.accountDetails,
+
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -234,8 +240,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                     const SizedBox(height: 16),
 
                     // Profile URL
-                    Text(
-                      'Profile URL or Link',
+                      Text(loc.profileUrl,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -278,8 +283,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                     const SizedBox(height: 16),
 
                     // Username
-                    Text(
-                      'Username (if no URL)',
+                    Text(loc.username,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -291,7 +295,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                       controller: _usernameController,
                       onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
-                        hintText: '@fakeaccount123',
+                       hintText: loc.usernameHint,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 13,
@@ -325,8 +329,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Platform *',
+                        Text(
+                          loc.platformRequired,
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -341,12 +345,12 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
                           children: [
-                            _buildPlatformButton('Facebook'),
-                            _buildPlatformButton('Instagram'),
-                            _buildPlatformButton('Twitter'),
-                            _buildPlatformButton('TikTok'),
-                            _buildPlatformButton('LinkedIn'),
-                            _buildPlatformButton('Other'),
+                              _buildPlatformButton(loc.facebook),
+                              _buildPlatformButton(loc.instagram),
+                              _buildPlatformButton(loc.twitter),
+                              _buildPlatformButton(loc.tiktok),
+                              _buildPlatformButton(loc.linkedin),
+                              _buildPlatformButton(loc.other),
                           ],
                         ),
                       ],
@@ -370,8 +374,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Upload Screenshots (Recommended)',
+                     Text(
+                      loc.uploadScreenshotsRecommended,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -406,7 +410,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Screenshots of fake profile',
+                              loc.fakeProfileScreenshots,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey.shade600,
@@ -432,7 +436,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    'Upload Screenshots',
+                                      loc.uploadScreenshot,
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -451,7 +455,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                     if (_uploadedFiles.isNotEmpty) ...[
                       const SizedBox(height: 16),
                       Text(
-                        'Uploaded Screenshots (${_uploadedFiles.length})',
+                        loc.uploadedScreenshots(_uploadedFiles.length),
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -555,8 +559,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Check & Get Reporting Steps',
+                      :  Text(
+                          loc.checkReportingSteps,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -577,7 +581,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                "You'll receive platform-specific steps to report and legal options under PECA",
+                 loc.pecaInfoMessage,
                 style: TextStyle(fontSize: 13, color: Colors.blue.shade700),
                 textAlign: TextAlign.center,
               ),

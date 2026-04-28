@@ -210,7 +210,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 32),
             child: Text(
-              'Legal Sathi v1.0.0',
+              AppLocalizations.of(context)!.appVersion,
               style: TextStyle(fontSize: 13, color: Colors.grey[600]),
             ),
           ),

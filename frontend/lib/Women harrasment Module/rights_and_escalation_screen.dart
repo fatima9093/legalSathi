@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class RightsAndEscalationScreen extends StatelessWidget {
   const RightsAndEscalationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -14,9 +16,9 @@ class RightsAndEscalationScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Rights & Escalation',
-          style: TextStyle(
+        title: Text(
+          loc.rightsEscalation,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -52,21 +54,21 @@ class RightsAndEscalationScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Know Your Rights',
-                          style: TextStyle(
+                           loc.knowYourRights,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'Protected under the law',
-                          style: TextStyle(
+                          loc.protectedUnderLaw,
+                          style: const TextStyle(
                             fontSize: 14,
                             color: Color(0xFF424242),
                           ),
@@ -80,8 +82,8 @@ class RightsAndEscalationScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Your Rights Section
-              const Text(
-                'Your Rights',
+               Text(
+                loc.yourRights,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -93,36 +95,37 @@ class RightsAndEscalationScreen extends StatelessWidget {
 
               // Right to Confidentiality
               _buildRightCard(
-                title: 'Right to Confidentiality',
+                title: loc.rightConfidentiality,
                 description:
-                    'Your complaint and identity must be kept confidential throughout the process',
+                     loc.rightConfidentialityDesc,
               ),
 
               const SizedBox(height: 12),
 
               // Right to Female Committee Member
               _buildRightCard(
-                title: 'Right to Female Committee Member',
+                title: loc.rightFemaleMember,
                 description:
-                    'At least one female member must be present in the inquiry committee',
+                   loc.rightFemaleMemberDesc,
               ),
 
               const SizedBox(height: 12),
 
               // Right to No Retaliation
               _buildRightCard(
-                title: 'Right to No Retaliation',
+                title: loc.rightNoRetaliation,
                 description:
-                    'You cannot be punished, demoted, or fired for filing a complaint',
+                    loc.rightNoRetaliationDesc,
               ),
 
               const SizedBox(height: 12),
 
               // Right to Fair Hearing
               _buildRightCard(
-                title: 'Right to Fair Hearing',
+                title:  loc.rightFairHearing
+,
                 description:
-                    'Both parties must be given equal opportunity to present their case',
+                     loc.rightFairHearingDesc,
               ),
 
               const SizedBox(height: 24),
@@ -150,16 +153,16 @@ class RightsAndEscalationScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: const [
-                        Icon(
+                      children: [
+                        const Icon(
                           Icons.info_outline,
                           color: Color(0xFFE65100),
                           size: 24,
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Text(
-                          'Escalate if any of these occur:',
-                          style: TextStyle(
+                           loc.escalateIf,
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF5D4037),
@@ -168,11 +171,11 @@ class RightsAndEscalationScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildBulletPoint('Committee not formed within 7 days'),
-                    _buildBulletPoint('Inquiry not completed within 30 days'),
-                    _buildBulletPoint('Biased or unfair inquiry process'),
-                    _buildBulletPoint('Recommendations not implemented'),
-                    _buildBulletPoint('Retaliation after filing complaint'),
+                    _buildBulletPoint(loc.escalate1),
+                    _buildBulletPoint(loc.escalate2),
+                    _buildBulletPoint(loc.escalate3),
+                    _buildBulletPoint(loc.escalate4),
+                    _buildBulletPoint(loc.escalate5),
                   ],
                 ),
               ),
@@ -180,9 +183,9 @@ class RightsAndEscalationScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Templates Section
-              const Text(
-                'Templates',
-                style: TextStyle(
+              Text(
+                 loc.templates,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -193,8 +196,8 @@ class RightsAndEscalationScreen extends StatelessWidget {
 
               // Committee Reconstitution Request
               _buildTemplateCard(
-                title: 'Committee Reconstitution Request',
-                subtitle: 'If committee is biased',
+                title: loc.templateReconstitution,
+                subtitle:  loc.templateReconstitutionDesc,
                 onTap: () {
                   // TODO: Navigate to template
                 },
@@ -204,8 +207,8 @@ class RightsAndEscalationScreen extends StatelessWidget {
 
               // Escalation Letter
               _buildTemplateCard(
-                title: 'Escalation Letter',
-                subtitle: 'File with Ombudsperson',
+                title:loc.templateEscalation,
+                subtitle: loc.templateEscalationDesc,
                 onTap: () {
                   // TODO: Navigate to template
                 },
@@ -229,12 +232,12 @@ class RightsAndEscalationScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.description, color: Colors.white, size: 20),
-                      SizedBox(width: 8),
+                    children: [
+                      const Icon(Icons.description, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'Download Templates',
-                        style: TextStyle(
+                       loc.downloadTemplates,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -262,12 +265,12 @@ class RightsAndEscalationScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.upload, color: Color(0xFF00401A), size: 20),
-                      SizedBox(width: 8),
+                    children: [
+                      const Icon(Icons.upload, color: Color(0xFF00401A), size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'File with Ombudsperson',
-                        style: TextStyle(
+                        loc.fileWithOmbudsperson,
+                        style: const TextStyle(
                           color: Color(0xFF00401A),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' show XFile;
+import 'package:front_end/l10n/app_localizations.dart';
 
 import '../screen_with_nav.dart';
 import 'analyzing_document_screen.dart';
@@ -19,6 +20,8 @@ class _ScreenshotEvidenceReaderScreenState
   static const int _maxBytes = 10 * 1024 * 1024;
 
   Future<void> _uploadScreenshot() async {
+    final loc = AppLocalizations.of(context)!;
+
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
@@ -32,6 +35,7 @@ class _ScreenshotEvidenceReaderScreenState
 
       final file = result.files.single;
       Uint8List? bytes = file.bytes;
+
       if (bytes == null && file.path != null && !kIsWeb) {
         try {
           bytes = await XFile(file.path!).readAsBytes();
@@ -41,9 +45,9 @@ class _ScreenshotEvidenceReaderScreenState
       if (bytes == null || bytes.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not read the image. On web, try another browser or smaller file.'),
-              duration: Duration(seconds: 3),
+            SnackBar(
+              content: Text(loc.errorReadingImage),
+              duration: const Duration(seconds: 3),
             ),
           );
         }
@@ -53,13 +57,13 @@ class _ScreenshotEvidenceReaderScreenState
       if (bytes.length > _maxBytes) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Image must be under 10 MB.')),
+            SnackBar(content: Text(loc.imageSizeError)),
           );
         }
         return;
       }
 
-      final name = file.name.isNotEmpty ? file.name : 'screenshot.jpg';
+      final name = file.name.isNotEmpty ? file.name : loc.defaultFileName;
 
       if (!mounted) return;
       await Navigator.push<void>(
@@ -75,7 +79,7 @@ class _ScreenshotEvidenceReaderScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text("${loc.errorLabel}: $e"),
             duration: const Duration(seconds: 3),
           ),
         );
@@ -94,6 +98,8 @@ class _ScreenshotEvidenceReaderScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -103,9 +109,9 @@ class _ScreenshotEvidenceReaderScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Screenshot Evidence Reader',
-          style: TextStyle(
+        title: Text(
+          loc.screenshotReaderTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -137,9 +143,9 @@ class _ScreenshotEvidenceReaderScreenState
 
               const SizedBox(height: 32),
 
-              const Text(
-                'Upload Screenshot',
-                style: TextStyle(
+              Text(
+                loc.uploadScreenshot,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -149,9 +155,7 @@ class _ScreenshotEvidenceReaderScreenState
               const SizedBox(height: 12),
 
               Text(
-                kIsWeb
-                    ? 'We read text from your image, classify the legal area, suggest relevant laws, then you can generate a draft document. Keep the backend running on port 8000 for best results.'
-                    : 'Text is read on-device when possible, then analyzed via the Legal Sathi backend.',
+                kIsWeb ? loc.webDescription : loc.mobileDescription,
                 style: const TextStyle(fontSize: 14, color: Colors.grey, height: 1.5),
                 textAlign: TextAlign.center,
               ),
@@ -190,19 +194,9 @@ class _ScreenshotEvidenceReaderScreenState
                           ),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Tap to upload',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                        ),
+                        Text(loc.tapToUpload),
                         const SizedBox(height: 8),
-                        const Text(
-                          'PNG, JPG, WebP — up to 10 MB',
-                          style: TextStyle(fontSize: 12, color: Colors.grey),
-                        ),
+                        Text(loc.fileFormatInfo),
                       ],
                     ),
                   ),
@@ -222,14 +216,7 @@ class _ScreenshotEvidenceReaderScreenState
                     ),
                   ),
                   onPressed: _openDemo,
-                  child: const Text(
-                    'Try demo (sample analysis)',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: Text(loc.tryDemo),
                 ),
               ),
 
@@ -245,22 +232,15 @@ class _ScreenshotEvidenceReaderScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'What we do:',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
+                    Text(loc.whatWeDo),
                     const SizedBox(height: 12),
-                    _buildInfoItem(Icons.text_fields, 'Extract text (OCR)'),
+                    _buildInfoItem(Icons.text_fields, loc.ocrText),
                     const SizedBox(height: 8),
-                    _buildInfoItem(Icons.category, 'Identify legal domain'),
+                    _buildInfoItem(Icons.category, loc.identifyDomain),
                     const SizedBox(height: 8),
-                    _buildInfoItem(Icons.menu_book, 'Suggest relevant laws (indicative)'),
+                    _buildInfoItem(Icons.menu_book, loc.suggestLaws),
                     const SizedBox(height: 8),
-                    _buildInfoItem(Icons.description, 'Generate a draft document in the next step'),
+                    _buildInfoItem(Icons.description, loc.generateDraft),
                   ],
                 ),
               ),

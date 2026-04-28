@@ -5,6 +5,7 @@ import 'package:front_end/cyber%20law%20module/safety_guidance_loading_screen.da
 import 'package:front_end/models/blackmail_model.dart';
 import 'package:front_end/services/blackmail_service.dart';
 import '../utils/validators.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class BlackmailHandlingScreen extends StatefulWidget {
   const BlackmailHandlingScreen({super.key});
@@ -161,9 +162,9 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Blackmail Handling',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.blackmailHandlingTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -201,10 +202,10 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                     const SizedBox(height: 24),
 
                     // Title
-                    const Text(
-                      'Blackmail Situation',
+                    Text(
+                      AppLocalizations.of(context)!.blackmailSituation,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -215,7 +216,7 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
 
                     // Subtitle
                     Text(
-                      'Get immediate guidance on handling blackmail safely',
+                      AppLocalizations.of(context)!.blackmailGuidanceSubtitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -244,7 +245,7 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Do NOT pay the blackmailer. Do NOT engage further. Follow the guidance below.',
+                              AppLocalizations.of(context)!.blackmailWarning,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.red.shade900,
@@ -276,18 +277,18 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                          Row(
                             children: [
                               Text(
-                                'Describe the blackmail situation',
-                                style: TextStyle(
+                                AppLocalizations.of(context)!.describeBlackmailSituation,
+                                style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black87,
                                 ),
                               ),
-                              SizedBox(width: 4),
-                              Text(
+                              const SizedBox(width: 4),
+                              const Text(
                                 '*',
                                 style: TextStyle(
                                   fontSize: 15,
@@ -302,8 +303,7 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                             controller: _descriptionController,
                             maxLines: 6,
                             decoration: InputDecoration(
-                              hintText:
-                                  'What are they threatening? What do they want? Include any details...',
+                              hintText: AppLocalizations.of(context)!.describeBlackmailHint,
                               hintStyle: TextStyle(
                                 color: Colors.grey.shade400,
                                 fontSize: 14,
@@ -339,9 +339,9 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                     const SizedBox(height: 24),
 
                     // Upload Evidence section
-                    const Text(
-                      'Upload Evidence (Recommended)',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.uploadEvidenceRecommended,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
@@ -378,7 +378,7 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Screenshots of threats or demands',
+                            AppLocalizations.of(context)!.screenshotsOfThreats,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
@@ -396,9 +396,9 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                                     size: 18,
                                     color: Color(0xFF00401A),
                                   ),
-                                  label: const Text(
-                                    'Screenshots',
-                                    style: TextStyle(
+                                  label: Text(
+                                    AppLocalizations.of(context)!.screenshots,
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFF00401A),
@@ -426,9 +426,9 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                                     size: 18,
                                     color: Color(0xFF00401A),
                                   ),
-                                  label: const Text(
-                                    'Messages',
-                                    style: TextStyle(
+                                  label: Text(
+                                    AppLocalizations.of(context)!.messages,
+                                    style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFF00401A),
@@ -482,7 +482,9 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
-                                  '${_evidenceFiles?.length ?? 0} file(s) uploaded',
+                                  AppLocalizations.of(context)!.filesUploaded(
+                                    _evidenceFiles?.length ?? 0,
+                                  ),
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -606,9 +608,9 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
                             ),
                           ),
                         )
-                      : const Text(
-                          'Get Safety Guidance',
-                          style: TextStyle(
+                      : Text(
+                          AppLocalizations.of(context)!.getSafetyGuidance,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'challan_appeal_guide_screen.dart';
 import 'challan_data_model.dart';
@@ -11,6 +12,7 @@ class ChallanExplanationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -20,8 +22,7 @@ class ChallanExplanationScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Explanation & Next Steps',
+        title: Text(loc.explanationNextSteps,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -55,10 +56,9 @@ class ChallanExplanationScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Title
-            const Center(
-              child: Text(
-                'Understanding Your Challan',
-                style: TextStyle(
+            Center(
+              child: Text(loc.understandingChallan,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -69,8 +69,7 @@ class ChallanExplanationScreen extends StatelessWidget {
             const SizedBox(height: 8),
 
             Center(
-              child: Text(
-                'What this violation means and how to proceed',
+              child: Text(loc.violationMeaningSubtitle,
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
             ),
@@ -83,8 +82,7 @@ class ChallanExplanationScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'What This Violation Means',
+                  Text(loc.whatViolationMeans,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -108,8 +106,7 @@ class ChallanExplanationScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Is the Fine Correct?',
+                  Text(loc.isFineCorrect,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -117,7 +114,7 @@ class ChallanExplanationScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildVerifiedCard(),
+                  _buildVerifiedCard(context),
                 ],
               ),
             ),
@@ -130,8 +127,7 @@ class ChallanExplanationScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Where & How to Pay',
+                  Text(loc.whereHowToPay,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -139,7 +135,7 @@ class ChallanExplanationScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildPaymentInfoCard(),
+                  _buildPaymentInfoCard(context),
                 ],
               ),
             ),
@@ -152,8 +148,7 @@ class ChallanExplanationScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Think the Challan is Wrong?',
+                  Text(loc.thinkChallanWrong,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -161,7 +156,7 @@ class ChallanExplanationScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildAppealCard(),
+                  _buildAppealCard(context),
                 ],
               ),
             ),
@@ -193,8 +188,7 @@ class ChallanExplanationScreen extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Pay Online Now',
+                    child: Text(loc.payOnlineNow,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -224,8 +218,7 @@ class ChallanExplanationScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'File an Appeal',
+                    child: Text(loc.fileAppeal,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -248,8 +241,7 @@ class ChallanExplanationScreen extends StatelessWidget {
                   color: const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
-                  'Pay within 15 days to avoid additional penalties',
+                child: Text(loc.payWithinDeadline,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
@@ -264,6 +256,7 @@ class ChallanExplanationScreen extends StatelessWidget {
   }
 
   Widget _buildWarningCard({required String title, required String content}) {
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -307,7 +300,8 @@ class ChallanExplanationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVerifiedCard() {
+  Widget _buildVerifiedCard(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -320,12 +314,11 @@ class ChallanExplanationScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Icon(Icons.check_circle, color: Color(0xFF00401A), size: 20),
-              SizedBox(width: 8),
-              Text(
-                'Fine Amount Verified',
-                style: TextStyle(
+            children: [
+              const Icon(Icons.check_circle, color: Color(0xFF00401A), size: 20),
+              const SizedBox(width: 8),
+             Text(loc.fineVerified,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFF00401A),
@@ -347,7 +340,9 @@ class ChallanExplanationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentInfoCard() {
+  Widget _buildPaymentInfoCard(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -360,12 +355,11 @@ class ChallanExplanationScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Icon(Icons.attach_money, color: Color(0xFF00401A), size: 20),
-              SizedBox(width: 8),
-              Text(
-                'Payment Options',
-                style: TextStyle(
+            children: [
+              const Icon(Icons.attach_money, color: Color(0xFF00401A), size: 20),
+              const SizedBox(width: 8),
+              Text(loc.paymentOptions,
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -379,16 +373,15 @@ class ChallanExplanationScreen extends StatelessWidget {
               .toList(),
           const SizedBox(height: 16),
           Row(
-            children: const [
-              Icon(
+            children: [
+              const Icon(
                 Icons.location_on_outlined,
                 color: Color(0xFF00401A),
                 size: 20,
               ),
-              SizedBox(width: 8),
-              Text(
-                'Nearest Office',
-                style: TextStyle(
+              const SizedBox(width: 8),
+              Text(loc.nearestOffice,
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -407,12 +400,11 @@ class ChallanExplanationScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            children: const [
-              Icon(Icons.phone_outlined, color: Color(0xFF00401A), size: 20),
-              SizedBox(width: 8),
-              Text(
-                'Helpline',
-                style: TextStyle(
+            children: [
+              const Icon(Icons.phone_outlined, color: Color(0xFF00401A), size: 20),
+              const SizedBox(width: 8),
+              Text(loc.helpline,
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
@@ -421,8 +413,7 @@ class ChallanExplanationScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            'Call 1915 for payment assistance',
+          Text(loc.helplineNumber,
             style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
           ),
         ],
@@ -430,7 +421,9 @@ class ChallanExplanationScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAppealCard() {
+  Widget _buildAppealCard(BuildContext context) {
+      final loc = AppLocalizations.of(context)!;
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -443,12 +436,11 @@ class ChallanExplanationScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
-              Icon(Icons.warning_amber, color: Color(0xFFD97706), size: 20),
-              SizedBox(width: 8),
-              Text(
-                'Appeal Process',
-                style: TextStyle(
+            children: [
+              const Icon(Icons.warning_amber, color: Color(0xFFD97706), size: 20),
+              const SizedBox(width: 8),
+              Text(loc.appealProcess,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Color(0xFFD97706),

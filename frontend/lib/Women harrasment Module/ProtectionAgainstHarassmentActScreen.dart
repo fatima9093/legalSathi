@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class ProtectionAgainstHarassmentActScreen extends StatelessWidget {
   const ProtectionAgainstHarassmentActScreen({super.key});
@@ -15,9 +16,9 @@ class ProtectionAgainstHarassmentActScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Protection Against Harassment Act',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.protectionAgainstHarassmentAct,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -53,22 +54,22 @@ class ProtectionAgainstHarassmentActScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Protection Act 2010',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.protectionAct2010,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
-                            'Complete overview of your rights',
-                            style: TextStyle(
+                            AppLocalizations.of(context)!.completeOverviewOfYourRights,
+                            style: const TextStyle(
                               fontSize: 13,
                               color: Colors.black54,
                             ),
@@ -84,36 +85,36 @@ class ProtectionAgainstHarassmentActScreen extends StatelessWidget {
 
               // What is Harassment?
               _buildInfoCard(
-                title: 'What is Harassment?',
+                title: AppLocalizations.of(context)!.whatIsHarassment,
                 description:
-                    'Any unwelcome sexual advance, request for sexual favors, or conduct of sexual nature at workplace.',
+                    AppLocalizations.of(context)!.whatIsHarassmentDesc,
               ),
 
               const SizedBox(height: 12),
 
               // Who is Protected?
               _buildInfoCard(
-                title: 'Who is Protected?',
+                title: AppLocalizations.of(context)!.whoIsProtected,
                 description:
-                    'All women working in public and private organizations, including interns and trainees.',
+                    AppLocalizations.of(context)!.whoIsProtectedDesc,
               ),
 
               const SizedBox(height: 12),
 
               // Employer Obligations
               _buildInfoCard(
-                title: 'Employer Obligations',
+                title: AppLocalizations.of(context)!.employerObligations,
                 description:
-                    'Must establish inquiry committee, display law prominently, and take action within 3 months.',
+                    AppLocalizations.of(context)!.employerObligationsDesc,
               ),
 
               const SizedBox(height: 12),
 
               // Penalties
               _buildInfoCard(
-                title: 'Penalties',
+                title: AppLocalizations.of(context)!.penalties,
                 description:
-                    'Fine up to Rs. 1 million or imprisonment up to 3 years for non-compliance.',
+                    AppLocalizations.of(context)!.penaltiesDesc,
               ),
 
               const SizedBox(height: 16),
@@ -126,10 +127,10 @@ class ProtectionAgainstHarassmentActScreen extends StatelessWidget {
                   color: const Color.fromARGB(255, 213, 222, 218),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'This law applies to all workplaces in Pakistan with 3 or more employees.',
+                child: Text(
+                  AppLocalizations.of(context)!.lawAppliesNote,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
                     color: Color(0xFF00401A),
                     fontWeight: FontWeight.w500,

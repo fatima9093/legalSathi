@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 import 'package:front_end/services/traffic_police_complaint_service.dart';
@@ -105,6 +106,7 @@ class _PoliceAIComplaintGeneratorScreenState
   }
 
   Future<void> _selectDate() async {
+    final loc = AppLocalizations.of(context)!;
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -127,6 +129,7 @@ class _PoliceAIComplaintGeneratorScreenState
   }
 
   Future<void> _selectTime() async {
+     final loc = AppLocalizations.of(context)!;
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -147,26 +150,27 @@ class _PoliceAIComplaintGeneratorScreenState
   }
 
   Future<void> _generateComplaint() async {
+     final loc = AppLocalizations.of(context)!;
     if (!Validators.isNonEmpty(_whatHappenedController.text)) {
-      Validators.showError(context, 'Please describe what happened.');
+      Validators.showError(context,  loc.describeWhatHappened);
       return;
     }
 
     if (!Validators.isNonEmpty(_whereController.text)) {
       Validators.showError(
         context,
-        'Please enter where the incident occurred.',
+        loc.enterLocation,
       );
       return;
     }
 
     if (!Validators.isNonEmpty(_dateController.text)) {
-      Validators.showError(context, 'Please select the date of the incident.');
+      Validators.showError(context, loc.selectDate);
       return;
     }
 
     if (!Validators.isNonEmpty(_timeController.text)) {
-      Validators.showError(context, 'Please select the time of the incident.');
+      Validators.showError(context, loc.selectTime);
       return;
     }
 
@@ -272,6 +276,7 @@ class _PoliceAIComplaintGeneratorScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -281,8 +286,7 @@ class _PoliceAIComplaintGeneratorScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          _isEditing ? 'Edit Complaint' : 'AI Complaint Generator',
+       title: Text(_isEditing ? loc.editComplaint : loc.aiComplaintGenerator,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -318,8 +322,9 @@ class _PoliceAIComplaintGeneratorScreenState
 
                 // Title
                 Text(
-                  _isEditing ? 'Update Formal Complaint' : 'Generate Formal Complaint',
-                  textAlign: TextAlign.center,
+                 _isEditing
+                    ? loc.updateFormalComplaint
+                    : loc.generateFormalComplaint,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -352,13 +357,13 @@ class _PoliceAIComplaintGeneratorScreenState
                 ),
                 const SizedBox(height: 12),
 
-                _buildLabel('Full name', required: true),
+                _buildLabel(loc.fullName, required: true),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _complainantNameController,
                   textCapitalization: TextCapitalization.words,
                   decoration: InputDecoration(
-                    hintText: 'As on CNIC',
+                    hintText: loc.asOnCnic,
                     hintStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade400,
@@ -380,7 +385,7 @@ class _PoliceAIComplaintGeneratorScreenState
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Enter your full name';
+                      return loc.enterFullName;
                     }
                     return null;
                   },
@@ -388,13 +393,13 @@ class _PoliceAIComplaintGeneratorScreenState
 
                 const SizedBox(height: 16),
 
-                _buildLabel('Contact number', required: true),
+                _buildLabel( loc.contactNumber, required: true),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _contactController,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
-                    hintText: 'Mobile number',
+                    hintText: loc.mobileNumber,
                     hintStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade400,
@@ -416,7 +421,7 @@ class _PoliceAIComplaintGeneratorScreenState
                   ),
                   validator: (value) {
                     if (!Validators.isValidPhone(value)) {
-                      return 'Enter a valid phone number (at least 10 digits)';
+                      return  loc.invalidPhone;
                     }
                     return null;
                   },
@@ -424,7 +429,7 @@ class _PoliceAIComplaintGeneratorScreenState
 
                 const SizedBox(height: 16),
 
-                _buildLabel('CNIC', required: true),
+                _buildLabel( loc.cnic, required: true),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _cnicController,
@@ -452,7 +457,7 @@ class _PoliceAIComplaintGeneratorScreenState
                   ),
                   validator: (value) {
                     if (!Validators.isValidCnic(value)) {
-                      return 'Use format 12345-1234567-1';
+                      return loc.invalidCnic;
                     }
                     return null;
                   },
@@ -461,14 +466,14 @@ class _PoliceAIComplaintGeneratorScreenState
                 const SizedBox(height: 28),
 
                 // What Happened
-                _buildLabel('What Happened?', required: true),
+                _buildLabel( loc.whatHappened, required: true),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _whatHappenedController,
                   maxLines: 5,
                   decoration: InputDecoration(
                     hintText:
-                        'Describe the incident in detail: what the officer said, did, or demanded...',
+                         loc.whatHappenedHint,
                     hintStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade400,
@@ -490,7 +495,7 @@ class _PoliceAIComplaintGeneratorScreenState
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please describe what happened';
+                      return loc.describeWhatHappened ;
                     }
                     return null;
                   },
@@ -499,12 +504,12 @@ class _PoliceAIComplaintGeneratorScreenState
                 const SizedBox(height: 24),
 
                 // Where Did It Happen
-                _buildLabel('Where Did It Happen?', required: true),
+                _buildLabel( loc.whereDidItHappen, required: true),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _whereController,
                   decoration: InputDecoration(
-                    hintText: 'Exact location (road name, area, city)',
+                    hintText:  loc.locationHint,
                     hintStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade400,
@@ -526,7 +531,7 @@ class _PoliceAIComplaintGeneratorScreenState
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter the location';
+                      return loc.enterLocation;
                     }
                     return null;
                   },
@@ -541,7 +546,7 @@ class _PoliceAIComplaintGeneratorScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel('Date', required: true),
+                          _buildLabel(loc.date, required: true),
                           const SizedBox(height: 8),
                           TextFormField(
                             controller: _dateController,
@@ -590,7 +595,7 @@ class _PoliceAIComplaintGeneratorScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel('Time', required: true),
+                          _buildLabel(loc.time, required: true),
                           const SizedBox(height: 8),
                           TextFormField(
                             controller: _timeController,
@@ -640,12 +645,12 @@ class _PoliceAIComplaintGeneratorScreenState
                 const SizedBox(height: 24),
 
                 // Officer ID
-                _buildLabel('Officer ID / Badge Number'),
+                _buildLabel( loc.officerId,),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _officerIdController,
                   decoration: InputDecoration(
-                    hintText: 'If you noted it down',
+                    hintText: loc.officerIdHint,
                     hintStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade400,
@@ -670,14 +675,14 @@ class _PoliceAIComplaintGeneratorScreenState
                 const SizedBox(height: 24),
 
                 // Witness Names
-                _buildLabel('Witness Names (if any)'),
+                _buildLabel(loc.witnessNames,),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _witnessController,
                   maxLines: 3,
                   decoration: InputDecoration(
                     hintText:
-                        'List names and contact info of witnesses, one per line',
+                        loc.witnessHint,
                     hintStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade400,
@@ -772,10 +777,9 @@ class _PoliceAIComplaintGeneratorScreenState
                               color: Colors.white,
                             ),
                           )
-                        : Text(
-                            _isEditing
-                                ? 'Update Complaint Letter'
-                                : 'Generate Complaint Letter',
+                        : Text(_isEditing
+                    ? loc.updateComplaintButton
+                    : loc.generateComplaintButton,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

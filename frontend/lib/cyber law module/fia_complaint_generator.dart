@@ -3,6 +3,7 @@ import '../screen_with_nav.dart';
 import 'generated_fia_complaint_screen.dart';
 import '../utils/validators.dart';
 import 'package:front_end/services/fia_complaint_service.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class FIAComplaintGeneratorScreen extends StatefulWidget {
   const FIAComplaintGeneratorScreen({super.key});
@@ -73,11 +74,14 @@ class _FIAComplaintGeneratorScreenState
   }
 
   Future<void> _selectDate() async {
+    final loc = AppLocalizations.of(context)!;
+
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      helpText: loc.selectDate,
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -97,20 +101,22 @@ class _FIAComplaintGeneratorScreenState
   }
 
   Future<void> _generateComplaint() async {
+    final loc = AppLocalizations.of(context)!;
+
     if (!_isFormComplete) {
-      Validators.showError(context, 'Please fill all required fields.');
+      Validators.showError(context, loc.fillRequiredFields);
       return;
     }
     if (!Validators.isValidCnic(_cnicController.text)) {
-      Validators.showError(context, 'Enter CNIC in 12345-1234567-1 format.');
+      Validators.showError(context, loc.invalidCnic);
       return;
     }
     if (!Validators.isValidPhone(_phoneController.text)) {
-      Validators.showError(context, 'Enter a valid phone number.');
+      Validators.showError(context,  loc.invalidPhone);
       return;
     }
     if (!Validators.isValidEmail(_emailController.text)) {
-      Validators.showError(context, 'Enter a valid email address.');
+      Validators.showError(context, loc.invalidEmail);
       return;
     }
 
@@ -136,25 +142,27 @@ class _FIAComplaintGeneratorScreenState
     if (!(saveResult['success'] as bool? ?? false)) {
       Validators.showError(
         context,
-        saveResult['message'] as String? ?? 'Could not save complaint.',
+         saveResult['message'] ?? loc.errorSaving,
       );
       return;
     }
 
     if (saveResult['cloudSaved'] == false) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Complaint generated. To store in DB, run supabase_fia_complaints.sql in Supabase SQL Editor.',
+        SnackBar(
+          content:  Text(
+          saveResult['cloudSaved'] == false
+              ? loc.complaintGeneratedWarning
+              : loc.complaintSaved,
           ),
           backgroundColor: Colors.orange,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Complaint saved to your account.'),
-          backgroundColor: Color(0xFF00401A),
+        SnackBar(
+          content: Text(loc.complaintSaved),
+          backgroundColor: const Color(0xFF00401A),
         ),
       );
     }
@@ -179,6 +187,7 @@ class _FIAComplaintGeneratorScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -188,8 +197,8 @@ class _FIAComplaintGeneratorScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'FIA Complaint Generator',
+        title: Text(
+          loc.fiaComplaintGenerator,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -228,8 +237,8 @@ class _FIAComplaintGeneratorScreenState
                     const SizedBox(height: 16),
 
                     // Title
-                    const Text(
-                      'File FIA Cyber Crime Complaint',
+                    Text(
+                      loc.fileFiaComplaint,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
@@ -242,7 +251,7 @@ class _FIAComplaintGeneratorScreenState
 
                     // Subtitle
                     Text(
-                      'Fill in your details to generate a formal complaint',
+                      loc.fillDetailsSubtitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
@@ -269,8 +278,8 @@ class _FIAComplaintGeneratorScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Personal Information',
+                           Text(
+                            loc.personalinfo,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -279,7 +288,7 @@ class _FIAComplaintGeneratorScreenState
                           ),
                           const SizedBox(height: 16),
 
-                          _buildLabel('Full Name *'),
+                          _buildLabel(loc.fullName),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _fullNameController,
@@ -288,7 +297,7 @@ class _FIAComplaintGeneratorScreenState
 
                           const SizedBox(height: 16),
 
-                          _buildLabel('CNIC Number *'),
+                          _buildLabel(loc.cnicNumber),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _cnicController,
@@ -298,7 +307,7 @@ class _FIAComplaintGeneratorScreenState
 
                           const SizedBox(height: 16),
 
-                          _buildLabel('Phone Number *'),
+                          _buildLabel(loc.phoneNumber),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _phoneController,
@@ -308,7 +317,7 @@ class _FIAComplaintGeneratorScreenState
 
                           const SizedBox(height: 16),
 
-                          _buildLabel('Email Address *'),
+                          _buildLabel(loc.emailAddress),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _emailController,
@@ -318,7 +327,7 @@ class _FIAComplaintGeneratorScreenState
 
                           const SizedBox(height: 16),
 
-                          _buildLabel('Address'),
+                          _buildLabel(loc.address),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _addressController,
@@ -347,9 +356,9 @@ class _FIAComplaintGeneratorScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Incident Details',
-                            style: TextStyle(
+                          Text(
+                            loc.incidentDetails,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
@@ -357,7 +366,7 @@ class _FIAComplaintGeneratorScreenState
                           ),
                           const SizedBox(height: 16),
 
-                          _buildLabel('Date of Incident *'),
+                          _buildLabel(loc.dateOfIncident),
                           const SizedBox(height: 8),
                           _buildTextField(
                             controller: _dateController,
@@ -368,7 +377,7 @@ class _FIAComplaintGeneratorScreenState
 
                           const SizedBox(height: 16),
 
-                          _buildLabel('Describe the Incident *'),
+                          _buildLabel(loc.describeIncident),
                           const SizedBox(height: 8),
                           TextField(
                             controller: _incidentController,
@@ -446,7 +455,7 @@ class _FIAComplaintGeneratorScreenState
 
                           const SizedBox(height: 16),
 
-                          _buildLabel('Evidence Available'),
+                          _buildLabel(loc.evidenceAvailable),
                           const SizedBox(height: 8),
                           TextField(
                             controller: _evidenceController,
@@ -512,8 +521,8 @@ class _FIAComplaintGeneratorScreenState
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text(
-                                'Generate FIA Complaint',
+                            :  Text(
+                                loc.fiaComplaintInfo,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

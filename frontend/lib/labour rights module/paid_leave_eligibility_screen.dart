@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'file_labour_complaint_screen.dart';
 import '../utils/validators.dart';
@@ -133,9 +134,9 @@ class _PaidLeaveEligibilityScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Paid Leave Eligibility',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.paidLeaveEligibility,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -226,9 +227,9 @@ class _PaidLeaveEligibilityScreenState
           const SizedBox(height: 20),
 
           // Title
-          const Text(
-            'Check Leave Eligibility',
-            style: TextStyle(
+          Text(
+            AppLocalizations.of(context)!.checkLeaveEligibilityTitle,
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Colors.black87,
@@ -239,7 +240,7 @@ class _PaidLeaveEligibilityScreenState
 
           // Subtitle
           Text(
-            'Find out if you\'re entitled to paid leave',
+            AppLocalizations.of(context)!.findOutIfYouAreEntitledToPaidLeave,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
@@ -248,8 +249,8 @@ class _PaidLeaveEligibilityScreenState
 
           // Employment Type Dropdown
           _buildDropdownField(
-            label: 'Employment Type *',
-            hintText: 'Select employment type',
+            label: AppLocalizations.of(context)!.employmentTypeLabel,
+            hintText: AppLocalizations.of(context)!.selectEmploymentTypeHint,
             value: _selectedEmploymentType,
             items: employmentTypes,
             onChanged: (value) {
@@ -265,9 +266,9 @@ class _PaidLeaveEligibilityScreenState
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Duration of Employment (months) *',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.durationOfEmploymentMonthsLabel,
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -278,7 +279,7 @@ class _PaidLeaveEligibilityScreenState
                 controller: _durationController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  hintText: 'How long have you worked here?',
+                  hintText: AppLocalizations.of(context)!.howLongHaveYouWorkedHint,
                   hintStyle: TextStyle(color: Colors.grey.shade400),
                   filled: true,
                   fillColor: Colors.white,
@@ -299,8 +300,8 @@ class _PaidLeaveEligibilityScreenState
 
           // Leave Type Dropdown
           _buildDropdownField(
-            label: 'Leave Type *',
-            hintText: 'Select leave type',
+            label: AppLocalizations.of(context)!.leaveTypeLabel,
+            hintText: AppLocalizations.of(context)!.selectLeaveTypeHint,
             value: _selectedLeaveType,
             items: leaveTypes,
             onChanged: (value) {
@@ -324,9 +325,9 @@ class _PaidLeaveEligibilityScreenState
                 ),
               ),
               onPressed: _checkEligibility,
-              child: const Text(
-                'Check Eligibility',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.checkEligibilityButton,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -346,7 +347,7 @@ class _PaidLeaveEligibilityScreenState
               border: Border.all(color: Colors.green.shade200),
             ),
             child: Text(
-              'Paid leave is a legal right under the Factories Act and Shops & Establishments Act',
+              AppLocalizations.of(context)!.paidLeaveIsALegalRightNote,
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.green.shade900,

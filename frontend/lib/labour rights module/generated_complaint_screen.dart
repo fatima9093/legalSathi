@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:front_end/l10n/app_localizations.dart';
+
 import '../screen_with_nav.dart';
 
 class GeneratedComplaintScreen extends StatefulWidget {
@@ -24,74 +26,68 @@ class GeneratedComplaintScreen extends StatefulWidget {
 }
 
 class _GeneratedComplaintScreenState extends State<GeneratedComplaintScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  String _generateComplaintText() {
+  String _generateComplaintText(AppLocalizations l10n) {
     final String formattedDate =
-        '${widget.incidentDate.year.toString().padLeft(4, '0')}-${widget.incidentDate.month.toString().padLeft(2, '0')}-${widget.incidentDate.day.toString().padLeft(2, '0')}';
+        '${widget.incidentDate.year.toString().padLeft(4, '0')}-'
+        '${widget.incidentDate.month.toString().padLeft(2, '0')}-'
+        '${widget.incidentDate.day.toString().padLeft(2, '0')}';
 
     final DateTime now = DateTime.now();
     final String currentDate =
-        '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+        '${now.year.toString().padLeft(4, '0')}-'
+        '${now.month.toString().padLeft(2, '0')}-'
+        '${now.day.toString().padLeft(2, '0')}';
 
-    return '''To: Labour Department / Relevant Authority
+    return '''${l10n.complaintToHeader}
 
-Subject: Formal Labour Complaint
+${l10n.complaintSubject}
 
-Dear Sir/Madam,
+${l10n.complaintSalutation}
 
-I am writing to file a formal complaint against my employer, ${widget.employerName}, regarding the following issue:
+${l10n.complaintBody(widget.employerName)}
 
-Complaint Issue: ${widget.complaintIssue}
+${l10n.complaintIssueLabel(widget.complaintIssue)}
 
-Date of Incident: $formattedDate
+${l10n.complaintDateLabel(formattedDate)}
 
-This matter has caused significant distress and violates my rights as an employee under the applicable labour laws. I have attempted to resolve this issue internally without success.
+${l10n.complaintMiddlePara}
 
-I hereby request that the relevant authorities investigate this matter and take appropriate action to ensure my rights are protected and such violations do not occur in the future.
+${l10n.complaintRequestPara}
 
-I am available to provide any additional information or documentation required for this investigation.
+${l10n.complaintAvailabilityPara}
 
-Thank you for your attention to this serious matter.
+${l10n.complaintThankYou}
 
-Sincerely,
+${l10n.complaintSignoff}
 ${widget.yourName}
 ${widget.contactInfo}
 $currentDate''';
   }
 
-  void _copyToClipboard() {
-    Clipboard.setData(ClipboardData(text: _generateComplaintText()));
+  void _copyToClipboard(AppLocalizations l10n) {
+    Clipboard.setData(ClipboardData(text: _generateComplaintText(l10n)));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Complaint copied to clipboard'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(l10n.complaintCopiedMessage),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
-  void _regenerate() {
-    setState(() {
-      // Refresh the UI to simulate regeneration
-    });
+  void _regenerate(AppLocalizations l10n) {
+    setState(() {});
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Complaint regenerated'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(l10n.complaintRegeneratedMessage),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -101,9 +97,9 @@ $currentDate''';
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Draft Complaint Application',
-          style: TextStyle(
+        title: Text(
+          l10n.draftComplaintApplicationTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -122,9 +118,9 @@ $currentDate''';
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Generated Complaint',
-                  style: TextStyle(
+                Text(
+                  l10n.generatedComplaintLabel,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -147,7 +143,7 @@ $currentDate''';
                           color: Colors.grey.shade700,
                         ),
                         padding: EdgeInsets.zero,
-                        onPressed: _copyToClipboard,
+                        onPressed: () => _copyToClipboard(l10n),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -168,8 +164,8 @@ $currentDate''';
                         padding: EdgeInsets.zero,
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Download feature coming soon'),
+                            SnackBar(
+                              content: Text(l10n.downloadFeatureComingSoon),
                             ),
                           );
                         },
@@ -192,7 +188,7 @@ $currentDate''';
                 border: Border.all(color: Colors.grey.shade200),
               ),
               child: SelectableText(
-                _generateComplaintText(),
+                _generateComplaintText(l10n),
                 style: const TextStyle(
                   fontSize: 13,
                   color: Colors.black87,
@@ -218,14 +214,14 @@ $currentDate''';
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: _regenerate,
+                      onPressed: () => _regenerate(l10n),
                       icon: Icon(
                         Icons.refresh,
                         color: Colors.grey.shade700,
                         size: 20,
                       ),
                       label: Text(
-                        'Regenerate',
+                        l10n.regenerateButton,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -247,15 +243,15 @@ $currentDate''';
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      onPressed: _copyToClipboard,
+                      onPressed: () => _copyToClipboard(l10n),
                       icon: const Icon(
                         Icons.copy,
                         color: Colors.white,
                         size: 20,
                       ),
-                      label: const Text(
-                        'Copy Text',
-                        style: TextStyle(
+                      label: Text(
+                        l10n.copyTextButton,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

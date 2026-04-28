@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'fia_complaint_generator.dart';
 import 'package:front_end/services/challan_text_extraction_service.dart';
 import 'package:front_end/services/evidence_analysis_service.dart';
@@ -39,18 +40,21 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
   }
 
   Future<void> _analyzeInput() async {
+     final loc = AppLocalizations.of(context)!;
     final platformSteps = _getPlatformSteps(widget.platform);
     final tips = <String>[
-      'Save all screenshots with timestamps',
-      'Document all interactions with the fake account',
-      'Inform your contacts about the fake account',
-      'Enable privacy settings on your real accounts',
+      loc.tipSaveScreenshots,
+      loc.tipDocumentInteractions,
+      loc.tipInformContacts,
+      loc.tipEnablePrivacy,
     ];
 
     final profileInfo = [
-      if (widget.profileUrl.trim().isNotEmpty) 'URL: ${widget.profileUrl.trim()}',
-      if (widget.username.trim().isNotEmpty) 'Username: ${widget.username.trim()}',
-      'Platform: ${widget.platform}',
+     if (widget.profileUrl.trim().isNotEmpty)
+        '${loc.urlLabel}: ${widget.profileUrl.trim()}',
+      if (widget.username.trim().isNotEmpty)
+        '${loc.usernameLabel}: ${widget.username.trim()}',
+      '${loc.platformLabel}: ${widget.platform}',
     ].join('\n');
 
     final evidenceText = await _extractEvidenceText(widget.uploadedFiles);
@@ -64,10 +68,10 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
     }
 
     final legal = <String>[
-      'File complaint with FIA Cyber Crime under PECA.',
-      'Report to PTA where applicable.',
-      'File FIR at local police station if harassment/fraud is involved.',
-      'Consider civil defamation case if reputation is damaged.',
+      loc.legalFia,
+      loc.legalPta,
+      loc.legalFIR,
+      loc.legalCivilCase,
     ];
     if (analysis != null) {
       for (final law in analysis.relevantLaws) {
@@ -92,6 +96,9 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
+
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -101,8 +108,8 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Reporting Guidance',
+        title: Text(
+          loc.reportingGuidanceTitle,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -110,11 +117,13 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
           ),
         ),
       ),
-      body: _isLoading ? _buildLoadingScreen() : _buildResultsScreen(),
+     body: _isLoading
+    ? _buildLoadingScreen(AppLocalizations.of(context)!)
+    : _buildResultsScreen(AppLocalizations.of(context)!),
     );
   }
 
-  Widget _buildLoadingScreen() {
+  Widget _buildLoadingScreen(AppLocalizations loc) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -129,7 +138,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Analyzing account...',
+             loc.analyzingAccount,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
         ],
@@ -137,7 +146,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
     );
   }
 
-  Widget _buildResultsScreen() {
+  Widget _buildResultsScreen(AppLocalizations loc) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -180,7 +189,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Fake Account Detected',
+                            loc.fakeAccountDetected,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -189,7 +198,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Follow these steps to report',
+                           loc.followStepsReport,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.red.shade600,
@@ -210,7 +219,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Reference ID: ${widget.reportId}',
+                    '${loc.referenceId}: ${widget.reportId}',
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ),
@@ -232,8 +241,8 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'AI Summary',
+                     Text(
+                      loc.aiSummary,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -268,8 +277,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'How to Report on ${widget.platform}',
+                  Text(loc.howToReport(widget.platform),
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -300,8 +308,8 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Legal Options (PECA)',
+                   Text(
+                    loc.legalOptions,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -348,8 +356,8 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Additional Protection Tips',
+                  Text(
+                   loc.protectionTips,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -387,7 +395,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                   );
                 },
                 icon: const Icon(Icons.description_outlined, size: 20),
-                label: const Text('File FIA Complaint'),
+                label: Text(loc.fileFiaComplaint),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF00401A),
                   foregroundColor: Colors.white,
@@ -419,8 +427,8 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text(
-                  'Report Another Account',
+                child: Text(
+                 loc.reportAnotherAccount,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),

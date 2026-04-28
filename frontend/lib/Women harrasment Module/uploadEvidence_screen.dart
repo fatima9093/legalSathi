@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'package:front_end/Women%20harrasment%20Module/complain_preview_screen.dart';
 import 'package:file_picker/file_picker.dart';
@@ -43,15 +44,16 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   }
 
   Future<void> _pickFile(String fileType) async {
+    final loc = AppLocalizations.of(context)!;
+
     try {
       FilePickerResult? result;
 
-      // Different file types
       if (fileType == 'screenshot') {
         result = await FilePicker.platform.pickFiles(
           type: FileType.image,
           allowMultiple: true,
-          withData: true, // Important for web - loads bytes
+          withData: true,
         );
       } else if (fileType == 'audio') {
         result = await FilePicker.platform.pickFiles(
@@ -107,16 +109,17 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${result.files.length} file(s) added successfully'),
+            content: Text(
+                '${result.files.length} ${loc.filesAddedSuccessfully}'),
             backgroundColor: Colors.green,
-          ),
+        )
         );
       }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: ${e.toString()}'),
+           content: Text('${loc.error}: ${e.toString()}'),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 4),
         ),
@@ -125,6 +128,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   }
 
   Future<void> _removeFile(EvidenceFile file) async {
+    final loc = AppLocalizations.of(context)!;
     final result = await _complaintService.removeEvidenceFile(
       complaintId: widget.complaintId,
       fileName: file.fileName,
@@ -137,8 +141,8 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('File removed'),
+        SnackBar(
+          content: Text(loc.fileRemoved),
           backgroundColor: Colors.green,
         ),
       );
@@ -167,6 +171,8 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: PreferredSize(
@@ -187,10 +193,10 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         icon: const Icon(Icons.arrow_back, color: Colors.black),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Ombudsperson Complaint',
-                          style: TextStyle(
+                          loc.ombudspersonComplaint,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -205,27 +211,27 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   child: Row(
                     children: [
-                      _buildStep(number: '1', label: 'Info', isCompleted: true),
+                      _buildStep(number: '1', label: loc.info, isCompleted: true),
                       _buildStepLine(),
                       _buildStep(
                         number: '2',
-                        label: 'Incident',
+                        label: loc.incident,
                         isCompleted: true,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '3',
-                        label: 'Evidence',
+                        label: loc.evidence,
                         isActive: true,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '4',
-                        label: 'Preview',
+                        label: loc.preview,
                         isActive: false,
                       ),
                       _buildStepLine(),
-                      _buildStep(number: '5', label: 'Submit', isActive: false),
+                      _buildStep(number: '5', label: loc.submit, isActive: false),
                     ],
                   ),
                 ),
@@ -244,8 +250,8 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'Upload Evidence',
+                     Text(
+                      loc.uploadEvidence,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -253,8 +259,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      'Add supporting documents and witness information',
+                     Text(loc.addSupportingDocs,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade600,
@@ -268,7 +273,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         Expanded(
                           child: _buildEvidenceCard(
                             icon: Icons.image_outlined,
-                            label: 'Screenshots',
+                            label: loc.screenshots,
                             onTap: () => _pickFile('screenshot'),
                           ),
                         ),
@@ -276,7 +281,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         Expanded(
                           child: _buildEvidenceCard(
                             icon: Icons.chat_outlined,
-                            label: 'WhatsApp Chats',
+                            label:  loc.whatsappChats,
                             onTap: () => _pickFile('whatsapp_chat'),
                           ),
                         ),
@@ -290,7 +295,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         Expanded(
                           child: _buildEvidenceCard(
                             icon: Icons.email_outlined,
-                            label: 'Emails',
+                             label: loc.emails,
                             onTap: () => _pickFile('email'),
                           ),
                         ),
@@ -298,7 +303,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         Expanded(
                           child: _buildEvidenceCard(
                             icon: Icons.mic_outlined,
-                            label: 'Audio Files',
+                            label: loc.audioFiles,
                             onTap: () => _pickFile('audio'),
                           ),
                         ),
@@ -312,7 +317,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                         Expanded(
                           child: _buildEvidenceCard(
                             icon: Icons.videocam_outlined,
-                            label: 'Video Files',
+                            label: loc.videoFiles,
                             onTap: () => _pickFile('video'),
                           ),
                         ),
@@ -323,29 +328,23 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                     const SizedBox(height: 24),
 
                     // Show uploaded files
-                    if (_uploadedFiles.isNotEmpty) ...[
-                      _buildLabel('Uploaded Files (${_uploadedFiles.length})'),
-                      const SizedBox(height: 12),
-                      ...List.generate(_uploadedFiles.length, (index) {
-                        final file = _uploadedFiles[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: _buildFileChip(file),
-                        );
-                      }),
-                      const SizedBox(height: 16),
-                    ],
+                     if (_uploadedFiles.isNotEmpty) ...[
+                    Text('${loc.uploadedFiles} (${_uploadedFiles.length})'),
+                    const SizedBox(height: 12),
+                    ..._uploadedFiles.map(_buildFileChip),
+                    const SizedBox(height: 16),
+                  ],
 
-                    const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                    // Witness Names
-                    _buildLabel('Witness Names (Optional)'),
+                  Text(loc.witnessNames),
+                  const SizedBox(height: 8),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _witnessController,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText: 'List names of witnesses, one per line...',
+                        hintText: loc.witnessHint,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 14,
@@ -393,8 +392,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                     ),
                     minimumSize: const Size(double.infinity, 0),
                   ),
-                  child: const Text(
-                    'Continue to Preview',
+                  child: Text(loc.continuePreview,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -413,8 +411,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                     ),
                     minimumSize: const Size(double.infinity, 0),
                   ),
-                  child: const Text(
-                    'Back',
+                  child: Text(loc.back,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

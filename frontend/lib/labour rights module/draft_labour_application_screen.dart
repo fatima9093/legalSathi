@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'generated_application_screen.dart';
 import '../screen_with_nav.dart';
 import '../utils/validators.dart';
@@ -81,9 +82,9 @@ class _DraftLabourApplicationScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Draft Labour Application',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.draftLabourApplicationTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -116,9 +117,9 @@ class _DraftLabourApplicationScreenState
             const SizedBox(height: 24),
 
             // Title
-            const Text(
-              'Generate Application',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.generateApplicationTitle,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -128,9 +129,9 @@ class _DraftLabourApplicationScreenState
             const SizedBox(height: 8),
 
             // Subtitle
-            const Text(
-              'AI will create a legally formatted application',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+            Text(
+              AppLocalizations.of(context)!.generateApplicationSubtitle,
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
               textAlign: TextAlign.center,
             ),
 
@@ -140,17 +141,17 @@ class _DraftLabourApplicationScreenState
             Align(
               alignment: Alignment.centerLeft,
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Employer Name ',
-                      style: TextStyle(
+                      text: '${AppLocalizations.of(context)!.employerNameLabel} ',
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: '*',
                       style: TextStyle(
                         fontSize: 14,
@@ -166,7 +167,7 @@ class _DraftLabourApplicationScreenState
             TextField(
               controller: _employerNameController,
               decoration: InputDecoration(
-                hintText: 'Company/organization name',
+                hintText: AppLocalizations.of(context)!.companyNameHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -194,17 +195,17 @@ class _DraftLabourApplicationScreenState
             Align(
               alignment: Alignment.centerLeft,
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Your full name ',
-                      style: TextStyle(
+                      text: '${AppLocalizations.of(context)!.yourFullNameLabel} ',
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: '*',
                       style: TextStyle(
                         fontSize: 14,
@@ -221,7 +222,7 @@ class _DraftLabourApplicationScreenState
               controller: _employeeNameController,
               textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(
-                hintText: 'As on CNIC / service record',
+                hintText: AppLocalizations.of(context)!.asOnCnicHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -249,17 +250,17 @@ class _DraftLabourApplicationScreenState
             Align(
               alignment: Alignment.centerLeft,
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Contact (phone / email) ',
-                      style: TextStyle(
+                      text: '${AppLocalizations.of(context)!.contactLabel} ',
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
                       ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: '*',
                       style: TextStyle(
                         fontSize: 14,
@@ -276,7 +277,7 @@ class _DraftLabourApplicationScreenState
               controller: _employeeContactController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                hintText: 'e.g. 03XX-XXXXXXX, name@email.com',
+                hintText: AppLocalizations.of(context)!.contactHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
