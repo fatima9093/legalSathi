@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'challan_data_model.dart';
@@ -14,8 +15,8 @@ class ChallanAppealGuideScreen extends StatelessWidget {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open the link.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.couldNotOpenLink),
             backgroundColor: Colors.red,
           ),
         );
@@ -24,7 +25,7 @@ class ChallanAppealGuideScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(AppLocalizations.of(context)!.errorOccurred(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -54,8 +55,8 @@ class ChallanAppealGuideScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'File an appeal',
+        title: Text(
+        AppLocalizations.of(context)!.fileAppeal,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -76,8 +77,7 @@ class ChallanAppealGuideScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Next step',
+                Text(AppLocalizations.of(context)!.nextStep,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -85,17 +85,14 @@ class ChallanAppealGuideScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  'Appeals must follow the deadline and office printed on your '
-                  'challan. Keep copies of the challan, CNIC, and any evidence.',
+                Text(AppLocalizations.of(context)!.appealGuidance,
                   style: TextStyle(fontSize: 14, color: Colors.grey.shade800, height: 1.4),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'What to do',
+          Text(AppLocalizations.of(context)!.whatToDo,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -148,8 +145,7 @@ class ChallanAppealGuideScreen extends StatelessWidget {
                   ),
                 ),
           const SizedBox(height: 24),
-          const Text(
-            'Official references',
+          Text(AppLocalizations.of(context)!.officialReferences,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -159,25 +155,27 @@ class ChallanAppealGuideScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _linkTile(
             context,
-            title: 'Punjab Police',
-            subtitle: 'Traffic / complaints contacts',
+            title: AppLocalizations.of(context)!.punjabPolice,
+            subtitle: AppLocalizations.of(context)!.punjabPoliceSubtitle,
             uri: Uri.parse('https://punjabpolice.gov.pk'),
           ),
           _linkTile(
             context,
-            title: 'Islamabad Police',
-            subtitle: 'ICT citizen services',
+            title: AppLocalizations.of(context)!.islamabadPolice,
+
+            subtitle:AppLocalizations.of(context)!.islamabadPoliceSubtitle,
             uri: Uri.parse('https://ictpolice.gov.pk'),
           ),
           _linkTile(
             context,
-            title: 'Sindh Police',
-            subtitle: 'Complaints & traffic information',
+            title: AppLocalizations.of(context)!.sindhPolice,
+
+            subtitle:AppLocalizations.of(context)!.sindhPoliceSubtitle,
             uri: Uri.parse('https://sindhpolice.gov.pk'),
           ),
           const SizedBox(height: 16),
           Text(
-            'For deadlines and the correct office (magistrate / SP Traffic), follow what is printed on your official challan.',
+            AppLocalizations.of(context)!.appealFooterNote,
             style: TextStyle(fontSize: 13, color: Colors.grey.shade700, height: 1.4),
           ),
           const SizedBox(height: 24),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -44,56 +45,53 @@ class PoliceGeneratedComplaintScreen extends StatefulWidget {
 
 class _PoliceGeneratedComplaintScreenState
     extends State<PoliceGeneratedComplaintScreen> {
-  String get complaintText {
+  String complaintText (AppLocalizations loc) {
     final currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
     final officerInfo = widget.officerId.isEmpty
-        ? 'Not noted'
+        ? loc.notNoted 
         : widget.officerId;
     final witnessInfo = widget.witnesses.isEmpty
-        ? 'No witnesses present'
+        ? loc.noWitnesses
         : widget.witnesses;
 
-    return '''FORMAL COMPLAINT AGAINST POLICE OFFICER MISBEHAVIOR
+    return '''${loc.complaintTitle}
 
-To: Senior Superintendent of Police (SSP) Traffic
-Date: $currentDate
+${loc.toSSP}
+${loc.date}: $currentDate
 
-Subject: Complaint Against Police Officer Misbehavior
+${loc.subject}
 
-Respected Sir/Madam,
+${loc.respected}
 
-I am writing to file a formal complaint regarding the unprofessional and inappropriate conduct of a traffic police officer.
+${loc.intro}
 
-INCIDENT DETAILS:
+${loc.incidentDetails}
 
-Date: ${widget.date}
-Time: ${widget.time}
-Location: ${widget.location}
-Officer ID/Badge Number: $officerInfo
+${loc.date}: ${widget.date}
+${loc.time}: ${widget.time}
+${loc.location}: ${widget.location}
+${loc.officerIdLabel}: $officerInfo
 
-DESCRIPTION OF INCIDENT:
+${loc.description}
 
 ${widget.whatHappened}
 
-WITNESSES:
+${loc.witnessSection}
 
 $witnessInfo
 
-REQUEST FOR ACTION:
+${loc.requestAction}
 
-I request that you kindly investigate this matter and take appropriate action against the officer involved. Such behavior violates the code of conduct expected from police officers and undermines public trust in law enforcement.
+${loc.closing}
 
-I am willing to provide any additional information or evidence if required and would appreciate being informed of the outcome of this complaint.
-
-Thank you for your attention to this matter.
-
-Yours sincerely,
-${widget.complainantName.trim()}
-Contact: ${widget.contactNumber.trim()}
-CNIC: ${widget.cnic.trim()}''';
-  }
+${loc.yoursSincerely},
+${widget.complainantName}
+${loc.contact}: ${widget.contactNumber}
+${loc.cnic}: ${widget.cnic}''';
+}
 
   Future<void> _downloadAsPDF() async {
+    final loc = AppLocalizations.of(context)!;
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -113,8 +111,7 @@ CNIC: ${widget.cnic.trim()}''';
                   ),
                 ),
                 pw.SizedBox(height: 20),
-                pw.Text(
-                  complaintText,
+                pw.Text(complaintText(loc),
                   style: const pw.TextStyle(fontSize: 11, lineSpacing: 1.5),
                 ),
               ],
@@ -130,13 +127,14 @@ CNIC: ${widget.cnic.trim()}''';
   }
 
   Future<void> _copyToClipboard() async {
-    await Clipboard.setData(ClipboardData(text: complaintText));
+    final loc = AppLocalizations.of(context)!;
+    await Clipboard.setData(ClipboardData(text: complaintText(loc)));
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Complaint copied to clipboard'),
-          backgroundColor: Color(0xFF00401A),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(loc.copiedToClipboard),
+          backgroundColor: const Color(0xFF00401A),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -152,6 +150,7 @@ CNIC: ${widget.cnic.trim()}''';
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -161,8 +160,7 @@ CNIC: ${widget.cnic.trim()}''';
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Generated Complaint',
+        title: Text(loc.generatedComplaint,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -186,16 +184,15 @@ CNIC: ${widget.cnic.trim()}''';
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
-                  children: const [
-                    Icon(
+                  children: [
+                    const Icon(
                       Icons.check_circle,
                       color: Color(0xFF00401A),
                       size: 20,
                     ),
-                    SizedBox(width: 8),
-                    Text(
-                      'Complaint Letter Generated',
-                      style: TextStyle(
+                    const SizedBox(width: 8),
+                    Text(loc.complaintGenerated,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF00401A),
@@ -208,8 +205,7 @@ CNIC: ${widget.cnic.trim()}''';
               const SizedBox(height: 24),
 
               // Title
-              const Text(
-                'Your Formal Complaint',
+              Text(loc.yourFormalComplaint,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
@@ -219,8 +215,7 @@ CNIC: ${widget.cnic.trim()}''';
 
               const SizedBox(height: 8),
 
-              Text(
-                'Review, edit, and submit your complaint',
+              Text(loc.reviewEditSubmit,
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
 
@@ -256,19 +251,17 @@ CNIC: ${widget.cnic.trim()}''';
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Police Misbehavior Complaint',
-                            style: TextStyle(
+                        children: [
+                          Text(loc.policeMisbehavior,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Generated by Legal Sathi AI',
-                            style: TextStyle(
+                          const SizedBox(height: 4),
+                          Text(loc.generatedByAI,
+                            style: const TextStyle(
                               fontSize: 12,
                               color: Colors.white70,
                             ),
@@ -281,8 +274,7 @@ CNIC: ${widget.cnic.trim()}''';
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
-                      child: SelectableText(
-                        complaintText,
+                      child: SelectableText(complaintText(loc),
                         style: TextStyle(
                           fontSize: 13,
                           color: Colors.grey.shade800,
@@ -304,7 +296,7 @@ CNIC: ${widget.cnic.trim()}''';
                       onPressed:
                           widget.onEditPressed != null ? _editComplaint : null,
                       icon: const Icon(Icons.edit, size: 18),
-                      label: const Text('Edit'),
+                     label: Text(loc.edit),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF00401A),
                         minimumSize: const Size(0, 48),
@@ -320,7 +312,7 @@ CNIC: ${widget.cnic.trim()}''';
                     child: OutlinedButton.icon(
                       onPressed: _regenerate,
                       icon: const Icon(Icons.refresh, size: 18),
-                      label: const Text('Regenerate'),
+                      label: Text(loc.regenerate),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF00401A),
                         minimumSize: const Size(0, 48),
@@ -342,8 +334,7 @@ CNIC: ${widget.cnic.trim()}''';
                 child: ElevatedButton.icon(
                   onPressed: _downloadAsPDF,
                   icon: const Icon(Icons.download, size: 20),
-                  label: const Text(
-                    'Download as PDF',
+                  label: Text(loc.downloadPdf,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -366,8 +357,7 @@ CNIC: ${widget.cnic.trim()}''';
                 child: OutlinedButton.icon(
                   onPressed: _copyToClipboard,
                   icon: const Icon(Icons.copy, size: 20),
-                  label: const Text(
-                    'Copy to Clipboard',
+                  label: Text(loc.copyClipboard,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -403,8 +393,7 @@ CNIC: ${widget.cnic.trim()}''';
                       size: 24,
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      'Submit this complaint to SSP Traffic office or file online through provincial police portal',
+                    Text(loc.submitInstruction,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 13,

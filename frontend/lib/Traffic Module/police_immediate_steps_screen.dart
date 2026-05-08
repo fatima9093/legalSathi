@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'police_complaint_filing_screen.dart';
 import 'traffic_contact_launcher.dart';
@@ -9,6 +10,7 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -18,8 +20,7 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Immediate Steps',
+        title: Text(loc.immediateSteps,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -52,8 +53,8 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Title
-              const Text(
-                'What to Do Right Now',
+               Text(
+                loc.whatToDoNow,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
@@ -64,7 +65,7 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               Text(
-                'Follow these steps during the incident',
+                loc.followSteps,
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
 
@@ -75,13 +76,12 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                 stepNumber: 1,
                 icon: Icons.self_improvement_outlined,
                 iconColor: const Color(0xFF00401A),
-                title: 'Stay Calm',
-                description:
-                    'Remain polite and cooperative. Do not argue, shout, or resist physically.',
+                 title: loc.step1Title,
+            description: loc.step1Desc,
                 tips: [
-                  'Keep your composure',
-                  'Speak respectfully',
-                  'Avoid confrontation',
+                     loc.step1Tip1,
+                      loc.step1Tip2,
+                      loc.step1Tip3,
                 ],
               ),
 
@@ -91,13 +91,12 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                 stepNumber: 2,
                 icon: Icons.access_time,
                 iconColor: const Color(0xFF00401A),
-                title: 'Record Time and Place',
-                description:
-                    'Note exact time, date, and location of the incident immediately.',
-                tips: [
-                  'Check your watch/phone',
-                  'Note nearby landmarks',
-                  'Remember street names',
+                title: loc.step2Title,
+                description: loc.step2Desc,
+                 tips: [
+                  loc.step2Tip1,
+                  loc.step2Tip2,
+                  loc.step2Tip3,
                 ],
               ),
 
@@ -107,15 +106,14 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                 stepNumber: 3,
                 icon: Icons.badge_outlined,
                 iconColor: const Color(0xFF00401A),
-                title: 'Ask for Officer Details',
-                description:
-                    'Politely request officer name, badge number, and station.',
-                tips: [
-                  'Say: "May I have your name and badge number?"',
-                  'Note vehicle number if applicable',
-                  'Be polite but firm',
-                ],
-              ),
+                title: loc.step3Title,
+            description: loc.step3Desc,
+            tips: [
+              loc.step3Tip1,
+              loc.step3Tip2,
+              loc.step3Tip3,
+            ],
+          ),
 
               const SizedBox(height: 16),
 
@@ -123,13 +121,12 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                 stepNumber: 4,
                 icon: Icons.description_outlined,
                 iconColor: const Color(0xFF00401A),
-                title: 'Save Challan Number',
-                description:
-                    'If challan is issued, keep it safe and note all details.',
+                 title: loc.step4Title,
+                description: loc.step4Desc,
                 tips: [
-                  'Take photo of challan',
-                  'Note challan number',
-                  'Keep original safe',
+              loc.step4Tip1,
+              loc.step4Tip2,
+              loc.step4Tip3,
                 ],
               ),
 
@@ -139,15 +136,16 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                 stepNumber: 5,
                 icon: Icons.videocam_outlined,
                 iconColor: const Color(0xFF00401A),
-                title: 'Safe Recording Methods',
-                description: 'Legal ways to document the interaction.',
+                title: loc.step5Title,
+                description: loc.step5Desc,
                 tips: [
-                  'Video recording in public is legal',
-                  'Keep phone visible, not hidden',
-                  'Inform officer you are recording',
-                  'Do NOT record audio without consent',
-                ],
-              ),
+                    loc.step5Tip1,
+                    loc.step5Tip2,
+                    loc.step5Tip3,
+                    loc.step5Tip4,
+            ],
+          ),
+
 
               const SizedBox(height: 16),
 
@@ -155,14 +153,14 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                 stepNumber: 6,
                 icon: Icons.camera_alt_outlined,
                 iconColor: const Color(0xFF00401A),
-                title: 'Gather Evidence',
-                description: 'Collect any available evidence of misbehavior.',
-                tips: [
-                  'Take photos if safe',
-                  'Get witness contact info',
-                  'Note any CCTV cameras nearby',
-                ],
-              ),
+                title: loc.step6Title,
+            description: loc.step6Desc,
+            tips: [
+              loc.step6Tip1,
+              loc.step6Tip2,
+              loc.step6Tip3,
+            ],
+          ),
 
               const SizedBox(height: 32),
 
@@ -190,16 +188,16 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
-                        'Next: Where to File Complaint',
-                        style: TextStyle(
+                        loc.nextFileComplaint,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, size: 18),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.arrow_forward, size: 18),
                     ],
                   ),
                 ),
@@ -225,7 +223,7 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'If you feel physically threatened, prioritize your safety and leave the situation',
+                        loc.safetyWarning,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade800,
@@ -247,7 +245,7 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                         TrafficPoliceContacts.helpline1915,
                       ),
                       icon: const Icon(Icons.phone, size: 20),
-                      label: const Text('Call 1915'),
+                      label:  Text(loc.call1915),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF00401A),
                         side: const BorderSide(color: Color(0xFF00401A)),
@@ -268,7 +266,7 @@ class PoliceImmediateStepsScreen extends StatelessWidget {
                         );
                       },
                       icon: const Icon(Icons.description_outlined, size: 20),
-                      label: const Text('File complaint'),
+                      label: Text(loc.fileComplaint),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00401A),
                         foregroundColor: Colors.white,

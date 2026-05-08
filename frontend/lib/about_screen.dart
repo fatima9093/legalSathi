@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -14,9 +15,9 @@ class AboutScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'About',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.settings,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -54,9 +55,9 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 8),
 
             // English Subtitle
-            const Text(
-              'AI Legal Assistant',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
+            Text(
+              AppLocalizations.of(context)!.aiLegalAssistant,
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
             ),
 
             // Urdu Text
@@ -91,12 +92,12 @@ class AboutScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'About Legal Sathi',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.aboutLegalSathi,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'generated_complaint_screen.dart';
 import '../screen_with_nav.dart';
 import '../utils/validators.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/models/overtime_context.dart';
 import 'package:front_end/models/wage_check_context.dart';
 import 'package:front_end/services/labour_wage_record_service.dart';
@@ -10,14 +11,8 @@ class FileGeneralComplaintScreen extends StatefulWidget {
   final String? employerName;
   final String? complaintIssue;
   final DateTime? incidentDate;
-
-  /// When opened from minimum wage results, saved with the complaint to Supabase.
   final WageCheckContext? wageCheckContext;
-
-  /// When opened from overtime calculator; same complaint flow + DB row type `overtime_complaint`.
   final OvertimeContext? overtimeContext;
-
-  /// When opened after [FileDeniedLeaveComplaintScreen] (tags DB row `denied_leave_complaint`).
   final bool fromDeniedLeaveFlow;
 
   const FileGeneralComplaintScreen({
@@ -57,7 +52,6 @@ class _FileGeneralComplaintScreenState
   @override
   void initState() {
     super.initState();
-    // Pre-fill data if coming from denied leave screen
     if (widget.employerName != null) {
       _employerNameController.text = widget.employerName!;
     }
@@ -83,27 +77,26 @@ class _FileGeneralComplaintScreenState
   }
 
   void _showLabourRecordSaveFeedback(Map<String, dynamic> res) {
+    final l10n = AppLocalizations.of(context)!;
     if (res['success'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Complaint details saved to your account.'),
-          backgroundColor: Color(0xFF00401A),
+        SnackBar(
+          content: Text(l10n.complaintSavedMessage),
+          backgroundColor: const Color(0xFF00401A),
         ),
       );
     } else if (res['needAuth'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Sign in to save this complaint to your account.'),
-          backgroundColor: Color(0xFFD97706),
+        SnackBar(
+          content: Text(l10n.signInToSaveComplaint),
+          backgroundColor: const Color(0xFFD97706),
         ),
       );
     } else if (res['missingTable'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Run supabase_labour_wage_records_complete.sql in Supabase SQL Editor (Dashboard).',
-          ),
-          backgroundColor: Color(0xFFD97706),
+        SnackBar(
+          content: Text(l10n.runSupabaseSqlMessage),
+          backgroundColor: const Color(0xFFD97706),
         ),
       );
     }
@@ -132,17 +125,20 @@ class _FileGeneralComplaintScreenState
   }
 
   Future<void> _generateComplaint() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_isFormComplete) {
-      Validators.showError(context, 'Please fill all required fields.');
+      Validators.showError(context, l10n.fillAllFieldsError);
       return;
     }
     if (!Validators.isValidPhone(_contactController.text)) {
-      Validators.showError(context, 'Enter a valid contact number.');
+      Validators.showError(context, l10n.validContactError);
       return;
     }
 
     final wageCtx = widget.wageCheckContext;
     final otCtx = widget.overtimeContext;
+
     if (wageCtx != null) {
       final res = await _labourWageService.saveWageComplaint(
         ctx: wageCtx,
@@ -192,6 +188,8 @@ class _FileGeneralComplaintScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -201,9 +199,9 @@ class _FileGeneralComplaintScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Draft Complaint Application',
-          style: TextStyle(
+        title: Text(
+          l10n.draftComplaintTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -219,9 +217,9 @@ class _FileGeneralComplaintScreenState
             const SizedBox(height: 8),
 
             // Employer Name
-            const Text(
-              'Employer Name',
-              style: TextStyle(
+            Text(
+              l10n.employerNameLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -231,7 +229,7 @@ class _FileGeneralComplaintScreenState
             TextField(
               controller: _employerNameController,
               decoration: InputDecoration(
-                hintText: 'Enter employer name',
+                hintText: l10n.employerNameHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -257,9 +255,10 @@ class _FileGeneralComplaintScreenState
             const SizedBox(height: 20),
 
             // Complaint Issue
-            const Text(
-              'Complaint Issue',
-              style: TextStyle(
+            Text(
+              // ✅ Use the plain section label key, NOT complaintIssueLabel(...)
+              l10n.complaintIssueSectionLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -270,7 +269,7 @@ class _FileGeneralComplaintScreenState
               controller: _complaintIssueController,
               maxLines: 5,
               decoration: InputDecoration(
-                hintText: 'Describe the complaint issue',
+                hintText: l10n.complaintIssueHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -293,9 +292,9 @@ class _FileGeneralComplaintScreenState
             const SizedBox(height: 20),
 
             // Your Name
-            const Text(
-              'Your Name',
-              style: TextStyle(
+            Text(
+              l10n.yourNameLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -305,7 +304,7 @@ class _FileGeneralComplaintScreenState
             TextField(
               controller: _yourNameController,
               decoration: InputDecoration(
-                hintText: 'Enter your full name',
+                hintText: l10n.yourNameHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -331,9 +330,9 @@ class _FileGeneralComplaintScreenState
             const SizedBox(height: 20),
 
             // Contact Information
-            const Text(
-              'Contact Information',
-              style: TextStyle(
+            Text(
+              l10n.contactInfoLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -344,7 +343,7 @@ class _FileGeneralComplaintScreenState
               controller: _contactController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-                hintText: 'Phone number or email',
+                hintText: l10n.contactInfoHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -370,9 +369,9 @@ class _FileGeneralComplaintScreenState
             const SizedBox(height: 20),
 
             // Incident Date
-            const Text(
-              'Incident Date',
-              style: TextStyle(
+            Text(
+              l10n.incidentDateLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -396,7 +395,7 @@ class _FileGeneralComplaintScreenState
                   children: [
                     Text(
                       _selectedDate == null
-                          ? 'Select date'
+                          ? l10n.selectDateHint
                           : '${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.year}',
                       style: TextStyle(
                         fontSize: 14,
@@ -431,9 +430,9 @@ class _FileGeneralComplaintScreenState
                   ),
                 ),
                 onPressed: _isFormComplete ? _generateComplaint : null,
-                child: const Text(
-                  'Generate Complaint Application',
-                  style: TextStyle(
+                child: Text(
+                  l10n.generateComplaintButton,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,

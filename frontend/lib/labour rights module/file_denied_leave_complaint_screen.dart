@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'file_general_complaint_screen.dart';
 import '../screen_with_nav.dart';
 import '../utils/validators.dart';
@@ -16,8 +17,9 @@ class _FileDeniedLeaveComplaintScreenState
   final TextEditingController _employerNameController = TextEditingController();
   final TextEditingController _reasonController = TextEditingController();
 
-  String _selectedLeaveType = 'Annual Leave';
+  late String _selectedLeaveType;
   DateTime? _selectedDate;
+  List<String> _leaveTypes = [];
 
   bool get _isFormComplete {
     return _employerNameController.text.trim().isNotEmpty &&
@@ -25,17 +27,23 @@ class _FileDeniedLeaveComplaintScreenState
         _reasonController.text.trim().isNotEmpty;
   }
 
-  final List<String> _leaveTypes = [
-    'Annual Leave',
-    'Sick Leave',
-    'Casual Leave',
-  ];
-
   @override
   void initState() {
     super.initState();
     _employerNameController.addListener(() => setState(() {}));
     _reasonController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    _leaveTypes = [
+      l10n.annualLeave,
+      l10n.sickLeave,
+      l10n.casualLeave,
+    ];
+    _selectedLeaveType = _leaveTypes.first;
   }
 
   @override
@@ -68,12 +76,12 @@ class _FileDeniedLeaveComplaintScreenState
   }
 
   void _proceed() {
+    final l10n = AppLocalizations.of(context)!;
     if (!_isFormComplete) {
-      Validators.showError(context, 'Please fill all required fields.');
+      Validators.showError(context, l10n.fillAllFieldsError);
       return;
     }
 
-    // Navigate to general complaint screen with pre-filled data
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -90,6 +98,8 @@ class _FileDeniedLeaveComplaintScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -99,9 +109,9 @@ class _FileDeniedLeaveComplaintScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'File Complaint for Denied Leave',
-          style: TextStyle(
+        title: Text(
+          l10n.fileDeniedLeaveComplaintTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -115,9 +125,9 @@ class _FileDeniedLeaveComplaintScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Employer Name
-            const Text(
-              'Employer Name',
-              style: TextStyle(
+            Text(
+              l10n.employerNameLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -127,7 +137,7 @@ class _FileDeniedLeaveComplaintScreenState
             TextField(
               controller: _employerNameController,
               decoration: InputDecoration(
-                hintText: 'Enter employer name',
+                hintText: l10n.employerNameHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -153,9 +163,9 @@ class _FileDeniedLeaveComplaintScreenState
             const SizedBox(height: 20),
 
             // Leave Type
-            const Text(
-              'Leave Type',
-              style: TextStyle(
+            Text(
+              l10n.leaveTypeLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -207,9 +217,9 @@ class _FileDeniedLeaveComplaintScreenState
             const SizedBox(height: 20),
 
             // Date of Leave Request
-            const Text(
-              'Date of Leave Request',
-              style: TextStyle(
+            Text(
+              l10n.dateOfLeaveRequestLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -233,7 +243,7 @@ class _FileDeniedLeaveComplaintScreenState
                   children: [
                     Text(
                       _selectedDate == null
-                          ? 'mm/dd/yyyy'
+                          ? l10n.dateHint
                           : '${_selectedDate!.month.toString().padLeft(2, '0')}/${_selectedDate!.day.toString().padLeft(2, '0')}/${_selectedDate!.year}',
                       style: TextStyle(
                         fontSize: 14,
@@ -255,9 +265,9 @@ class _FileDeniedLeaveComplaintScreenState
             const SizedBox(height: 20),
 
             // Reason for Denial
-            const Text(
-              'Reason for Denial',
-              style: TextStyle(
+            Text(
+              l10n.reasonForDenialLabel,
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -268,7 +278,7 @@ class _FileDeniedLeaveComplaintScreenState
               controller: _reasonController,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText: 'Describe why your leave was denied',
+                hintText: l10n.reasonForDenialHint,
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
                 filled: true,
                 fillColor: Colors.white,
@@ -330,15 +340,11 @@ class _FileDeniedLeaveComplaintScreenState
                           color: Colors.grey.shade800,
                           height: 1.4,
                         ),
-                        children: const [
+                        children: [
+                          TextSpan(text: l10n.aiHelperNote),
                           TextSpan(
-                            text:
-                                'Our AI will help you draft a formal complaint based on your information. ',
-                          ),
-                          TextSpan(
-                            text:
-                                'Make sure all details are accurate before proceeding.',
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                            text: l10n.aiHelperNoteBold,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
@@ -364,9 +370,9 @@ class _FileDeniedLeaveComplaintScreenState
                   ),
                 ),
                 onPressed: _isFormComplete ? _proceed : null,
-                child: const Text(
-                  'Proceed',
-                  style: TextStyle(
+                child: Text(
+                  l10n.proceedButton,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,

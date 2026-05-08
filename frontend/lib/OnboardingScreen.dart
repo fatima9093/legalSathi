@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../LanguageSelectionScreen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -13,38 +14,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
   // Define all onboarding data
-  final List<OnboardingData> _pages = [
+  List<OnboardingData> _pages = []; // ← removed "late final", empty list initially
+
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  // Safe to use context here
+  _pages = [
     OnboardingData(
       icon: Icons.balance,
       isIconData: true,
-      title: 'Know Your Rights',
-      urduTitle: 'اپنے حقوق جانیں',
-      description:
-          'Access comprehensive legal information about Pakistani laws covering criminal, civil, labour, and cyber domains.',
+      title: AppLocalizations.of(context)!.knowYourRights,
+      description: AppLocalizations.of(context)!.knowYourRightsDesc,
     ),
     OnboardingData(
       imagePath: 'assets/legal_image.png',
       isIconData: false,
-      title: 'AI Legal Assistant',
-      urduTitle: 'اے آئی قانونی معاون',
-      description:
-          'Get instant answers to your legal questions in English, Roman Urdu, or Urdu from our intelligent assistant.',
+      title: AppLocalizations.of(context)!.aiLegalAssistantTitle,
+      description: AppLocalizations.of(context)!.aiLegalAssistantDesc,
     ),
     OnboardingData(
       imagePath: 'assets/draft_image.png',
       isIconData: false,
-      title: 'Draft Documents',
-      urduTitle: 'دستاویزات تیار کریں',
-      description:
-          'Generate FIRs, complaints, and legal documents with guided step-by-step assistance.',
+      title: AppLocalizations.of(context)!.draftDocumentsTitle,
+      description: AppLocalizations.of(context)!.draftDocumentsDesc,
     ),
   ];
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
+}
 
   void _navigateToLanguageSelection() {
     Navigator.push(
@@ -69,9 +65,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: _navigateToLanguageSelection,
-                  child: const Text(
-                    'Skip',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.skip,
+                    style: const TextStyle(
                       color: Color(0xFF666666),
                       fontSize: 14,
                     ),
@@ -123,7 +119,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor:  Color(0xFF00401A),
+                  backgroundColor: const Color(0xFF00401A),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -131,7 +127,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   minimumSize: const Size(double.infinity, 0),
                 ),
                 child: Text(
-                  _currentPage < _pages.length - 1 ? 'Next' : 'Get Started',
+                  _currentPage < _pages.length - 1 ? AppLocalizations.of(context)!.next : AppLocalizations.of(context)!.getStarted,
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white,
@@ -167,7 +163,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: data.isIconData
                   ? Icon(
                       data.icon,
-                      color:  Color(0xFF00401A),
+                      color: const Color(0xFF00401A),
                       size: 48,
                     )
                   : Center(
@@ -180,7 +176,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           // Fallback if image not found
                           return const Icon(
                             Icons.image,
-                            color:  Color(0xFF00401A),
+                            color: const Color(0xFF00401A),
                             size: 48,
                           );
                         },
@@ -198,18 +194,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Urdu text
-          Text(
-            data.urduTitle,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              color:  Color(0xFF00401A),
             ),
           ),
 
@@ -238,7 +222,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       height: 8,
       width: isActive ? 20 : 8,
       decoration: BoxDecoration(
-        color: isActive ?  Color(0xFF00401A) : Colors.grey.shade300,
+        color: isActive ? const Color(0xFF00401A) : Colors.grey.shade300,
         borderRadius: BorderRadius.circular(4),
       ),
     );
@@ -251,7 +235,6 @@ class OnboardingData {
   final String? imagePath;
   final bool isIconData;
   final String title;
-  final String urduTitle;
   final String description;
 
   OnboardingData({
@@ -259,7 +242,6 @@ class OnboardingData {
     this.imagePath,
     required this.isIconData,
     required this.title,
-    required this.urduTitle,
     required this.description,
   });
 }

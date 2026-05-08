@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'package:front_end/Women%20harrasment%20Module/IncidentDetails_screen.dart';
 import 'package:front_end/models/complaint_model.dart';
@@ -50,6 +51,7 @@ class _OmbudspersonComplaintFormScreenState
   }
 
   Future<void> _loadComplaint() async {
+    final loc = AppLocalizations.of(context)!;
     setState(() => _isLoading = true);
     final result = await _complaintService.getComplaint(_currentComplaintId!);
     setState(() => _isLoading = false);
@@ -67,14 +69,15 @@ class _OmbudspersonComplaintFormScreenState
   }
 
   Future<void> _saveAndContinue() async {
+     final loc = AppLocalizations.of(context)!;
     // Validate fields
     if (!Validators.isNonEmpty(_fullNameController.text)) {
-      Validators.showError(context, 'Please enter your full name.');
+      Validators.showError(context, loc.enterFullName);
       return;
     }
 
     if (!Validators.isNonEmpty(_cnicController.text)) {
-      Validators.showError(context, 'Please enter your CNIC.');
+      Validators.showError(context, loc.invalidCnic);
       return;
     }
 
@@ -84,27 +87,27 @@ class _OmbudspersonComplaintFormScreenState
     }
 
     if (!Validators.isValidPhone(_phoneController.text)) {
-      Validators.showError(context, 'Enter a valid phone number.');
+      Validators.showError(context, loc.invalidPhone);
       return;
     }
 
     if (!Validators.isValidEmail(_emailController.text)) {
-      Validators.showError(context, 'Enter a valid email address.');
+      Validators.showError(context, loc.invalidEmail);
       return;
     }
 
     if (!Validators.isNonEmpty(_workplaceController.text)) {
-      Validators.showError(context, 'Please enter your workplace.');
+      Validators.showError(context, loc.enterWorkplace);
       return;
     }
 
     if (!Validators.isNonEmpty(_designationController.text)) {
-      Validators.showError(context, 'Please enter your designation.');
+      Validators.showError(context, loc.enterDesignation);
       return;
     }
 
     if (!Validators.isNonEmpty(_cityController.text)) {
-      Validators.showError(context, 'Please enter your city.');
+      Validators.showError(context,  loc.enterCity);
       return;
     }
 
@@ -131,8 +134,8 @@ class _OmbudspersonComplaintFormScreenState
       _currentComplaintId = result['complaintId'];
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Information saved successfully'),
+        SnackBar(
+          content: Text(loc.infoSaved),
           backgroundColor: Colors.green,
         ),
       );
@@ -156,6 +159,7 @@ class _OmbudspersonComplaintFormScreenState
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -177,10 +181,10 @@ class _OmbudspersonComplaintFormScreenState
                         icon: const Icon(Icons.arrow_back, color: Colors.black),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Ombudsperson Complaint',
-                          style: TextStyle(
+                          loc.ombudspersonComplaint,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -199,30 +203,30 @@ class _OmbudspersonComplaintFormScreenState
                     children: [
                       _buildStep(
                         number: '1',
-                        label: 'Info',
+                        label: loc.info,
                         isActive: true,
                         isCompleted: true,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '2',
-                        label: 'Incident',
+                        label:loc.incident,
                         isActive: false,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '3',
-                        label: 'Evidence',
+                        label: loc.evidence,
                         isActive: false,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '4',
-                        label: 'Preview',
+                        label: loc.preview,
                         isActive: false,
                       ),
                       _buildStepLine(),
-                      _buildStep(number: '5', label: 'Submit', isActive: false),
+                      _buildStep(number: '5', label: loc.submit, isActive: false),
                     ],
                   ),
                 ),
@@ -244,9 +248,9 @@ class _OmbudspersonComplaintFormScreenState
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Section title
-                    const Text(
-                      'Applicant Information',
-                      style: TextStyle(
+                    Text(
+                      loc.applicantInfo,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -257,7 +261,7 @@ class _OmbudspersonComplaintFormScreenState
 
                     // Section subtitle
                     Text(
-                      'Enter your personal details',
+                      loc.enterDetails,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade600,
@@ -267,7 +271,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 24),
 
                     // Full Name
-                    _buildLabel('Full Name'),
+                    _buildLabel(loc.fullName),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _fullNameController,
@@ -277,7 +281,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 20),
 
                     // CNIC Number
-                    _buildLabel('CNIC Number'),
+                    _buildLabel(loc.cnic),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _cnicController,
@@ -288,7 +292,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 20),
 
                     // Phone Number
-                    _buildLabel('Phone Number'),
+                    _buildLabel('loc.phone'),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _phoneController,
@@ -299,7 +303,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 20),
 
                     // Email Address
-                    _buildLabel('Email Address'),
+                    _buildLabel(loc.email),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _emailController,
@@ -310,7 +314,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 20),
 
                     // Workplace Name
-                    _buildLabel('Workplace Name'),
+                    _buildLabel(loc.workplace),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _workplaceController,
@@ -320,7 +324,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 20),
 
                     // Your Designation
-                    _buildLabel('Your Designation'),
+                    _buildLabel(loc.designation),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _designationController,
@@ -330,7 +334,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 20),
 
                     // City
-                    _buildLabel('City'),
+                    _buildLabel(loc.city),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _cityController,
@@ -366,8 +370,8 @@ class _OmbudspersonComplaintFormScreenState
                         strokeWidth: 2,
                       ),
                     )
-                  : const Text(
-                      'Continue to Incident Details',
+                  :  Text(
+                      loc.continueToIncident,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

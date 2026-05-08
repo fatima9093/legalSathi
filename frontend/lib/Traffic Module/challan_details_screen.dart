@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'challan_explanation_screen.dart';
 import 'challan_data_model.dart';
@@ -10,6 +11,7 @@ class ChallanDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -19,8 +21,8 @@ class ChallanDetailsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Challan Details',
+        title: Text(
+              AppLocalizations.of(context)!.challanDetails,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -38,11 +40,11 @@ class ChallanDetailsScreen extends StatelessWidget {
               color: const Color(0xFFE6F7F0),
               padding: const EdgeInsets.all(16),
               child: Row(
-                children: const [
-                  Icon(Icons.check_circle, color: Color(0xFF00401A), size: 20),
-                  SizedBox(width: 12),
+                children: [
+                  const Icon(Icons.check_circle, color: Color(0xFF00401A), size: 20),
+                  const SizedBox(width: 12),
                   Text(
-                    'Challan Extracted Successfully',
+                      AppLocalizations.of(context)!.challanExtractedSuccessfully,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -76,8 +78,7 @@ class ChallanDetailsScreen extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Some fields could not be read automatically. '
-                          'Please compare with your original challan.',
+                        AppLocalizations.of(context)!.challanFallbackWarning,
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey.shade800,
@@ -98,8 +99,7 @@ class ChallanDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Extracted Information',
+                  Text(AppLocalizations.of(context)!.extractedInformation,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -107,8 +107,7 @@ class ChallanDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    'AI has read your challan details',
+                  Text(AppLocalizations.of(context)!.aiReadChallan,
                     style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                   ),
                 ],
@@ -137,39 +136,39 @@ class ChallanDetailsScreen extends StatelessWidget {
                     _buildDetailItem(
                       icon: Icons.receipt_outlined,
                       iconColor: const Color(0xFF00401A),
-                      label: 'Challan Number',
+                      label: AppLocalizations.of(context)!.challanNumber,
                       value: challanData.challanNumber,
                       isFirst: true,
                     ),
                     _buildDetailItem(
                       icon: Icons.directions_car_outlined,
                       iconColor: const Color(0xFF00401A),
-                      label: 'Vehicle Number',
+                      label: AppLocalizations.of(context)!.vehicleNumber,
                       value: challanData.vehicleNumber,
                     ),
                     _buildDetailItem(
                       icon: Icons.warning_amber_outlined,
                       iconColor: challanData.getViolationColor(),
-                      label: 'Violation Type',
+                      label: AppLocalizations.of(context)!.violationType,
                       value: challanData.violationType,
                       valueColor: challanData.getViolationColor(),
                     ),
                     _buildDetailItem(
                       icon: Icons.attach_money,
                       iconColor: const Color(0xFF00401A),
-                      label: 'Fine Amount',
+                     label: AppLocalizations.of(context)!.fineAmount,
                       value: challanData.fineAmount,
                     ),
                     _buildDetailItem(
                       icon: Icons.location_on_outlined,
                       iconColor: const Color(0xFF00401A),
-                      label: 'Issue Location',
+                      label: AppLocalizations.of(context)!.issueLocation,
                       value: challanData.issueLocation,
                     ),
                     _buildDetailItem(
                       icon: Icons.badge_outlined,
                       iconColor: const Color(0xFF00401A),
-                      label: 'Officer ID',
+                      label: AppLocalizations.of(context)!.officerId,
                       value: challanData.officerId,
                       isLast: true,
                     ),
@@ -182,23 +181,28 @@ class ChallanDetailsScreen extends StatelessWidget {
 
             // Issued on info
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'Issued on: ${DateFormat('dd MMM yyyy, h:mm a').format(challanData.issueDate)}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
-                ),
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            loc.issuedOn(
+              DateFormat('dd MMM yyyy, h:mm a')
+                  .format(challanData.issueDate),
             ),
-
-            const SizedBox(height: 24),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 24),
 
             // Action button
             Padding(
@@ -224,25 +228,25 @@ class ChallanDetailsScreen extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text(
-                      'View Explanation & Next Steps',
-                      style: TextStyle(
+                  children: [
+                    Text(AppLocalizations.of(context)!.viewExplanation,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Icon(Icons.arrow_forward, size: 20),
+                    const SizedBox(width: 8),
+                    const Icon(Icons.arrow_forward, size: 20),
                   ],
                 ),
               ),
             ),
 
             const SizedBox(height: 24),
-          ],
-        ),
-      ),
+          
+        
+      ]),
+    )
     );
   }
 

@@ -78,7 +78,7 @@ class ProfileScreen extends StatelessWidget {
                       Text(
                         user?.displayName ??
                             (user?.email?.split('@').first) ??
-                            'Guest',
+                            AppLocalizations.of(context)!.guest,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

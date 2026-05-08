@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'rights_and_escalation_screen.dart';
 import 'workplace_committee_check_screen.dart';
 
@@ -7,6 +8,8 @@ class WorkplaceCommitteeProcedureScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -16,9 +19,9 @@ class WorkplaceCommitteeProcedureScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Workplace Committee Procedure',
-          style: TextStyle(
+        title: Text(
+          loc.workplaceCommitteeProcedure,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -38,58 +41,57 @@ class WorkplaceCommitteeProcedureScreen extends StatelessWidget {
                   color: const Color(0xFFD9EBD9),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'Every organization with 3+ employees must have an inquiry committee',
-                  style: TextStyle(fontSize: 14, color: Color(0xFF1B5E20)),
+                child: Text(
+                  loc.organizationInquiryCommittee,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF1B5E20),
+                  ),
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // Committee Composition Section
               _buildSectionCard(
-                title: 'Committee Composition',
+                title: loc.workplaceCommitteeComposition,
                 items: [
-                  '3 members minimum',
-                  'At least 1 woman member',
-                  'Senior management representative',
+                  loc.committeeMembersMinimum,
+                  loc.atLeastOneWomanMember,
+                  loc.seniorManagementRepresentative,
                 ],
               ),
 
               const SizedBox(height: 16),
 
-              // Filing Process Section
               _buildSectionCard(
-                title: 'Filing Process',
+                title: loc.filingProcess,
                 items: [
-                  'Submit written complaint to committee',
-                  'Within 3 days of incident',
-                  'Include all evidence and witnesses',
+                  loc.submitWrittenComplaint,
+                  loc.withinThreeDaysOfIncident,
+                  loc.includeAllEvidenceAndWitnesses,
                 ],
               ),
 
               const SizedBox(height: 16),
 
-              // Inquiry Timeline Section
               _buildSectionCard(
-                title: 'Inquiry Timeline',
+                title: loc.inquiryTimeline,
                 items: [
-                  'Committee must complete inquiry in 30 days',
-                  'Both parties given fair hearing',
-                  'Confidentiality maintained',
+                  loc.committeeCompleteInquiry30Days,
+                  loc.bothPartiesFairHearing,
+                  loc.confidentialityMaintained,
                 ],
               ),
 
               const SizedBox(height: 16),
 
-              // Possible Outcomes Section
               _buildSectionCard(
-                title: 'Possible Outcomes',
+                title: loc.possibleOutcomes,
                 items: [
-                  'Warning to accused',
-                  'Transfer or suspension',
-                  'Termination for serious cases',
-                  'Compensation to complainant',
+                  loc.warningToAccused,
+                  loc.transferOrSuspension,
+                  loc.terminationForSeriousCases,
+                  loc.compensationToComplainant,
                 ],
               ),
 
@@ -113,19 +115,20 @@ class WorkplaceCommitteeProcedureScreen extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: RichText(
-                        text: const TextSpan(
-                          style: TextStyle(
+                        text: TextSpan(
+                          style: const TextStyle(
                             fontSize: 14,
                             color: Color(0xFF5D4037),
                           ),
                           children: [
                             TextSpan(
-                              text:
-                                  'If committee doesn\'t exist or fails to act, file directly with ',
+                              text: loc.ifCommitteeDoesNotExist,
                             ),
                             TextSpan(
-                              text: 'Ombudsperson',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              text: loc.ombudsperson,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -159,12 +162,12 @@ class WorkplaceCommitteeProcedureScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.description, color: Colors.white, size: 20),
-                      SizedBox(width: 8),
+                    children: [
+                      const Icon(Icons.description, color: Colors.white),
+                      const SizedBox(width: 8),
                       Text(
-                        'Start Internal Complaint',
-                        style: TextStyle(
+                        loc.startInternalComplaint,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -177,7 +180,7 @@ class WorkplaceCommitteeProcedureScreen extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-              // View Rights & Escalation Button
+              // View Rights Button
               SizedBox(
                 height: 50,
                 child: OutlinedButton(
@@ -185,19 +188,23 @@ class WorkplaceCommitteeProcedureScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const RightsAndEscalationScreen(),
+                        builder: (context) =>
+                            const RightsAndEscalationScreen(),
                       ),
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF00401A), width: 2),
+                    side: const BorderSide(
+                      color: Color(0xFF00401A),
+                      width: 2,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'View Rights & Escalation',
-                    style: TextStyle(
+                  child: Text(
+                    loc.viewRightsAndEscalation,
+                    style: const TextStyle(
                       color: Color(0xFF00401A),
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

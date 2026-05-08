@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 
 class FineCalculatorScreen extends StatefulWidget {
@@ -20,6 +21,8 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -29,9 +32,9 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Fine Calculator',
-          style: TextStyle(
+        title: Text(
+          loc.fineCalculator,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -40,7 +43,6 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
       ),
       body: Column(
         children: [
-          // Header card
           Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
@@ -64,22 +66,23 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Calculate Total Fine',
-                        style: TextStyle(
+                        loc.calculateTotalFine,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
-                        'Select all violations',
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
+                        loc.selectViolations,
+                        style: const TextStyle(
+                            fontSize: 13, color: Colors.black54),
                       ),
                     ],
                   ),
@@ -88,24 +91,23 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
             ),
           ),
 
-          // Scrollable violations list
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    _buildViolationCard('Over Speeding', 1500),
+                    _buildViolationCard(loc.overSpeeding, 1500),
                     const SizedBox(height: 12),
-                    _buildViolationCard('Red Light', 1000),
+                    _buildViolationCard(loc.redLight, 1000),
                     const SizedBox(height: 12),
-                    _buildViolationCard('No Helmet', 500),
+                    _buildViolationCard(loc.noHelmet, 500),
                     const SizedBox(height: 12),
-                    _buildViolationCard('No Seat Belt', 500),
+                    _buildViolationCard(loc.noSeatBelt, 500),
                     const SizedBox(height: 12),
-                    _buildViolationCard('Mobile Use', 1000),
+                    _buildViolationCard(loc.mobileUse, 1000),
                     const SizedBox(height: 12),
-                    _buildViolationCard('No License', 5000),
+                    _buildViolationCard(loc.noLicense, 5000),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -133,16 +135,11 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF00401A) : Colors.grey.shade300,
+            color: isSelected
+                ? const Color(0xFF00401A)
+                : Colors.grey.shade300,
             width: isSelected ? 2 : 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [
@@ -150,23 +147,22 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    violation,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected ? Colors.black87 : Colors.black87,
-                    ),
-                  ),
+                  Text(violation,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      )),
                   const SizedBox(height: 4),
                   Text(
-                    'Rs. ${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                    'Rs. $amount',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade700,
+                    ),
                   ),
                 ],
               ),
             ),
-            // Radio button
             Container(
               width: 24,
               height: 24,

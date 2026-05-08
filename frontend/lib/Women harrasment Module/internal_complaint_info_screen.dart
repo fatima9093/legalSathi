@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'incident_details_screen.dart';
 import '../utils/validators.dart';
 
@@ -35,6 +36,7 @@ class _InternalComplaintInfoScreenState
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -44,12 +46,11 @@ class _InternalComplaintInfoScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Internal Complaint',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+        title:Text(AppLocalizations.of(context)!.internalComplaint,
+            style:TextStyle(
+              color:Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -62,15 +63,15 @@ class _InternalComplaintInfoScreenState
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildStep(1, 'Info', true, false),
+                _buildStep(1, loc.info, true, false),
                 _buildStepLine(false),
-                _buildStep(2, 'Incident', false, false),
+                _buildStep(2, loc.incident, false, false),
                 _buildStepLine(false),
-                _buildStep(3, 'Evidence', false, false),
+                _buildStep(3, loc.evidence, false, false),
                 _buildStepLine(false),
-                _buildStep(4, 'Preview', false, false),
+                _buildStep(4, loc.preview, false, false),
                 _buildStepLine(false),
-                _buildStep(5, 'Submit', false, false),
+                _buildStep(5, loc.submit, false, false),
               ],
             ),
           ),
@@ -84,8 +85,8 @@ class _InternalComplaintInfoScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Your Information',
+                    Text(
+                     AppLocalizations.of(context)!.yourInformation,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -93,19 +94,20 @@ class _InternalComplaintInfoScreenState
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Enter your personal and workplace details',
+                     Text(
+                      AppLocalizations.of(context)!.enterDetails,
+
                       style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
                     ),
                     const SizedBox(height: 24),
 
                     // Full Name
-                    _buildLabel('Full Name'),
+                    _buildLabel(AppLocalizations.of(context)!.fullName),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _fullNameController,
                       decoration: InputDecoration(
-                        hintText: 'Enter your full name',
+                        hintText: AppLocalizations.of(context)!.enterFullName,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -136,12 +138,12 @@ class _InternalComplaintInfoScreenState
                     const SizedBox(height: 20),
 
                     // CNIC Number
-                    _buildLabel('CNIC Number'),
+                    _buildLabel(AppLocalizations.of(context)!.cnicNumber),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _cnicController,
                       decoration: InputDecoration(
-                        hintText: '00000-0000000-0',
+                        hintText: AppLocalizations.of(context)!.cnicHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -173,12 +175,11 @@ class _InternalComplaintInfoScreenState
                     const SizedBox(height: 20),
 
                     // Phone Number
-                    _buildLabel('Phone Number'),
-                    const SizedBox(height: 8),
+_buildLabel(AppLocalizations.of(context)!.phoneNumber),                    const SizedBox(height: 8),
                     TextFormField(
                       controller: _phoneController,
                       decoration: InputDecoration(
-                        hintText: '+92 300 0000000',
+                        hintText: AppLocalizations.of(context)!.phoneHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -210,12 +211,12 @@ class _InternalComplaintInfoScreenState
                     const SizedBox(height: 20),
 
                     // Email Address
-                    _buildLabel('Email Address'),
+                    _buildLabel(AppLocalizations.of(context)!.emailAddress),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                        hintText: 'your.email@example.com',
+                        hintText: AppLocalizations.of(context)!.emailHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -247,12 +248,12 @@ class _InternalComplaintInfoScreenState
                     const SizedBox(height: 20),
 
                     // Workplace Name
-                    _buildLabel('Workplace Name'),
+                    _buildLabel(AppLocalizations.of(context)!.workplaceName),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _workplaceNameController,
                       decoration: InputDecoration(
-                        hintText: 'Organization/Company name',
+                       hintText: AppLocalizations.of(context)!.orgHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -283,12 +284,12 @@ class _InternalComplaintInfoScreenState
                     const SizedBox(height: 20),
 
                     // Your Designation
-                    _buildLabel('Your Designation'),
+                    _buildLabel(AppLocalizations.of(context)!.designation),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _designationController,
                       decoration: InputDecoration(
-                        hintText: 'Job title/position',
+                       hintText: AppLocalizations.of(context)!.jobHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -319,12 +320,12 @@ class _InternalComplaintInfoScreenState
                     const SizedBox(height: 20),
 
                     // Department
-                    _buildLabel('Department'),
+                    _buildLabel(AppLocalizations.of(context)!.department),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _departmentController,
                       decoration: InputDecoration(
-                        hintText: 'Department name',
+                        hintText: AppLocalizations.of(context)!.deptHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -441,8 +442,8 @@ class _InternalComplaintInfoScreenState
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Continue to Incident Details',
+                        child:  Text(
+                            AppLocalizations.of(context)!.continueToIncident,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,

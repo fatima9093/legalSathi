@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/Women%20harrasment%20Module/ombudspersonComplaintForm_screen.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class SelectJurisdictionScreen extends StatefulWidget {
   const SelectJurisdictionScreen({super.key});
@@ -50,8 +51,7 @@ class _SelectJurisdictionScreenState extends State<SelectJurisdictionScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Select Jurisdiction',
+        title: Text(AppLocalizations.of(context)!.selectJurisdiction,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -79,8 +79,7 @@ class _SelectJurisdictionScreenState extends State<SelectJurisdictionScreen> {
             const SizedBox(height: 24),
 
             // Title
-            const Text(
-              'Which Province/Area?',
+            Text(AppLocalizations.of(context)!.whichProvince,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -91,8 +90,7 @@ class _SelectJurisdictionScreenState extends State<SelectJurisdictionScreen> {
             const SizedBox(height: 8),
 
             // Subtitle
-            Text(
-              'Select where your workplace is located',
+            Text(AppLocalizations.of(context)!.selectWorkplaceLocation,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -145,8 +143,7 @@ class _SelectJurisdictionScreenState extends State<SelectJurisdictionScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: Text(
-            'Next',
+          child: Text(AppLocalizations.of(context)!.next,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

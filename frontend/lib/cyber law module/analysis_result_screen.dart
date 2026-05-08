@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../labour rights module/file_general_complaint_screen.dart';
 import '../screen_with_nav.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class AnalysisResultScreen extends StatefulWidget {
   final String? filePath;
@@ -13,7 +14,6 @@ class AnalysisResultScreen extends StatefulWidget {
   final List<String>? relevantLaws;
   final String? summary;
 
-  /// Sample salary-slip style content when no OCR pipeline ran.
   final bool demoMode;
 
   const AnalysisResultScreen({
@@ -41,9 +41,10 @@ class _AnalysisResultScreenState extends State<AnalysisResultScreen> {
   @override
   void initState() {
     super.initState();
+
     if (widget.demoMode) {
-      _extractedText =
-          '''Employee Name: Muhammad Ali
+      _extractedText = '''
+Employee Name: Muhammad Ali
 CNIC: 00000-0000000-0
 Position: Software Engineer
 Department: IT
@@ -52,61 +53,39 @@ Allowances: 10,000 PKR
 Deductions: 5,000 PKR
 Net Salary: 55,000 PKR
 Payment Date: February 2026
+''';
 
-The salary slip confirms employment with monthly compensation. This document can be used as proof of employment and income for legal purposes.''';
-      _tags = const ['Salary Slip', 'Employment Proof'];
-      _relevantLaws = const [
-        'Labour Code / minimum wage rules — verify current provincial notification.',
-        'Payment of Wages — timely payment and authorised deductions.',
-        'Cross-check allowances and deductions with your appointment terms.',
+      _tags = ['Salary Slip', 'Employment Proof'];
+      _relevantLaws = [
+        'Labour Code compliance required',
+        'Payment of Wages rules apply',
+        'Verify deductions legally',
       ];
-      _classifiedDomain = 'Labour — sample salary slip (demo)';
-      _summary =
-          'Demo only: replace with a real screenshot upload for OCR and analysis.';
+      _classifiedDomain = 'Labour Document';
+      _summary = 'Demo analysis of salary slip document.';
     } else {
-      _extractedText = widget.extractedText?.trim().isNotEmpty == true
-          ? widget.extractedText!.trim()
-          : 'No text was extracted.';
-      _tags = widget.tags != null && widget.tags!.isNotEmpty
-          ? List<String>.from(widget.tags!)
-          : ['Document'];
-      _relevantLaws = widget.relevantLaws != null &&
-              widget.relevantLaws!.isNotEmpty
-          ? List<String>.from(widget.relevantLaws!)
-          : [
-              'Review the applicable Pakistani statute with a lawyer or official source.',
-            ];
-      _classifiedDomain = widget.classifiedDomain?.trim().isNotEmpty == true
-          ? widget.classifiedDomain!.trim()
-          : 'Unclassified document';
-      _summary = widget.summary?.trim() ?? '';
+      _extractedText = widget.extractedText ?? 'No text extracted.';
+      _tags = widget.tags ?? ['Document'];
+      _relevantLaws = widget.relevantLaws ??
+          ['Consult legal authority for verification'];
+      _classifiedDomain = widget.classifiedDomain ?? 'Unclassified';
+      _summary = widget.summary ?? '';
     }
   }
 
-  void _copyToClipboard() {
+  void _copyToClipboard(AppLocalizations l10n) {
     Clipboard.setData(ClipboardData(text: _extractedText));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Text copied to clipboard'),
-        duration: Duration(seconds: 2),
-        backgroundColor: Color(0xFF00401A),
-      ),
+      SnackBar(content: Text(l10n.textCopiedMessage)),
     );
   }
 
   void _generateComplaint() {
     final issue = StringBuffer()
-      ..writeln('Issue inferred from screenshot evidence')
-      ..writeln('Domain: $_classifiedDomain');
-    if (_tags.isNotEmpty) {
-      issue.writeln('Tags: ${_tags.join(', ')}');
-    }
-    issue
+      ..writeln('Domain: $_classifiedDomain')
+      ..writeln('Tags: ${_tags.join(', ')}')
+      ..writeln('Summary: $_summary')
       ..writeln('')
-      ..writeln('Summary:')
-      ..writeln(_summary.isNotEmpty ? _summary : 'User requests legal action based on extracted evidence.')
-      ..writeln('')
-      ..writeln('Extracted evidence text:')
       ..writeln(_extractedText);
 
     Navigator.push(
@@ -119,37 +98,31 @@ The salary slip confirms employment with monthly compensation. This document can
     );
   }
 
-  Future<void> _shareAnalysis() async {
-    final shareText = StringBuffer()
-      ..writeln('Legal Sathi - Evidence Analysis')
-      ..writeln('Domain: $_classifiedDomain')
-      ..writeln('Tags: ${_tags.join(', ')}')
-      ..writeln('');
-    if (_summary.isNotEmpty) {
-      shareText
-        ..writeln('Summary:')
-        ..writeln(_summary)
-        ..writeln('');
-    }
-    if (_relevantLaws.isNotEmpty) {
-      shareText.writeln('Relevant Laws:');
-      for (final law in _relevantLaws) {
-        shareText.writeln('- $law');
-      }
-      shareText.writeln('');
-    }
-    shareText
-      ..writeln('Extracted Text:')
+  Future<void> _shareAnalysis(AppLocalizations l10n) async {
+    final text = StringBuffer()
+      ..writeln(l10n.shareHeader)
+      ..writeln(l10n.domainLabel(_classifiedDomain))
+      ..writeln(l10n.tagsLabel(_tags.join(', ')))
+      ..writeln('')
+      ..writeln(l10n.summaryLabel)
+      ..writeln(_summary)
+      ..writeln('')
+      ..writeln(l10n.relevantLawsLabel)
+      ..writeln(_relevantLaws.join('\n- '))
+      ..writeln('')
+      ..writeln(l10n.extractedTextLabel)
       ..writeln(_extractedText);
 
     await Share.share(
-      shareText.toString(),
-      subject: 'Legal Sathi Evidence Analysis',
+      text.toString(),
+      subject: l10n.shareSubject,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -159,345 +132,87 @@ The salary slip confirms employment with monthly compensation. This document can
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Analysis Result',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: Text(l10n.analysisResultTitle),
       ),
       bottomNavigationBar: buildBottomNavBar(context, 2),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 8),
-
-            // Analysis Complete Badge
+            // Status
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade200),
               ),
               child: Row(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF00401A),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
+                  const Icon(Icons.check_circle, color: Colors.green),
                   const SizedBox(width: 8),
-                  const Text(
-                    'Analysis Complete',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
+                  Text(l10n.analysisCompleteLabel),
                 ],
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            // Classified Domain Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00401A),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.work,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Classified Domain',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _classifiedDomain,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            if (_summary.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00401A).withOpacity(0.06),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF00401A).withOpacity(0.2)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Summary',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _summary,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        height: 1.45,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
 
             const SizedBox(height: 16),
+
+            // Domain
+            Text(l10n.classifiedDomainLabel),
+            Text(
+              _classifiedDomain,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Summary
+            if (_summary.isNotEmpty) ...[
+              Text(l10n.summaryLabel),
+              Text(_summary),
+              const SizedBox(height: 16),
+            ],
 
             // Tags
             Wrap(
               spacing: 8,
               children: _tags
-                  .map(
-                    (tag) => Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF00401A).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: const Color(0xFF00401A).withOpacity(0.3),
-                        ),
-                      ),
-                      child: Text(
-                        tag,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF00401A),
-                        ),
-                      ),
-                    ),
-                  )
+                  .map((tag) => Chip(label: Text(tag)))
                   .toList(),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
-            // Extracted Text Section
-            const Text(
-              'Extracted Text',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
+            // Extracted Text
+            Text(l10n.extractedTextLabel),
+            const SizedBox(height: 8),
             Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(width: 8),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.copy,
-                          size: 20,
-                          color: Color(0xFF00401A),
-                        ),
-                        onPressed: _copyToClipboard,
-                        tooltip: 'Copy text',
-                      ),
-                    ],
-                  ),
-                  SelectableText(
-                    _extractedText,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      height: 1.6,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
+              padding: const EdgeInsets.all(12),
+              color: Colors.white,
+              child: SelectableText(_extractedText),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
-            // Relevant Laws Section
-            const Text(
-              'Relevant Laws',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+            // Relevant Laws
+            Text(l10n.relevantLawsLabel),
+            ..._relevantLaws.map((law) => Text("• $law")),
+
+            const SizedBox(height: 20),
+
+            // Buttons
+            ElevatedButton(
+              onPressed: _generateComplaint,
+              child: Text(l10n.generateComplaintButton),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            Column(
-              children: _relevantLaws
-                  .map(
-                    (law) => Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade200),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF00401A).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.menu_book,
-                              color: Color(0xFF00401A),
-                              size: 20,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              law,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.black87,
-                                height: 1.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                  .toList(),
+            ElevatedButton(
+              onPressed: () => _shareAnalysis(l10n),
+              child: Text(l10n.shareAnalysisButton),
             ),
-
-            const SizedBox(height: 24),
-
-            // Generate Complaint Button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed: _generateComplaint,
-                icon: const Icon(Icons.description, color: Colors.white),
-                label: const Text(
-                  'Generate Complaint',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00401A),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Share Analysis Button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton.icon(
-                onPressed: _shareAnalysis,
-                icon: const Icon(Icons.share, color: Color(0xFF00401A)),
-                label: const Text(
-                  'Share Analysis',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF00401A),
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF00401A)),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
           ],
         ),
       ),

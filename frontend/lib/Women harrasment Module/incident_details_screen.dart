@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'upload_evidence_screen.dart';
 
 class IncidentDetailsScreen extends StatefulWidget {
@@ -64,9 +65,9 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Internal Complaint',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.internalComplaint,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -115,12 +116,12 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 24),
 
                     // Date of Incident
-                    _buildLabel('Date of Incident'),
+                    _buildLabel(AppLocalizations.of(context)!.dateOfIncident),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _dateController,
                       decoration: InputDecoration(
-                        hintText: 'DD/MM/YYYY',
+                        hintText: AppLocalizations.of(context)!.dateFormatHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -164,7 +165,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 24),
 
                     // Type of Harassment
-                    _buildLabel('Type of Harassment'),
+                    _buildLabel(AppLocalizations.of(context)!.typeOfHarassment),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 12,
@@ -217,13 +218,13 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 24),
 
                     // Detailed Description
-                    _buildLabel('Detailed Description'),
+                    _buildLabel(AppLocalizations.of(context)!.detailedDescription),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _descriptionController,
                       maxLines: 6,
                       decoration: InputDecoration(
-                        hintText: 'Describe the incident...',
+                        hintText: AppLocalizations.of(context)!.describeIncidentHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -252,12 +253,12 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 24),
 
                     // Accused Person's Name
-                    _buildLabel('Accused Person\'s Name'),
+                    _buildLabel(AppLocalizations.of(context)!.accusedPersonName),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _accusedNameController,
                       decoration: InputDecoration(
-                        hintText: 'Full name',
+                        hintText: AppLocalizations.of(context)!.fullNameHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,
@@ -288,12 +289,12 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 20),
 
                     // Accused Person's Designation
-                    _buildLabel('Accused Person\'s Designation'),
+                    _buildLabel(AppLocalizations.of(context)!.accusedPersonDesignation),
                     const SizedBox(height: 8),
                     TextFormField(
                       controller: _accusedDesignationController,
                       decoration: InputDecoration(
-                        hintText: 'Job title',
+                        hintText: AppLocalizations.of(context)!.jobTitleHint,
                         hintStyle: const TextStyle(
                           color: Color(0xFFBDBDBD),
                           fontSize: 14,

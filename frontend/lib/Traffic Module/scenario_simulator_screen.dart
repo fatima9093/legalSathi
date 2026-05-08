@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class ScenarioSimulatorScreen extends StatefulWidget {
   const ScenarioSimulatorScreen({super.key});
@@ -11,66 +12,62 @@ class ScenarioSimulatorScreen extends StatefulWidget {
 class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
   int currentStep = 0;
 
-  final List<SimulatorStep> steps = [
-    SimulatorStep(
-      title: 'Officer Stops You',
-      description: 'Traffic officer asks for bribe',
-      action: 'Refuse Politely',
-      icon: Icons.error_outline,
-      iconColor: const Color(0xFFDC2626),
-      iconBgColor: const Color(0xFFFFE6E6),
-    ),
-    SimulatorStep(
-      title: 'Collect Details',
-      description: 'Note badge number, time, location',
-      action: 'Record Information',
-      icon: Icons.warning_amber_outlined,
-      iconColor: const Color(0xFFD97706),
-      iconBgColor: const Color(0xFFFFF9E6),
-    ),
-    SimulatorStep(
-      title: 'Request Challan',
-      description: 'Ask for written official challan',
-      action: 'Get Documentation',
-      icon: Icons.check_circle_outline,
-      iconColor: const Color(0xFF0284C7),
-      iconBgColor: const Color(0xFFE0F2FE),
-    ),
-    SimulatorStep(
-      title: 'Report Incident',
-      description: 'Call 1915 helpline immediately',
-      action: 'File Complaint',
-      icon: Icons.check_circle,
-      iconColor: const Color(0xFF00401A),
-      iconBgColor: const Color(0xFFE6F7F0),
-    ),
-    SimulatorStep(
-      title: 'Follow Up',
-      description: 'Submit written complaint online',
-      action: 'Track Status',
-      icon: Icons.check_circle,
-      iconColor: const Color(0xFF00401A),
-      iconBgColor: const Color(0xFFE6F7F0),
-    ),
-  ];
-
-  void _nextStep() {
-    if (currentStep < steps.length - 1) {
-      setState(() {
-        currentStep++;
-      });
-    } else {
-      // Start over
-      setState(() {
-        currentStep = 0;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
+    final List<SimulatorStep> steps = [
+      SimulatorStep(
+        title: loc.simulatorStepStopTitle,
+        description: loc.simulatorStepStopDesc,
+        action: loc.simulatorStepStopAction,
+        icon: Icons.error_outline,
+        iconColor: const Color(0xFFDC2626),
+        iconBgColor: const Color(0xFFFFE6E6),
+      ),
+      SimulatorStep(
+        title: loc.simulatorStepDetailsTitle,
+        description: loc.simulatorStepDetailsDesc,
+        action: loc.simulatorStepDetailsAction,
+        icon: Icons.warning_amber_outlined,
+        iconColor: const Color(0xFFD97706),
+        iconBgColor: const Color(0xFFFFF9E6),
+      ),
+      SimulatorStep(
+        title: loc.simulatorStepChallanTitle,
+        description: loc.simulatorStepChallanDesc,
+        action: loc.simulatorStepChallanAction,
+        icon: Icons.check_circle_outline,
+        iconColor: const Color(0xFF0284C7),
+        iconBgColor: const Color(0xFFE0F2FE),
+      ),
+      SimulatorStep(
+        title: loc.simulatorStepReportTitle,
+        description: loc.simulatorStepReportDesc,
+        action: loc.simulatorStepReportAction,
+        icon: Icons.check_circle,
+        iconColor: const Color(0xFF00401A),
+        iconBgColor: const Color(0xFFE6F7F0),
+      ),
+      SimulatorStep(
+        title: loc.simulatorStepFollowUpTitle,
+        description: loc.simulatorStepFollowUpDesc,
+        action: loc.simulatorStepFollowUpAction,
+        icon: Icons.check_circle,
+        iconColor: const Color(0xFF00401A),
+        iconBgColor: const Color(0xFFE6F7F0),
+      ),
+    ];
+
     final step = steps[currentStep];
     final isLastStep = currentStep == steps.length - 1;
+
+    void nextStep() {
+      setState(() {
+        currentStep =
+            isLastStep ? 0 : currentStep + 1;
+      });
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -81,9 +78,9 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Scenario Simulator',
-          style: TextStyle(
+        title: Text(
+          loc.simulatorTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -96,10 +93,9 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
           children: [
             const SizedBox(height: 24),
 
-            // Title
-            const Text(
-              'Bribe Refusal Flow',
-              style: TextStyle(
+            Text(
+              loc.bribeFlowTitle,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFFD97706),
@@ -108,15 +104,13 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
 
             const SizedBox(height: 12),
 
-            // Step indicator
             Text(
-              'Step ${currentStep + 1} of ${steps.length}',
+              loc.stepIndicator(currentStep + 1, steps.length),
               style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
             ),
 
             const SizedBox(height: 16),
 
-            // Progress bar
             Row(
               children: List.generate(
                 steps.length,
@@ -139,24 +133,15 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
 
             const SizedBox(height: 32),
 
-            // Step card
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.06),
-                    blurRadius: 15,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: Column(
                 children: [
-                  // Icon
                   Container(
                     width: 56,
                     height: 56,
@@ -164,45 +149,40 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                       color: step.iconBgColor,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(step.icon, color: step.iconColor, size: 28),
+                    child: Icon(step.icon,
+                        color: step.iconColor, size: 28),
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Title
                   Text(
                     step.title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
                     ),
                   ),
 
                   const SizedBox(height: 8),
 
-                  // Description
                   Text(
                     step.description,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade600,
-                      height: 1.4,
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  // Action
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Action: ',
+                        "${loc.actionLabel}: ",
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight: FontWeight.w600,
                           color: Colors.grey.shade700,
                         ),
                       ),
@@ -214,12 +194,6 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                           color: Color(0xFF00401A),
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      const Icon(
-                        Icons.arrow_forward,
-                        size: 14,
-                        color: Color(0xFF00401A),
-                      ),
                     ],
                   ),
                 ],
@@ -228,26 +202,16 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
 
             const SizedBox(height: 32),
 
-            // Next button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _nextStep,
+                onPressed: nextStep,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF00401A),
-                  foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 54),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
                 ),
                 child: Text(
-                  isLastStep ? 'Start Over' : 'Next Step',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  isLastStep ? loc.startOver : loc.nextStep,
                 ),
               ),
             ),

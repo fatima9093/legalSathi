@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class InternalComplaintSubmissionScreen extends StatelessWidget {
   const InternalComplaintSubmissionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -14,9 +17,9 @@ class InternalComplaintSubmissionScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Submission Instructions',
-          style: TextStyle(
+        title: Text(
+          loc.submissionInstructions,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -33,8 +36,8 @@ class InternalComplaintSubmissionScreen extends StatelessWidget {
             Container(
               width: 60,
               height: 60,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8F5E9),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE8F5E9),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -47,9 +50,9 @@ class InternalComplaintSubmissionScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Ready to Submit
-            const Text(
-              'Ready to Submit!',
-              style: TextStyle(
+            Text(
+              loc.readyToSubmit,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -75,62 +78,63 @@ class InternalComplaintSubmissionScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'How to Submit Internally',
-                    style: TextStyle(
+                  Text(
+                    loc.howToSubmitInternally,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
+
                   const SizedBox(height: 16),
 
                   // Step 1
                   _buildStep(
-                    '1. Submit to Committee',
-                    'Hand-deliver or email complaint to Harassment Inquiry Committee chairperson',
+                    loc.internalComplaintProcedureStep1Title,
+                    loc.internalComplaintProcedureStep1Desc,
                   ),
+
                   const SizedBox(height: 16),
 
                   // Step 2
                   _buildStep(
-                    '2. Through HR Department',
-                    'Submit via HR with acknowledgment receipt',
+                    loc.internalComplaintProcedureStep2Title,
+                    loc.internalComplaintProcedureStep2Desc,
                   ),
+
                   const SizedBox(height: 16),
 
                   // Step 3
                   _buildStep(
-                    '3. Request Diary Number',
-                    'Get official receipt with date and reference number',
+                    loc.internalComplaintProcedureStep3Title,
+                    loc.internalComplaintProcedureStep3Desc,
                   ),
+
                   const SizedBox(height: 24),
 
-                  // Timeline Section
-                  const Text(
-                    'Timeline',
-                    style: TextStyle(
+                  // Timeline
+                  Text(
+                    loc.timeline,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
+
                   const SizedBox(height: 12),
 
-                  _buildBulletPoint(
-                    'Committee must start inquiry within 7 days',
-                  ),
-                  _buildBulletPoint('Inquiry completes within 30 days'),
-                  _buildBulletPoint(
-                    'Employer implements recommendations within 7 days',
-                  ),
+                  _buildBulletPoint(loc.timeline1),
+                  _buildBulletPoint(loc.timeline2),
+                  _buildBulletPoint(loc.timeline3),
                 ],
               ),
             ),
 
             const SizedBox(height: 24),
 
-            // Email to HR Button
+            // Email Button
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -143,9 +147,9 @@ class InternalComplaintSubmissionScreen extends StatelessWidget {
                   color: Colors.white,
                   size: 20,
                 ),
-                label: const Text(
-                  'Email to HR',
-                  style: TextStyle(
+                label: Text(
+                  loc.emailToHR,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -170,10 +174,13 @@ class InternalComplaintSubmissionScreen extends StatelessWidget {
                 color: const Color(0xFFE8F5E9),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'Keep copies of all documents and receipts',
+              child: Text(
+                loc.note,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: Color(0xFF1B5E20)),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Color(0xFF1B5E20),
+                ),
               ),
             ),
 

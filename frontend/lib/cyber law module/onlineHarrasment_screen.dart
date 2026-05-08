@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 
 class OnlineHarassmentPECA24Screen extends StatelessWidget {
@@ -6,6 +7,7 @@ class OnlineHarassmentPECA24Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -15,8 +17,8 @@ class OnlineHarassmentPECA24Screen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Online Harassment (PECA 24)',
+        title:  Text(
+           loc.onlineHarassmentTitle,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -53,22 +55,22 @@ class OnlineHarassmentPECA24Screen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'PECA Section 24',
-                            style: TextStyle(
+                             loc.pecaSection24,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
-                            'Cyber stalking & harassment',
-                            style: TextStyle(
+                             loc.cyberStalking,
+                            style: const TextStyle(
                               fontSize: 13,
                               color: Colors.black54,
                             ),
@@ -84,36 +86,37 @@ class OnlineHarassmentPECA24Screen extends StatelessWidget {
 
               // What is Online Harassment?
               _buildInfoCard(
-                title: 'What is Online Harassment?',
+                title: loc.whatIsHarassment,
                 description:
-                    'PECA Section 24: Sending threatening messages, stalking, or intimidating someone online.',
+                    loc.harassmentDesc,
               ),
 
               const SizedBox(height: 12),
 
               // Penalties
               _buildInfoCard(
-                title: 'Penalties',
+                title:  loc.penalties,
                 description:
-                    'Imprisonment up to 3 years and/or fine up to Rs. 1 million.',
+                    loc.penaltiesDesc,
               ),
 
               const SizedBox(height: 12),
 
               // What to Do
               _buildInfoCard(
-                title: 'What to Do',
+                title: loc.whatToDo,
                 description:
-                    'Save all evidence (screenshots with timestamps), block the harasser, report to FIA Cyber Crime Wing.',
+                    loc.whatToDoDesc,
+              
               ),
 
               const SizedBox(height: 12),
 
               // How to Report
               _buildInfoCard(
-                title: 'How to Report',
+              title: loc.howToReport(loc.platformLabel),
                 description:
-                    'Visit FIA Cyber Crime website, file online complaint, or visit nearest FIA office.',
+                    loc.howToReportDesc,
               ),
 
               const SizedBox(height: 16),
@@ -126,8 +129,8 @@ class OnlineHarassmentPECA24Screen extends StatelessWidget {
                   color: const Color(0xFFE8F3ED),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'FIA Cyber Crime Helpline: 1991 | Website: complaint.fia.gov.pk',
+                child:  Text(
+                   loc.fiaHelpline,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,

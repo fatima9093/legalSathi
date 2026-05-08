@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'complaint_preview_screen.dart';
 
 class UploadEvidenceScreen extends StatefulWidget {
@@ -56,9 +57,9 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Internal Complaint',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.internalComplaint,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -72,29 +73,29 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Upload Evidence',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.uploadEvidence,
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Add supporting documents',
-                style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
+              Text(
+                AppLocalizations.of(context)!.addSupportingDocuments,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF757575)),
               ),
               const SizedBox(height: 24),
 
               // Witness Names
-              _buildLabel('Witness Names'),
+              _buildLabel(AppLocalizations.of(context)!.witnessNames),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _witnessNamesController,
                 maxLines: 6,
                 decoration: InputDecoration(
-                  hintText: 'List witnesses...',
+                  hintText: AppLocalizations.of(context)!.listWitnessesHint,
                   hintStyle: const TextStyle(
                     color: Color(0xFFBDBDBD),
                     fontSize: 14,
@@ -156,9 +157,9 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'Continue to Preview',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.continueToPreview,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -183,9 +184,9 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                     ),
                     backgroundColor: Colors.white,
                   ),
-                  child: const Text(
-                    'Back',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.back,
+                    style: const TextStyle(
                       color: Colors.black87,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

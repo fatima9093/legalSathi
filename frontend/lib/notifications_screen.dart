@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});
@@ -14,8 +15,8 @@ class NotificationsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Notifications',
+        title: Text(
+          AppLocalizations.of(context)!.notifications,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -30,36 +31,36 @@ class NotificationsScreen extends StatelessWidget {
             icon: Icons.check_circle,
             iconColor: const Color(0xFF4CAF50),
             iconBackgroundColor: const Color(0xFFE8F5E9),
-            title: 'Document Ready',
-            description: 'Your FIR draft has been generated successfully.',
-            time: '2 min ago',
+            title: AppLocalizations.of(context)!.documentReady,
+            description: AppLocalizations.of(context)!.firDraftGeneratedSuccessfully,
+            time: AppLocalizations.of(context)!.minAgo,
           ),
           const SizedBox(height: 12),
           _buildNotificationCard(
             icon: Icons.description,
             iconColor: const Color(0xFF4CAF50),
             iconBackgroundColor: const Color(0xFFE8F5E9),
-            title: 'Evidence Processed',
-            description: 'Your uploaded evidence has been analyzed.',
-            time: '1 hour ago',
+            title: AppLocalizations.of(context)!.evidenceProcessed,
+            description: AppLocalizations.of(context)!.evidenceHasBeenAnalyzed,
+            time: AppLocalizations.of(context)!.hourAgo,
           ),
           const SizedBox(height: 12),
           _buildNotificationCard(
             icon: Icons.menu_book,
             iconColor: const Color(0xFFFFA726),
             iconBackgroundColor: const Color(0xFFFFF3E0),
-            title: 'New Law Update',
-            description: 'PECA 2016 amendments have been added.',
-            time: '2 hours ago',
+            title: AppLocalizations.of(context)!.newLawUpdate,
+            description: AppLocalizations.of(context)!.pecaAmendmentsAdded,
+            time: AppLocalizations.of(context)!.hoursAgo,
           ),
           const SizedBox(height: 12),
           _buildNotificationCard(
             icon: Icons.access_time,
             iconColor: const Color(0xFF4CAF50),
             iconBackgroundColor: const Color(0xFFE8F5E9),
-            title: 'Welcome to Legal Sathi',
-            description: 'Start by exploring our legal categories.',
-            time: '1 day ago',
+            title: AppLocalizations.of(context)!.welcomeToLegalSathi,
+            description: AppLocalizations.of(context)!.startByExploringLegalCategories,
+            time: AppLocalizations.of(context)!.dayAgo,
           ),
         ],
       ),

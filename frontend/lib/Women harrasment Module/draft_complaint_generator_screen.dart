@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'draft_complaint_form_data.dart';
 import 'generated_complaint_screen.dart';
 import '../utils/validators.dart';
@@ -77,8 +78,7 @@ class _DraftComplaintGeneratorScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Draft Complaint',
+        title: Text(AppLocalizations.of(context)!.draftComplaint,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -107,13 +107,10 @@ class _DraftComplaintGeneratorScreenState
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: [
-          _buildStepCircle(1, 'Personal', currentStep >= 0),
-          _buildStepLine(currentStep >= 1),
-          _buildStepCircle(2, 'Incident', currentStep >= 1),
-          _buildStepLine(currentStep >= 2),
-          _buildStepCircle(3, 'Impact', currentStep >= 2),
-          _buildStepLine(currentStep >= 3),
-          _buildStepCircle(4, 'Relief', currentStep >= 3),
+          _buildStepCircle(1, AppLocalizations.of(context)!.personal, currentStep >= 0),
+          _buildStepCircle(2, AppLocalizations.of(context)!.incident, currentStep >= 1),
+          _buildStepCircle(3, AppLocalizations.of(context)!.impact, currentStep >= 2),
+          _buildStepCircle(4, AppLocalizations.of(context)!.relief, currentStep >= 3),
         ],
       ),
     );
@@ -195,8 +192,7 @@ class _DraftComplaintGeneratorScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Personal Information',
+        Text(AppLocalizations.of(context)!.personalInformation,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -205,30 +201,30 @@ class _DraftComplaintGeneratorScreenState
         ),
         const SizedBox(height: 24),
         _buildTextField(
-          'Full Name',
-          'Enter your full name',
+           AppLocalizations.of(context)!.fullName,
+          AppLocalizations.of(context)!.enterFullName,
           fullNameController,
         ),
-        _buildTextField('CNIC Number', '00000-0000000-0', cnicController),
-        _buildTextField('Phone Number', '+92 300 0000000', phoneController),
+        _buildTextField(AppLocalizations.of(context)!.cnicNumber, '00000-0000000-0', cnicController),
+        _buildTextField(AppLocalizations.of(context)!.phoneNumber, '+92 300 0000000', phoneController),
         _buildTextField(
-          'Email Address',
+          AppLocalizations.of(context)!.emailAddress,
           'your.email@example.com',
           emailController,
         ),
         _buildTextField(
-          'Your Designation',
-          'Job title/position',
+          AppLocalizations.of(context)!.designation,
+          AppLocalizations.of(context)!.jobTitle,
           designationController,
         ),
         _buildTextField(
-          'Workplace Name',
-          'Organization/Company name',
+          AppLocalizations.of(context)!.workplaceName,
+           AppLocalizations.of(context)!.organizationName,
           workplaceController,
         ),
         _buildTextField(
-          'Workplace Address',
-          'Complete address...',
+          AppLocalizations.of(context)!.workplaceAddress,
+          AppLocalizations.of(context)!.enterAddress,
           addressController,
           maxLines: 3,
         ),
@@ -240,8 +236,7 @@ class _DraftComplaintGeneratorScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Incident Details',
+        Text(AppLocalizations.of(context)!.incidentDetails,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -250,25 +245,25 @@ class _DraftComplaintGeneratorScreenState
         ),
         const SizedBox(height: 24),
         _buildTextField(
-          'Date(s) of Incident',
-          'DD/MM/YYYY or date range',
+           AppLocalizations.of(context)!.incidentDate,
+           AppLocalizations.of(context)!.dateFormatHint,
           dateController,
         ),
         _buildTextField(
-          'Description of Harassment',
-          'Describe what happened in detail. Include: what was said/done, when, where, who was involved, and any witnesses present...',
+          AppLocalizations.of(context)!.harassmentDescription,
+          AppLocalizations.of(context)!.harassmentDescriptionHint,
           descriptionController,
           maxLines: 5,
         ),
         _buildTextField(
-          'Evidence Attached',
-          'List all evidence: screenshots, emails, messages, recordings, etc.',
+          AppLocalizations.of(context)!.evidenceAttached,
+          AppLocalizations.of(context)!.evidenceHint,
           evidenceController,
           maxLines: 3,
         ),
         _buildTextField(
-          'Witness Names (if any)',
-          'List names of witnesses, one per line...',
+          AppLocalizations.of(context)!.witnesses,
+          AppLocalizations.of(context)!.witnessHint,
           witnessController,
           maxLines: 3,
         ),
@@ -280,8 +275,7 @@ class _DraftComplaintGeneratorScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Impact on You',
+        Text(AppLocalizations.of(context)!.impactOnYou,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -290,20 +284,20 @@ class _DraftComplaintGeneratorScreenState
         ),
         const SizedBox(height: 24),
         _buildTextField(
-          'Mental Impact',
-          'Describe mental health effects: stress, anxiety, depression, sleep issues...',
+          AppLocalizations.of(context)!.mentalImpact,
+          AppLocalizations.of(context)!.mentalImpactHint,
           mentalImpactController,
           maxLines: 3,
         ),
         _buildTextField(
-          'Emotional Impact',
-          'Describe emotional effects: fear, humiliation, loss of confidence...',
+        AppLocalizations.of(context)!.emotionalImpact,
+        AppLocalizations.of(context)!.emotionalImpactHint,
           emotionalImpactController,
           maxLines: 3,
         ),
         _buildTextField(
-          'Safety Concerns',
-          'Describe any safety concerns or threats...',
+          AppLocalizations.of(context)!.safetyConcerns,
+          AppLocalizations.of(context)!.safetyConcernsHint,
           safetyConcernsController,
           maxLines: 3,
         ),
@@ -315,8 +309,7 @@ class _DraftComplaintGeneratorScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Relief Sought',
+        Text(AppLocalizations.of(context)!.reliefSought,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -324,8 +317,7 @@ class _DraftComplaintGeneratorScreenState
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          'Select all that apply',
+        Text(AppLocalizations.of(context)!.selectAllThatApply,
           style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
         ),
         const SizedBox(height: 24),
@@ -444,8 +436,7 @@ class _DraftComplaintGeneratorScreenState
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'Generate Complaint',
+              child: Text(AppLocalizations.of(context)!.generateComplaint,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             )
@@ -478,8 +469,7 @@ class _DraftComplaintGeneratorScreenState
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Back',
+              child: Text(AppLocalizations.of(context)!.back,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
@@ -494,47 +484,46 @@ class _DraftComplaintGeneratorScreenState
     if (currentStep == 0) {
       // Validate personal information
       if (!Validators.isNonEmpty(fullNameController.text)) {
-        Validators.showError(context, 'Please enter your full name.');
+        Validators.showError(context, AppLocalizations.of(context)!.enterFullNameError);
         return;
       }
       if (!Validators.isValidCnic(cnicController.text)) {
-        Validators.showError(context, 'Enter CNIC in 12345-1234567-1 format.');
+        Validators.showError(context, AppLocalizations.of(context)!.invalidCnic);
         return;
       }
       if (!Validators.isValidPhone(phoneController.text)) {
-        Validators.showError(context, 'Enter a valid phone number.');
+       Validators.showError(context, AppLocalizations.of(context)!.invalidPhone);
         return;
       }
       if (!Validators.isValidEmail(emailController.text)) {
-        Validators.showError(context, 'Enter a valid email address.');
+      Validators.showError(context, AppLocalizations.of(context)!.invalidEmail);
         return;
       }
       if (!Validators.isNonEmpty(designationController.text)) {
-        Validators.showError(context, 'Please enter your designation.');
+       Validators.showError(context, AppLocalizations.of(context)!.enterDesignation);
         return;
       }
       if (!Validators.isNonEmpty(workplaceController.text)) {
-        Validators.showError(context, 'Please enter your workplace.');
+        Validators.showError(context, AppLocalizations.of(context)!.enterWorkplace);
         return;
       }
     } else if (currentStep == 1) {
       // Validate incident details
       if (!Validators.isNonEmpty(dateController.text)) {
-        Validators.showError(context, 'Please select the incident date.');
-        return;
+       Validators.showError(context, AppLocalizations.of(context)!.selectIncidentDate);
       }
       if (!Validators.isNonEmpty(descriptionController.text)) {
-        Validators.showError(context, 'Please describe the incident.');
+        Validators.showError(context, AppLocalizations.of(context)!.describeIncident);
         return;
       }
     } else if (currentStep == 2) {
       // Validate impact information
       if (!Validators.isNonEmpty(mentalImpactController.text)) {
-        Validators.showError(context, 'Please describe the mental impact.');
+        Validators.showError(context, AppLocalizations.of(context)!.mentalImpactError);
         return;
       }
       if (!Validators.isNonEmpty(emotionalImpactController.text)) {
-        Validators.showError(context, 'Please describe the emotional impact.');
+        Validators.showError(context, AppLocalizations.of(context)!.emotionalImpactError);
         return;
       }
     }
@@ -610,10 +599,7 @@ class _DraftComplaintGeneratorScreenState
         .toList();
 
     if (selectedRelief.isEmpty) {
-      Validators.showError(
-        context,
-        'Please select at least one relief option.',
-      );
+      Validators.showError(context, AppLocalizations.of(context)!.selectReliefError);
       return;
     }
 

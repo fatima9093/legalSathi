@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'traffic_police_contacts.dart';
 
-/// Phone, WhatsApp, web, maps, and address sheet for traffic police complaint flows.
 class TrafficContactLauncher {
   TrafficContactLauncher._();
 
@@ -13,14 +13,15 @@ class TrafficContactLauncher {
     Uri uri, {
     String? errorMessage,
   }) async {
+    final loc = AppLocalizations.of(context)!;
+
     try {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
       if (!ok && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              errorMessage ?? 'Could not open this link on this device.',
-            ),
+            content: Text(errorMessage ?? loc.couldNotOpenLink),
             backgroundColor: Colors.red,
           ),
         );
@@ -29,7 +30,7 @@ class TrafficContactLauncher {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(loc.errorOpeningLink(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -38,21 +39,24 @@ class TrafficContactLauncher {
   }
 
   static Future<void> dial(BuildContext context, String numberDigits) async {
+    final loc = AppLocalizations.of(context)!;
+
     final cleaned = numberDigits.replaceAll(RegExp(r'[^\d+]'), '');
     final uri = Uri(scheme: 'tel', path: cleaned);
+
     await _launch(
       context,
       uri,
-      errorMessage: 'Cannot start a call on this device.',
+      errorMessage: loc.cannotStartCall,
     );
   }
 
   static Future<void> whatsAppComplaint(BuildContext context) async {
     final phone = TrafficPoliceContacts.whatsappComplaintE164;
     final text = Uri.encodeComponent(
-      'Assalam-o-Alaikum. I wish to file a complaint regarding traffic police conduct. '
-      '(Sent via Legal Sathi app — please advise next steps.)',
+      AppLocalizations.of(context)!.whatsappComplaintMessage,
     );
+
     await _launch(
       context,
       Uri.parse('https://wa.me/$phone?text=$text'),
@@ -68,6 +72,7 @@ class TrafficContactLauncher {
     String query,
   ) async {
     final q = Uri.encodeComponent(query);
+
     await _launch(
       context,
       Uri.parse('https://www.google.com/maps/search/?api=1&query=$q'),
@@ -75,27 +80,26 @@ class TrafficContactLauncher {
   }
 
   static void showWrittenComplaintAddressesSheet(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     final offices = <_OfficeAddress>[
       _OfficeAddress(
-        title: 'Lahore — Traffic HQ (indicative)',
-        address:
-            'Confirm the current SP Traffic / submission desk on Punjab Police website or your challan.',
+        title: loc.lahoreTrafficHQ,
+        address: loc.lahoreTrafficDesc,
         mapsQuery: 'Traffic Police Headquarters Lahore',
       ),
       _OfficeAddress(
-        title: 'Karachi — Traffic Police (indicative)',
-        address:
-            'Use the address or portal printed on your notice or sindhpolice.gov.pk.',
+        title: loc.karachiTrafficHQ,
+        address: loc.karachiTrafficDesc,
         mapsQuery: 'Traffic Police Headquarters Karachi',
       ),
       _OfficeAddress(
-        title: 'Islamabad — ICT Traffic',
-        address:
-            'Follow ICT Police citizen services or the office named on your document.',
+        title: loc.islamabadTrafficHQ,
+        address: loc.islamabadTrafficDesc,
         mapsQuery: 'ICT Traffic Police Office Islamabad',
       ),
       _OfficeAddress(
-        title: 'Online — Punjab complaint portal',
+        title: loc.onlinePunjabComplaint,
         address: TrafficPoliceContacts.punjabOnlineComplaint,
         isUrl: true,
       ),
@@ -108,6 +112,8 @@ class TrafficContactLauncher {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (ctx) {
+        final loc = AppLocalizations.of(ctx)!;
+
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -126,9 +132,9 @@ class TrafficContactLauncher {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Written complaint — addresses & links',
-                  style: TextStyle(
+                Text(
+                  loc.writtenComplaintTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
@@ -136,7 +142,7 @@ class TrafficContactLauncher {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Verify with your official challan or provincial police site.',
+                  loc.verifyWithOfficialSources,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
                 const SizedBox(height: 16),
@@ -147,6 +153,7 @@ class TrafficContactLauncher {
                     separatorBuilder: (_, __) => const Divider(height: 1),
                     itemBuilder: (context, i) {
                       final o = offices[i];
+
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(
@@ -171,27 +178,27 @@ class TrafficContactLauncher {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              tooltip: 'Copy',
                               icon: const Icon(Icons.copy, size: 22),
                               onPressed: () async {
                                 await Clipboard.setData(
                                   ClipboardData(text: o.address),
                                 );
+
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Copied to clipboard'),
-                                      backgroundColor: Color(0xFF00401A),
+                                    SnackBar(
+                                      content: Text(loc.copiedToClipboard),
+                                      backgroundColor: const Color(0xFF00401A),
                                     ),
                                   );
                                 }
                               },
                             ),
                             IconButton(
-                              tooltip: o.isUrl ? 'Open link' : 'Open in Maps',
                               icon: Icon(
-                                o.isUrl ? Icons.open_in_new : Icons.map_outlined,
-                                size: 22,
+                                o.isUrl
+                                    ? Icons.open_in_new
+                                    : Icons.map_outlined,
                               ),
                               onPressed: () {
                                 if (o.isUrl) {

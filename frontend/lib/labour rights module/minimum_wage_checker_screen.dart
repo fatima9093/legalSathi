@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'minimum_wage_data.dart';
 import 'minimum_wage_result_screen.dart';
@@ -23,7 +24,7 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text('Minimum Wage Checker'),
+        title: Text(AppLocalizations.of(context)!.minimumWageCheckerTitle),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -48,17 +49,17 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
-                'Check Your Wage',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.checkYourWageTitle,
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Verify if your salary meets legal minimum wage',
+              Text(
+                AppLocalizations.of(context)!.checkYourWageSubtitle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -70,9 +71,9 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Province *',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.provinceLabel,
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -81,15 +82,15 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     value: selectedProvince,
-                    hint: const Text('Select your province'),
-                    items: MinimumWageData.provinces
-                        .map(
-                          (province) => DropdownMenuItem(
-                            value: province,
-                            child: Text(province),
-                          ),
-                        )
-                        .toList(),
+                    hint: Text(AppLocalizations.of(context)!.selectProvinceHint),
+                    items: MinimumWageData.workerTypes(context)
+                    .map(
+                      (type) => DropdownMenuItem(
+                        value: type,
+                        child: Text(type),
+                      ),
+                    )
+                    .toList(),
                     onChanged: (value) {
                       setState(() {
                         selectedProvince = value;
@@ -131,9 +132,9 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Worker Type *',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.workerTypeLabel,
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -142,13 +143,15 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     value: selectedWorkerType,
-                    hint: const Text('Select worker type'),
-                    items: MinimumWageData.workerTypes
-                        .map(
-                          (type) =>
-                              DropdownMenuItem(value: type, child: Text(type)),
-                        )
-                        .toList(),
+                    hint: Text(AppLocalizations.of(context)!.selectWorkerTypeHint),
+                    items: MinimumWageData.provinces(context)
+                    .map(
+                      (province) => DropdownMenuItem(
+                        value: province,
+                        child: Text(province),
+                      ),
+                    )
+                    .toList(),
                     onChanged: (value) {
                       setState(() {
                         selectedWorkerType = value;
@@ -190,9 +193,9 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Monthly Salary (Rs.) *',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.monthlySalaryLabel,
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -205,7 +208,7 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                       decimal: true,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'e.g. 45000 or 45,000',
+                      hintText: AppLocalizations.of(context)!.monthlySalaryHint,
                       hintStyle: const TextStyle(color: Colors.grey),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -250,9 +253,9 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Check My Wage',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.checkMyWageButton,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -271,8 +274,8 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                   color: const Color(0xFFE8F1EB),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Minimum wage rates are updated annually by provincial governments',
+                child: Text(
+                  AppLocalizations.of(context)!.minimumWageRatesNote,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13,

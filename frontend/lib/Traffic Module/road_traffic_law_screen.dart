@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'package:front_end/Traffic%20Module/fine_calculator_screen.dart';
 import 'Traffic_Offence_Types_Screen.dart';
@@ -26,6 +27,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -35,8 +38,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Road & Traffic Law',
+        title:  Text(
+          loc.roadTrafficLawTitle,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -52,8 +55,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               width: double.infinity,
               color: Color(0xFFF5F5F5),
               padding: const EdgeInsets.symmetric(vertical: 20),
-              child: const Text(
-                'ٹریفک\nقوانین',
+              child: Text(
+                 loc.trafficHeaderUrdu,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
@@ -71,7 +74,7 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search sections...',
+                  hintText: loc.searchSections,
                   hintStyle: TextStyle(
                     color: Colors.grey.shade400,
                     fontSize: 14,
@@ -98,8 +101,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               icon: Icons.camera_alt_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Traffic Challan OCR Reader',
-              subtitle: 'Scan and identify violations',
+              title: loc.ocrReaderTitle,
+              subtitle: loc.ocrReaderSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -116,8 +119,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               icon: Icons.info_outline,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Offence Types Guide',
-              subtitle: 'Recognize traffic violations',
+               title: loc.offenceGuideTitle,
+              subtitle: loc.offenceGuideSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -134,8 +137,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               icon: Icons.calculate_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Fine Calculator',
-              subtitle: 'Calculate penalty amounts',
+              title: loc.fineCalculatorTitle,
+              subtitle: loc.fineCalculatorSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -152,8 +155,9 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               icon: Icons.description_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Required Documents',
-              subtitle: 'What to carry while driving',
+               title: loc.requiredDocumentsTitle,
+              subtitle: loc.requiredDocumentsSubtitle,
+              
               onTap: () {
                 Navigator.push(
                   context,
@@ -170,8 +174,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               icon: Icons.shield_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Police Misbehavior Guide',
-              subtitle: 'Steps if officer misbehaves',
+               title: loc.policeGuideTitle,
+              subtitle: loc.policeGuideSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -188,8 +192,8 @@ class _RoadTrafficLawScreenState extends State<RoadTrafficLawScreen> {
               icon: Icons.play_circle_outline,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Scenario Simulator',
-              subtitle: 'Learn traffic-related scenarios',
+              title: loc.simulatorTitle,
+              subtitle: loc.simulatorSubtitle,
               onTap: () {
                 Navigator.push(
                   context,

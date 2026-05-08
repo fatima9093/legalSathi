@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'challan_data_model.dart';
 
-/// Official-style entry points for paying traffic challans (Pakistan).
-/// URLs are public portals; update if your province changes domains.
 class ChallanPayOnlineScreen extends StatelessWidget {
   final ChallanData challanData;
 
@@ -13,23 +12,23 @@ class ChallanPayOnlineScreen extends StatelessWidget {
 
   static final List<_PayPortal> _portals = [
     _PayPortal(
-      title: 'Punjab (PSCA / e-Challan)',
-      subtitle: 'Safe Cities / Punjab digital challan services',
+      titleKey: 'punjab_psca',
+      subtitleKey: 'punjab_psca_subtitle',
       uri: Uri.parse('https://psca.gop.pk'),
     ),
     _PayPortal(
-      title: 'Punjab Police',
-      subtitle: 'Provincial police website & services',
+      titleKey: 'punjab_police',
+      subtitleKey: 'punjab_police_subtitle',
       uri: Uri.parse('https://punjabpolice.gov.pk'),
     ),
     _PayPortal(
-      title: 'Islamabad Capital Police',
-      subtitle: 'ICT traffic & challan information',
+      titleKey: 'ict_police',
+      subtitleKey: 'ict_police_subtitle',
       uri: Uri.parse('https://ictpolice.gov.pk'),
     ),
     _PayPortal(
-      title: 'Sindh Police',
-      subtitle: 'Sindh traffic / citizen services',
+      titleKey: 'sindh_police',
+      subtitleKey: 'sindh_police_subtitle',
       uri: Uri.parse('https://sindhpolice.gov.pk'),
     ),
   ];
@@ -39,8 +38,8 @@ class ChallanPayOnlineScreen extends StatelessWidget {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Could not open the link. Try copying the URL from your browser.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.couldNotOpenLink),
             backgroundColor: Colors.red,
           ),
         );
@@ -49,7 +48,7 @@ class ChallanPayOnlineScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error opening link: $e'),
+            content: Text(AppLocalizations.of(context)!.errorOpeningLink(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -59,6 +58,8 @@ class ChallanPayOnlineScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -68,9 +69,9 @@ class ChallanPayOnlineScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Pay challan online',
-          style: TextStyle(
+        title: Text(
+          loc.payChallanOnline,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -85,16 +86,14 @@ class ChallanPayOnlineScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFFE6F7F0),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: const Color(0xFF00401A).withOpacity(0.2),
-              ),
+              border: Border.all(color: const Color(0xFF00401A).withOpacity(0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Next step',
-                  style: TextStyle(
+                Text(
+                  loc.nextStep,
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF00401A),
@@ -102,33 +101,42 @@ class ChallanPayOnlineScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Use only official government or police portals. Have your '
-                  'challan number and vehicle details ready.',
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade800, height: 1.4),
+                  loc.useOfficialPortals,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade800,
+                    height: 1.4,
+                  ),
                 ),
               ],
             ),
           ),
+
           const SizedBox(height: 20),
-          const Text(
-            'Your challan number',
-            style: TextStyle(
+
+          Text(
+            loc.challanNumberTitle,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Colors.black54,
             ),
           ),
+
           const SizedBox(height: 8),
+
           Material(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               onTap: () {
-                Clipboard.setData(ClipboardData(text: challanData.challanNumber));
+                Clipboard.setData(
+                  ClipboardData(text: challanData.challanNumber),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Challan number copied'),
-                    backgroundColor: Color(0xFF00401A),
+                  SnackBar(
+                    content: Text(loc.challanCopied),
+                    backgroundColor: const Color(0xFF00401A),
                   ),
                 );
               },
@@ -153,21 +161,27 @@ class ChallanPayOnlineScreen extends StatelessWidget {
               ),
             ),
           ),
+
           const SizedBox(height: 24),
-          const Text(
-            'Open a payment portal',
-            style: TextStyle(
+
+          Text(
+            loc.openPaymentPortal,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
               color: Colors.black87,
             ),
           ),
+
           const SizedBox(height: 8),
+
           Text(
-            'Pick your province or the site printed on your challan.',
+            loc.selectProvincePortal,
             style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
           ),
+
           const SizedBox(height: 12),
+
           ..._portals.map(
             (p) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
@@ -180,39 +194,74 @@ class ChallanPayOnlineScreen extends StatelessWidget {
                     side: BorderSide(color: Colors.grey.shade200),
                   ),
                   title: Text(
-                    p.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+                    _getTitle(context, p.titleKey),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  subtitle: Text(p.subtitle),
-                  trailing: const Icon(Icons.open_in_new, color: Color(0xFF00401A)),
+                  subtitle: Text(_getSubtitle(context, p.subtitleKey)),
+                  trailing: const Icon(
+                    Icons.open_in_new,
+                    color: Color(0xFF00401A),
+                  ),
                   onTap: () => _open(context, p.uri),
                 ),
               ),
             ),
           ),
+
           const SizedBox(height: 8),
+
           Text(
-            'Fine shown in app: ${challanData.fineAmount}',
+            loc.fineShown(challanData.fineAmount),
             style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
           ),
+
           const SizedBox(height: 24),
         ],
       ),
     );
   }
+
+  String _getTitle(BuildContext context, String key) {
+    final loc = AppLocalizations.of(context)!;
+    switch (key) {
+      case 'punjab_psca':
+        return loc.punjabPsca;
+      case 'punjab_police':
+        return loc.punjabPolice;
+      case 'ict_police':
+        return loc.ictPolice;
+      case 'sindh_police':
+        return loc.sindhPolice;
+      default:
+        return '';
+    }
+  }
+
+  String _getSubtitle(BuildContext context, String key) {
+    final loc = AppLocalizations.of(context)!;
+    switch (key) {
+      case 'punjab_psca':
+        return loc.punjabPscaSubtitle;
+      case 'punjab_police':
+        return loc.punjabPoliceSubtitle;
+      case 'ict_police':
+        return loc.ictPoliceSubtitle;
+      case 'sindh_police':
+        return loc.sindhPoliceSubtitle;
+      default:
+        return '';
+    }
+  }
 }
 
 class _PayPortal {
-  final String title;
-  final String subtitle;
+  final String titleKey;
+  final String subtitleKey;
   final Uri uri;
 
   _PayPortal({
-    required this.title,
-    required this.subtitle,
+    required this.titleKey,
+    required this.subtitleKey,
     required this.uri,
   });
 }

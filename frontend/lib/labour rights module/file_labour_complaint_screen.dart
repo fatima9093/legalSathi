@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'file_denied_leave_complaint_screen.dart';
 import 'file_general_complaint_screen.dart';
 import '../screen_with_nav.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 /// Single hub for labour complaints (used from Labour Rights, Paid Leave, Contract Violation, etc.).
 class FileLabourComplaintScreen extends StatelessWidget {
@@ -18,9 +19,9 @@ class FileLabourComplaintScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'File Labour Complaint',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.fileLabourComplaintTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -33,15 +34,15 @@ class FileLabourComplaintScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 8),
           Text(
-            'Select the issue you want to file a complaint for:',
+            AppLocalizations.of(context)!.selectComplaintIssue,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
           ),
           const SizedBox(height: 20),
           _ComplaintOptionTile(
             icon: Icons.event_busy,
             iconColor: const Color(0xFF00401A),
-            title: 'File Complaint for Denied Leave',
-            subtitle: 'Your leave request was unfairly denied',
+            title: AppLocalizations.of(context)!.fileDeniedLeaveComplaintTitle,
+            subtitle: AppLocalizations.of(context)!.fileDeniedLeaveComplaintSubtitle,
             onTap: () {
               Navigator.push<void>(
                 context,
@@ -55,8 +56,8 @@ class FileLabourComplaintScreen extends StatelessWidget {
           _ComplaintOptionTile(
             icon: Icons.info_outline,
             iconColor: const Color(0xFF00401A),
-            title: 'File Labour Complaint (General)',
-            subtitle: 'File a general workplace complaint',
+            title: AppLocalizations.of(context)!.fileGeneralComplaintTitle,
+            subtitle: AppLocalizations.of(context)!.fileGeneralComplaintSubtitle,
             onTap: () {
               Navigator.push<void>(
                 context,

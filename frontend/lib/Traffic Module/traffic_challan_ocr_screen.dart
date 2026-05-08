@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'challan_processing_screen.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class TrafficChallanOCRScreen extends StatefulWidget {
   const TrafficChallanOCRScreen({super.key});
@@ -22,6 +23,8 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
   static const int _maxBytes = 10 * 1024 * 1024;
 
   Future<void> _ensurePhotosPermission() async {
+    final loc = AppLocalizations.of(context)!;
+
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       final p = await Permission.photos.request();
       if (!p.isGranted) {
@@ -33,32 +36,29 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
   }
 
   Future<void> _takePhoto() async {
+    final loc = AppLocalizations.of(context)!;
+
     final proceed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Camera access'),
-        content: Text(
-          kIsWeb
-              ? 'Your browser will ask to use the camera. After you take a photo, we extract text from the image.'
-              : 'Legal Sathi needs the camera to photograph your challan. '
-                  'Tap Continue, then tap Allow when your phone asks for camera permission. '
-                  'After you take the picture, we read the text from it.',
-        ),
+        title: Text(loc.cameraAccessTitle),
+        content: Text(loc.cameraAccessDesc),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(loc.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(
               backgroundColor: const Color(0xFF00401A),
             ),
-            child: const Text('Continue'),
+            child: Text(loc.continueBtn),
           ),
         ],
       ),
     );
+
     if (proceed != true || !mounted) return;
 
     if (!kIsWeb) {
@@ -67,11 +67,7 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                cam.isPermanentlyDenied
-                    ? 'Camera is blocked. Enable it in app settings, then try again.'
-                    : 'Camera permission is required to take a photo.',
-              ),
+              content: Text(loc.cameraPermissionDenied),
               backgroundColor: Colors.red,
             ),
           );
@@ -90,14 +86,14 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
       if (photo == null || !mounted) return;
 
       final bytes = await photo.readAsBytes();
-      if (!_checkSize(bytes)) return;
+      if (!_checkSize(bytes, loc)) return;
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Photo captured. Extracting text from your challan…'),
-            backgroundColor: Color(0xFF00401A),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(loc.photoCaptured),
+            backgroundColor: const Color(0xFF00401A),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -111,7 +107,7 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error taking photo: $e'),
+            content: Text('${loc.errorTakingPhoto} $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -120,6 +116,8 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
   }
 
   Future<void> _importFromGallery() async {
+    final loc = AppLocalizations.of(context)!;
+
     if (!kIsWeb) {
       await _ensurePhotosPermission();
     }
@@ -135,17 +133,18 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
 
       final f = result.files.first;
       Uint8List? bytes = f.bytes;
+
       if (bytes == null && f.path != null) {
-        // Some platforms return path only
         try {
           bytes = await XFile(f.path!).readAsBytes();
         } catch (_) {}
       }
+
       if (bytes == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Could not read the selected file.'),
+            SnackBar(
+              content: Text(loc.fileReadError),
               backgroundColor: Colors.red,
             ),
           );
@@ -156,8 +155,8 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
       if (f.size > _maxBytes) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('File exceeds 10 MB limit.'),
+            SnackBar(
+              content: Text(loc.fileTooLarge),
               backgroundColor: Colors.red,
             ),
           );
@@ -168,13 +167,15 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
       final name = f.name.isNotEmpty
           ? f.name
           : _nameFromPath(f.path, 'challan_import');
+
       final isPdf = name.toLowerCase().endsWith('.pdf');
+
       _navigateToProcessing(bytes, name, isPdf ? 'pdf' : 'image');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking file: $e'),
+            content: Text('${loc.errorPickingFile} $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -189,11 +190,11 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
     return path.substring(i + 1);
   }
 
-  bool _checkSize(Uint8List bytes) {
+  bool _checkSize(Uint8List bytes, AppLocalizations loc) {
     if (bytes.length > _maxBytes) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Photo exceeds 10 MB limit.'),
+        SnackBar(
+          content: Text(loc.photoTooLarge),
           backgroundColor: Colors.red,
         ),
       );
@@ -221,6 +222,8 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -230,9 +233,9 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Traffic Challan OCR Reader',
-          style: TextStyle(
+        title: Text(
+          loc.ocrTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -245,6 +248,7 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
           child: Column(
             children: [
               const SizedBox(height: 32),
+
               Container(
                 width: 80,
                 height: 80,
@@ -258,55 +262,46 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
                   color: Color(0xFF00401A),
                 ),
               ),
+
               const SizedBox(height: 24),
-              const Text(
-                'Upload Your Challan',
-                style: TextStyle(
+
+              Text(
+                loc.uploadChallan,
+                style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
+
               const SizedBox(height: 8),
-              RichText(
+
+              Text(
+                loc.extractExplainText,
                 textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                  children: const [
-                    TextSpan(text: 'We '),
-                    TextSpan(
-                      text: 'extract text',
-                      style: TextStyle(
-                        color: Color(0xFF00401A),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    TextSpan(text: ' and '),
-                    TextSpan(
-                      text: 'explain the violation',
-                      style: TextStyle(
-                        color: Color(0xFF00401A),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+                style: TextStyle(color: Colors.grey.shade600),
               ),
+
               const SizedBox(height: 32),
+
               _buildOptionCard(
                 icon: Icons.camera_alt,
-                title: 'Take Photo',
-                subtitle: 'Open camera and capture your challan',
+                title: loc.takePhoto,
+                subtitle: loc.takePhotoSub,
                 onTap: _takePhoto,
               ),
+
               const SizedBox(height: 16),
+
               _buildOptionCard(
                 icon: Icons.photo_library_outlined,
-                title: 'Import from gallery',
-                subtitle: 'JPG, PNG, or PDF (max 10 MB)',
+                title: loc.importGallery,
+                subtitle: loc.importSub,
                 onTap: _importFromGallery,
               ),
+
               const SizedBox(height: 24),
+
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -315,8 +310,7 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Tip: For PDFs and web, keep the Legal Sathi backend running '
-                  '(localhost:8000) so text can be extracted.',
+                  loc.backendTip,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
@@ -336,54 +330,17 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
       child: Container(
-        width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Row(
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: const Color(0xFF00401A),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: Colors.white, size: 24),
-            ),
             const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
-            ),
+            Text(title),
+            Text(subtitle),
           ],
         ),
       ),

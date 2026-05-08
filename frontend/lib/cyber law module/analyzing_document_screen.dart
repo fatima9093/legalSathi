@@ -1,21 +1,15 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
 import '../screen_with_nav.dart';
 import '../services/challan_text_extraction_service.dart';
 import '../services/evidence_analysis_service.dart';
 import 'analysis_result_screen.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
-/// Processes a screenshot: OCR via [ChallanTextExtractionService], then
-/// domain/laws via backend [EvidenceAnalysisService].
-///
-/// [isDemo] skips OCR and opens [AnalysisResultScreen] with sample content.
 class AnalyzingDocumentScreen extends StatefulWidget {
   final Uint8List? imageBytes;
   final String? fileName;
-
-  /// Uses bundled-style sample analysis (no network).
   final bool isDemo;
 
   const AnalyzingDocumentScreen({
@@ -31,15 +25,22 @@ class AnalyzingDocumentScreen extends StatefulWidget {
 }
 
 class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
-  static const List<String> _stepTitles = [
-    'Extracting text from image…',
-    'Identifying legal domain…',
-    'Finding relevant laws…',
-  ];
-
+  late final List<String> _stepTitles;
   int _currentStep = 0;
   String? _error;
   bool _done = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+
+    _stepTitles = [
+      l10n.stepExtractText,
+      l10n.stepIdentifyDomain,
+      l10n.stepFindLaws,
+    ];
+  }
 
   @override
   void initState() {
@@ -52,13 +53,12 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
   }
 
   Future<void> _runDemo() async {
-    for (var i = 0; i < _stepTitles.length; i++) {
-      await Future<void>.delayed(const Duration(milliseconds: 900));
+    for (var i = 0; i < 3; i++) {
+      await Future.delayed(const Duration(milliseconds: 900));
       if (!mounted) return;
       setState(() => _currentStep = i + 1);
     }
-    if (!mounted) return;
-    await Future<void>.delayed(const Duration(milliseconds: 400));
+
     if (!mounted) return;
     await Navigator.pushReplacement(
       context,
@@ -69,19 +69,21 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
   }
 
   Future<void> _runPipeline() async {
+    final l10n = AppLocalizations.of(context)!;
+
     final bytes = widget.imageBytes;
     final name = widget.fileName;
-    if (bytes == null || bytes.isEmpty || name == null || name.isEmpty) {
+
+    if (bytes == null || name == null || name.isEmpty) {
       setState(() {
-        _error = 'Missing file data. Please try uploading again.';
+        _error = l10n.errorMissingFile;
         _done = true;
       });
       return;
     }
 
-    setState(() => _currentStep = 0);
-
     String ocr;
+
     try {
       ocr = await ChallanTextExtractionService.extractRawText(
         bytes: bytes,
@@ -89,19 +91,16 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
         fileType: 'image',
       );
     } catch (e) {
-      if (!mounted) return;
       setState(() {
-        _error = 'Could not read the image: $e';
+        _error = l10n.errorImageRead;
         _done = true;
       });
       return;
     }
 
-    if (!mounted) return;
     if (ocr.trim().length < 15) {
       setState(() {
-        _error =
-            'Very little text was read. Try a sharper screenshot, better lighting, or paste the text manually.';
+        _error = l10n.errorLowText;
         _done = true;
       });
       return;
@@ -111,12 +110,13 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
 
     final analysis = await EvidenceAnalysisService.analyze(ocr);
 
-    if (!mounted) return;
     setState(() => _currentStep = 2);
-    await Future<void>.delayed(const Duration(milliseconds: 350));
+
+    await Future.delayed(const Duration(milliseconds: 350));
+
     if (!mounted) return;
 
-    await Navigator.pushReplacement(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => AnalysisResultScreen(
@@ -134,6 +134,8 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -153,20 +155,16 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (_error != null) ...[
-                  Icon(Icons.error_outline, size: 56, color: Colors.red.shade700),
+                  Icon(Icons.error_outline, size: 56, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
                     _error!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade800, height: 1.4),
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: () => Navigator.pop(context),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF00401A),
-                    ),
-                    child: const Text('Go back'),
+                    child: Text(l10n.goBack),
                   ),
                 ] else ...[
                   SizedBox(
@@ -175,52 +173,44 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: CircularProgressIndicator(
-                            value: _done ? 1 : (_currentStep / _stepTitles.length).clamp(0.0, 1.0),
-                            strokeWidth: 6,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              Color(0xFF00401A),
-                            ),
-                            backgroundColor: Colors.grey.shade300,
-                          ),
+                        CircularProgressIndicator(
+                          value: _done
+                              ? 1
+                              : (_currentStep / 3).clamp(0.0, 1.0),
+                          strokeWidth: 6,
+                          color: const Color(0xFF00401A),
                         ),
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF00401A).withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.document_scanner_outlined,
-                            size: 40,
-                            color: Color(0xFF00401A),
-                          ),
+                        const Icon(
+                          Icons.document_scanner_outlined,
+                          size: 40,
+                          color: Color(0xFF00401A),
                         ),
                       ],
                     ),
                   ),
+
                   const SizedBox(height: 32),
-                  const Text(
-                    'Analyzing your evidence',
-                    style: TextStyle(
+
+                  Text(
+                    l10n.analyzingTitle,
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
                     ),
                   ),
+
                   const SizedBox(height: 8),
+
                   Text(
-                    widget.isDemo ? 'Demo mode (sample result)' : 'OCR and legal context',
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    widget.isDemo ? l10n.demoMode : l10n.ocrMode,
                   ),
+
                   const SizedBox(height: 32),
+
                   ...List.generate(_stepTitles.length, (index) {
                     final completed = _currentStep > index;
                     final active = _currentStep == index + 1;
+
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: Row(
@@ -235,8 +225,10 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
-                              completed ? Icons.check : Icons.circle_outlined,
-                              color: completed || active ? Colors.white : Colors.grey.shade600,
+                              completed
+                                  ? Icons.check
+                                  : Icons.circle_outlined,
+                              color: Colors.white,
                               size: 20,
                             ),
                           ),
@@ -245,9 +237,8 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
                             child: Text(
                               _stepTitles[index],
                               style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: active ? FontWeight.w600 : FontWeight.w500,
-                                color: active ? const Color(0xFF00401A) : Colors.grey.shade600,
+                                fontWeight:
+                                    active ? FontWeight.w600 : FontWeight.w500,
                               ),
                             ),
                           ),

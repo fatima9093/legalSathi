@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'package:front_end/Women%20harrasment%20Module/JurisdictionScreen.dart';
 
@@ -7,8 +8,10 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -16,9 +19,9 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Ombudsperson Complaint Steps',
-          style: TextStyle(
+        title: Text(
+          loc.ombudspersonComplaintSteps,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -30,10 +33,10 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
           // Header text
           Container(
             width: double.infinity,
-            color: Color(0xFFF5F5F5),
+            color: const Color(0xFFF5F5F5),
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
             child: Text(
-              'Follow these steps to file with Federal\nOmbudsperson',
+              loc.followStepsFileWithFederalOmbudsperson,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -52,52 +55,42 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 8),
 
-                    // Step 1
                     _buildStepCard(
                       stepNumber: '1',
-                      title: 'File Written Complaint',
-                      description:
-                          'Submit complaint within 3 months of incident to Federal Ombudsperson office',
+                      title: loc.fileWrittenComplaint,
+                      description: loc.submitComplaintWithin3Months,
                     ),
 
                     const SizedBox(height: 12),
 
-                    // Step 2
                     _buildStepCard(
                       stepNumber: '2',
-                      title: 'Provide Evidence',
-                      description:
-                          'Attach all evidence: emails, messages, witness statements, CCTV footage',
+                      title: loc.provideEvidence,
+                      description: loc.attachAllEvidence,
                     ),
 
                     const SizedBox(height: 12),
 
-                    // Step 3
                     _buildStepCard(
                       stepNumber: '3',
-                      title: 'Inquiry Process',
-                      description:
-                          'Ombudsperson conducts inquiry, both parties are heard',
+                      title: loc.inquiryProcess,
+                      description: loc.ombudspersonConductsInquiry,
                     ),
 
                     const SizedBox(height: 12),
 
-                    // Step 4
                     _buildStepCard(
                       stepNumber: '4',
-                      title: 'Decision Within 90 Days',
-                      description:
-                          'Final decision must be issued within 90 days of filing',
+                      title: loc.decisionWithin90Days,
+                      description: loc.finalDecisionWithin90Days,
                     ),
 
                     const SizedBox(height: 12),
 
-                    // Step 5
                     _buildStepCard(
                       stepNumber: '5',
-                      title: 'Implementation',
-                      description:
-                          'Organization must implement decision within 30 days',
+                      title: loc.implementation,
+                      description: loc.organizationImplementDecision,
                     ),
 
                     const SizedBox(height: 24),
@@ -118,7 +111,6 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
                     builder: (context) => const SelectJurisdictionScreen(),
                   ),
                 );
-                // TODO: Navigate to complaint form or generator
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF00401A),
@@ -128,18 +120,18 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
                 ),
                 minimumSize: const Size(double.infinity, 0),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.description_outlined,
                     color: Colors.white,
                     size: 20,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Text(
-                    'Start Ombudsperson Complaint',
-                    style: TextStyle(
+                    loc.startOmbudspersonComplaint,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -177,7 +169,6 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Step number circle
           Container(
             width: 40,
             height: 40,
@@ -196,10 +187,7 @@ class OmbudspersonComplaintsStepsScreen extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(width: 16),
-
-          // Text content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

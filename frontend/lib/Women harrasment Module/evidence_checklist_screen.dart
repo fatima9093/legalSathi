@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'ai_evidence_review_screen.dart';
 
 class EvidenceChecklistScreen extends StatefulWidget {
@@ -42,9 +43,9 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Evidence Checklist',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.evidenceChecklist,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -75,9 +76,9 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Evidence Collection Guide',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.evidenceCollectionGuide,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
@@ -85,7 +86,7 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Strong evidence strengthens your case',
+                    AppLocalizations.of(context)!.strongEvidenceStrengthensCase,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                 ],
@@ -97,9 +98,9 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
             // Primary Evidence Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                'Primary Evidence',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.primaryEvidence,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -127,9 +128,9 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
             // Secondary Evidence Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                'Secondary Evidence',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.secondaryEvidence,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -157,9 +158,9 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
             // Evidence Collection Guidance
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: const Text(
-                'Evidence Collection Guidance',
-                style: TextStyle(
+              child: Text(
+                AppLocalizations.of(context)!.evidenceCollectionGuidanceSection,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -173,13 +174,13 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
             _buildGuidanceSection(
               icon: Icons.check_circle,
               iconColor: Colors.green,
-              title: 'How to Collect Evidence Legally',
+              title: AppLocalizations.of(context)!.howToCollectEvidenceLegally,
               items: [
-                'Take screenshots with visible timestamps',
-                'Keep original files, submit copies',
-                'Document dates, times, and locations',
-                'Get witness statements in writing',
-                'Request CCTV through proper channels',
+                AppLocalizations.of(context)!.takeScreenshotsWithTimestamps,
+                AppLocalizations.of(context)!.keepOriginalFilesSubmitCopies,
+                AppLocalizations.of(context)!.documentDatesTimesLocations,
+                AppLocalizations.of(context)!.getWitnessStatementsWriting,
+                AppLocalizations.of(context)!.requestCCTVProperChannels,
               ],
             ),
 
@@ -189,13 +190,13 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
             _buildGuidanceSection(
               icon: Icons.cancel,
               iconColor: Colors.red,
-              title: 'What NOT to Do',
+              title: AppLocalizations.of(context)!.whatNotToDo,
               items: [
-                'Don\'t record calls without consent (illegal in Pakistan)',
-                'Don\'t alter or edit evidence',
-                'Don\'t delete original messages',
-                'Don\'t trespass to obtain evidence',
-                'Don\'t share evidence publicly before filing',
+                AppLocalizations.of(context)!.dontRecordCallsWithoutConsent,
+                AppLocalizations.of(context)!.dontAlterOrEditEvidence,
+                AppLocalizations.of(context)!.dontDeleteOriginalMessages,
+                AppLocalizations.of(context)!.dontTrespassObtainEvidence,
+                AppLocalizations.of(context)!.dontShareEvidencePublicly,
               ],
             ),
 

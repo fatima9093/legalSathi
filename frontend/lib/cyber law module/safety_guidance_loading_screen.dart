@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/cyber%20law%20module/safety_guidance_result_screen.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/models/blackmail_model.dart';
 import 'package:front_end/services/blackmail_guidance_service.dart';
 
@@ -22,25 +23,29 @@ class SafetyGuidanceLoadingScreen extends StatefulWidget {
 
 class _SafetyGuidanceLoadingScreenState
     extends State<SafetyGuidanceLoadingScreen> {
-  String _status = 'Preparing safety guidance...';
+
+   late String _status;
 
   @override
   void initState() {
     super.initState();
+     final loc = AppLocalizations.of(context)!;
+     _status = loc.preparingGuidance;
     _runGuidancePipeline();
   }
 
   Future<void> _runGuidancePipeline() async {
+    final loc = AppLocalizations.of(context)!;
     try {
       if (mounted) {
-        setState(() => _status = 'Reading uploaded evidence...');
+        setState(() => _status = loc.readingEvidence);
       }
       final guidance = await BlackmailGuidanceService.buildGuidance(
         situation: widget.situation,
         evidenceFiles: widget.evidenceFiles,
       );
       if (!mounted) return;
-      setState(() => _status = 'Generating personalized guidance...');
+       setState(() => _status = loc.generatingGuidance);
       await Future<void>.delayed(const Duration(milliseconds: 350));
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -69,6 +74,7 @@ class _SafetyGuidanceLoadingScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -78,8 +84,8 @@ class _SafetyGuidanceLoadingScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Safety Guidance',
+        title: Text(
+          loc.safetyGuidance,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,

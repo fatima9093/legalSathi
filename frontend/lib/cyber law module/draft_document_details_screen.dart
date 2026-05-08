@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/validators.dart';
 import '../screen_with_nav.dart';
+import '../l10n/app_localizations.dart';
 import 'draft_document_review_screen.dart';
 
 class DraftDocumentDetailsScreen extends StatefulWidget {
@@ -29,12 +30,11 @@ class _DraftDocumentDetailsScreenState
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
-  bool get _isFormComplete {
-    return _nameController.text.trim().isNotEmpty &&
-        _cnicController.text.trim().isNotEmpty &&
-        _addressController.text.trim().isNotEmpty &&
-        _dateController.text.trim().isNotEmpty;
-  }
+  bool get _isFormComplete =>
+      _nameController.text.trim().isNotEmpty &&
+      _cnicController.text.trim().isNotEmpty &&
+      _addressController.text.trim().isNotEmpty &&
+      _dateController.text.trim().isNotEmpty;
 
   @override
   void initState() {
@@ -55,35 +55,35 @@ class _DraftDocumentDetailsScreenState
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final l10n = AppLocalizations.of(context)!;
+
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: Color(0xFF00401A)),
-          ),
-          child: child!,
-        );
-      },
     );
+
     if (picked != null) {
       setState(() {
         _dateController.text =
-            '${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}';
+            '${picked.day.toString().padLeft(2, '0')}/'
+            '${picked.month.toString().padLeft(2, '0')}/'
+            '${picked.year}';
       });
     }
   }
 
   void _continueToReview() {
+    final l10n = AppLocalizations.of(context)!;
+
     if (!_isFormComplete) {
-      Validators.showError(context, 'Please fill all required fields.');
+      Validators.showError(context, l10n.pleaseFillFields);
       return;
     }
+
     if (!Validators.isValidCnic(_cnicController.text)) {
-      Validators.showError(context, 'Enter CNIC in 12345-1234567-1 format.');
+      Validators.showError(context, l10n.cnicFormatError);
       return;
     }
 
@@ -106,6 +106,8 @@ class _DraftDocumentDetailsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -115,9 +117,9 @@ class _DraftDocumentDetailsScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Draft Document',
-          style: TextStyle(
+        title: Text(
+          l10n.draftDocumentTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -126,194 +128,94 @@ class _DraftDocumentDetailsScreenState
       ),
       bottomNavigationBar: buildBottomNavBar(context, 2),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Progress Steps
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Row(
-                  children: [
-                    _buildProgressStep(
-                      number: 1,
-                      label: 'Type',
-                      isActive: false,
-                      isCompleted: true,
-                    ),
-                    _buildProgressLine(true),
-                    _buildProgressStep(
-                      number: 2,
-                      label: 'Details',
-                      isActive: true,
-                      isCompleted: false,
-                    ),
-                    _buildProgressLine(false),
-                    _buildProgressStep(
-                      number: 3,
-                      label: 'Review',
-                      isActive: false,
-                      isCompleted: false,
-                    ),
-                  ],
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.enterDetailsTitle,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            _buildField(
+              label: l10n.complainantName,
+              hint: l10n.enterFullName,
+              controller: _nameController,
+              icon: Icons.person,
+            ),
+
+            const SizedBox(height: 16),
+
+            _buildField(
+              label: l10n.cnicNumber,
+              hint: l10n.cnicHint,
+              controller: _cnicController,
+              icon: Icons.credit_card,
+              inputType: TextInputType.number,
+            ),
+
+            const SizedBox(height: 16),
+
+            _buildField(
+              label: l10n.address,
+              hint: l10n.enterAddress,
+              controller: _addressController,
+              icon: Icons.location_on,
+            ),
+
+            const SizedBox(height: 16),
+
+            Text(l10n.incidentDate),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _selectDate(context),
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey),
+                ),
+                child: Text(
+                  _dateController.text.isEmpty
+                      ? l10n.incidentDate
+                      : _dateController.text,
                 ),
               ),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 30),
 
-              // Title
-              const Text(
-                'Enter Details',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+            ElevatedButton(
+              onPressed: _isFormComplete ? _continueToReview : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00401A),
+                minimumSize: const Size(double.infinity, 50),
               ),
+              child: Text(l10n.continueButton),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 12),
 
-              // Complainant Name
-              _buildFormField(
-                label: 'Complainant Name',
-                hint: 'Enter your full name',
-                controller: _nameController,
-                icon: Icons.person,
+            OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
               ),
-
-              const SizedBox(height: 20),
-
-              // CNIC Number
-              _buildFormField(
-                label: 'CNIC Number',
-                hint: '00000-0000000-0',
-                controller: _cnicController,
-                icon: Icons.credit_card,
-                inputType: TextInputType.number,
-              ),
-
-              const SizedBox(height: 20),
-
-              // Address
-              _buildFormField(
-                label: 'Address',
-                hint: 'Enter your address',
-                controller: _addressController,
-                icon: Icons.location_on,
-              ),
-
-              const SizedBox(height: 20),
-
-              // Incident Date
-              const Text(
-                'Incident Date',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today,
-                        color: Colors.grey.shade600,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _dateController.text.isEmpty
-                              ? 'DD/MM/YYYY'
-                              : _dateController.text,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: _dateController.text.isEmpty
-                                ? Colors.grey.shade400
-                                : Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // Continue Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _isFormComplete
-                        ? const Color(0xFF00401A)
-                        : Colors.grey.shade400,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: _isFormComplete ? _continueToReview : null,
-                  child: const Text(
-                    'Continue',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // Back Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF00401A)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Back',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF00401A),
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 24),
-            ],
-          ),
+              child: Text(l10n.backButton),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildFormField({
+  Widget _buildField({
     required String label,
     required String hint,
     required TextEditingController controller,
@@ -323,103 +225,20 @@ class _DraftDocumentDetailsScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
+        Text(label),
+        const SizedBox(height: 6),
         TextField(
           controller: controller,
           keyboardType: inputType,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
-            filled: true,
-            fillColor: Colors.white,
-            prefixIcon: Icon(icon, color: Colors.grey.shade600, size: 20),
+            prefixIcon: Icon(icon),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF00401A)),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 0,
-              vertical: 14,
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildProgressStep({
-    required int number,
-    required String label,
-    required bool isActive,
-    required bool isCompleted,
-  }) {
-    return Expanded(
-      child: Column(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isCompleted || isActive
-                  ? const Color(0xFF00401A)
-                  : Colors.grey.shade300,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: isCompleted
-                  ? const Icon(Icons.check, color: Colors.white, size: 24)
-                  : Text(
-                      '$number',
-                      style: TextStyle(
-                        color: isActive || isCompleted
-                            ? Colors.white
-                            : Colors.grey.shade600,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: isActive || isCompleted
-                  ? Colors.black
-                  : Colors.grey.shade500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressLine(bool isCompleted) {
-    return Expanded(
-      child: Container(
-        height: 2,
-        color: isCompleted ? const Color(0xFF00401A) : Colors.grey.shade300,
-        margin: const EdgeInsets.only(top: 24),
-      ),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/labour_wage_record_service.dart';
 
 import '../screen_with_nav.dart';
@@ -106,7 +106,7 @@ class _BackPayCalculatorScreenState extends State<BackPayCalculatorScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text('Calculate Back Pay Owed'),
+        title: Text(AppLocalizations.of(context)!.backPayCalculatorTitle),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,

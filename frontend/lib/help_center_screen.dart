@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});
@@ -14,9 +15,9 @@ class HelpCenterScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Help Center',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.helpCenter,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -48,9 +49,9 @@ class HelpCenterScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // How Can We Help?
-            const Text(
-              'How Can We Help?',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.howCanWeHelp,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
@@ -59,9 +60,9 @@ class HelpCenterScreen extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            const Text(
-              'Find answers and get support',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
+            Text(
+              AppLocalizations.of(context)!.findAnswersAndSupport,
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
             ),
 
             const SizedBox(height: 24),
@@ -72,9 +73,9 @@ class HelpCenterScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Help Topics',
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.helpTopics,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Colors.black,
@@ -85,8 +86,8 @@ class HelpCenterScreen extends StatelessWidget {
                   _buildHelpTopicCard(
                     icon: Icons.menu_book,
                     iconColor: const Color(0xFF00401A),
-                    title: 'How to Use Legal Sathi',
-                    subtitle: 'Learn the basics of navigating the app',
+                    title: AppLocalizations.of(context)!.howToUseLegalSathi,
+                    subtitle: AppLocalizations.of(context)!.learnBasicsNavigatingApp,
                     onTap: () {},
                   ),
 
@@ -95,8 +96,8 @@ class HelpCenterScreen extends StatelessWidget {
                   _buildHelpTopicCard(
                     icon: Icons.camera_alt_outlined,
                     iconColor: const Color(0xFF00401A),
-                    title: 'How to Upload Evidence',
-                    subtitle: 'Step-by-step guide for uploading documents',
+                    title: AppLocalizations.of(context)!.howToUploadEvidence,
+                    subtitle: AppLocalizations.of(context)!.stepByStepGuideUploadingDocuments,
                     onTap: () {},
                   ),
 

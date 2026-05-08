@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'submission_instructions_screen.dart';
 import 'package:front_end/models/complaint_model.dart';
@@ -46,7 +47,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message'] ?? 'Failed to load complaint'),
+            content: Text(result['message'] ??  AppLocalizations.of(context)!.failedToLoadComplaint),
             backgroundColor: Colors.red,
           ),
         );
@@ -69,8 +70,9 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('PDF downloaded successfully!'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.pdfDownloaded),
           backgroundColor: Colors.green,
         ),
       );
@@ -102,8 +104,8 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
     await _loadComplaint();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Complaint regenerated!'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.complaintRegenerated),
         backgroundColor: Colors.green,
       ),
     );
@@ -111,6 +113,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     if (_isLoading) {
       return Scaffold(
         backgroundColor: const Color(0xFFF5F5F5),
@@ -129,11 +132,12 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
             children: [
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
-              const Text('Failed to load complaint'),
+              Text(AppLocalizations.of(context)!.failedToLoadComplaint),
+
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Go Back'),
+                child: Text(AppLocalizations.of(context)!.goBack),
               ),
             ],
           ),
@@ -160,9 +164,8 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
                         icon: const Icon(Icons.arrow_back, color: Colors.black),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      const Expanded(
-                        child: Text(
-                          'Ombudsperson Complaint',
+                       Expanded(
+                        child: Text(AppLocalizations.of(context)!.ombudspersonComplaint,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -178,23 +181,23 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   child: Row(
                     children: [
-                      _buildStep(number: '1', label: 'Info', isCompleted: true),
+                      _buildStep(number: '1', label: loc.info, isCompleted: true),
                       _buildStepLine(),
                       _buildStep(
                         number: '2',
-                        label: 'Incident',
+                        label: loc.incident,
                         isCompleted: true,
                       ),
                       _buildStepLine(),
                       _buildStep(
                         number: '3',
-                        label: 'Evidence',
+                        label: loc.evidence,
                         isCompleted: true,
                       ),
                       _buildStepLine(),
-                      _buildStep(number: '4', label: 'Preview', isActive: true),
+                      _buildStep(number: '4', label: loc.preview, isActive: true),
                       _buildStepLine(),
-                      _buildStep(number: '5', label: 'Submit', isActive: false),
+                      _buildStep(number: '5', label: loc.submit, isActive: false),
                     ],
                   ),
                 ),
@@ -211,14 +214,14 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16),
             color: Colors.white,
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle, color: Color(0xFF00401A), size: 20),
-                SizedBox(width: 8),
+                const Icon(Icons.check_circle, color: Color(0xFF00401A), size: 20),
+                const SizedBox(width: 8),
                 Text(
-                  'Complaint Generated',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.complaintGenerated,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF00401A),
@@ -341,7 +344,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
 
                           const SizedBox(height: 20),
 
-                          _buildSection('APPLICANT DETAILS:', [
+                          _buildSection(AppLocalizations.of(context)!.applicantDetails, [
                             'Name: ${_complaint!.fullName ?? "Not provided"}',
                             'CNIC: ${_complaint!.cnic ?? "Not provided"}',
                             'Phone: ${_complaint!.phone ?? "Not provided"}',
@@ -353,7 +356,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
 
                           const SizedBox(height: 16),
 
-                          _buildSection('INCIDENT DETAILS:', [
+                          _buildSection(AppLocalizations.of(context)!.incidentDetails, [
                             'Date of Incident: ${_complaint!.incidentDate ?? "Not provided"}',
                             'Type of Harassment: ${_complaint!.harassmentType ?? "Not provided"}',
                             'Description: ${_complaint!.description ?? "Not provided"}',
@@ -361,7 +364,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
 
                           const SizedBox(height: 16),
 
-                          _buildSection('ACCUSED PERSON:', [
+                          _buildSection(AppLocalizations.of(context)!.accusedPerson,  [
                             'Name: ${_complaint!.accusedName ?? "Not provided"}',
                             'Designation: ${_complaint!.accusedDesignation ?? "Not provided"}',
                           ]),
@@ -370,7 +373,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
 
                           if (_complaint!.evidenceFiles != null &&
                               _complaint!.evidenceFiles!.isNotEmpty)
-                            _buildSection('EVIDENCE FILES:', [
+                            _buildSection(AppLocalizations.of(context)!.evidenceFiles, [
                               ..._complaint!.evidenceFiles!.map(
                                 (file) =>
                                     '• ${file.fileName} (${file.fileType})',
@@ -389,7 +392,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
                                     Icons.edit_outlined,
                                     size: 18,
                                   ),
-                                  label: const Text('Edit'),
+                                  label:Text(AppLocalizations.of(context)!.edit),
                                   style: OutlinedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
@@ -408,7 +411,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
                                 child: OutlinedButton.icon(
                                   onPressed: _regenerate,
                                   icon: const Icon(Icons.refresh, size: 18),
-                                  label: const Text('Regenerate'),
+                                  label: Text(AppLocalizations.of(context)!.regenerate),
                                   style: OutlinedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 12,
@@ -441,7 +444,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
                                           Icons.download_outlined,
                                           size: 18,
                                         ),
-                                  label: const Text('Download'),
+                                  label: Text(AppLocalizations.of(context)!.download),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF00401A),
                                     padding: const EdgeInsets.symmetric(
@@ -491,8 +494,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
                     ),
                     minimumSize: const Size(double.infinity, 0),
                   ),
-                  child: const Text(
-                    'Continue to Submission Instructions',
+                  child:Text(AppLocalizations.of(context)!.continueToSubmission,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -511,8 +513,7 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
                     ),
                     minimumSize: const Size(double.infinity, 0),
                   ),
-                  child: const Text(
-                    'Back',
+                  child: Text(AppLocalizations.of(context)!.back,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

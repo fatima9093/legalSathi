@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/Women%20harrasment%20Module/ombudspersonComplaintsSteps_screen.dart';
 import 'ProtectionAgainstHarassmentActScreen.dart';
 import 'workplace_committee_procedure_screen.dart';
@@ -36,9 +37,9 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Women Harassment Laws',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.womenHarassmentLawsTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -72,7 +73,7 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search sections...',
+                  hintText: AppLocalizations.of(context)!.searchSectionsHint,
                   hintStyle: TextStyle(
                     color: Colors.grey.shade400,
                     fontSize: 14,
@@ -99,8 +100,8 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
               icon: Icons.shield_outlined,
               iconColor: Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Protection Against\nHarassment Act',
-              subtitle: 'Complete law overview and',
+              title: AppLocalizations.of(context)!.protectionAgainstHarassmentActTitle,
+              subtitle: AppLocalizations.of(context)!.protectionAgainstHarassmentActSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -119,8 +120,8 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
               icon: Icons.format_list_bulleted,
               iconColor: Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Ombudsperson Complain\nSteps',
-              subtitle: 'How to file with Ombudsperson',
+              title: AppLocalizations.of(context)!.ombudspersonComplainStepsTitle,
+              subtitle: AppLocalizations.of(context)!.ombudspersonComplainStepsSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -139,8 +140,8 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
               icon: Icons.description_outlined,
               iconColor: Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Workplace Committee\nProcedure',
-              subtitle: 'Internal complaint process',
+              title: AppLocalizations.of(context)!.workplaceCommitteeProcedureTitle,
+              subtitle: AppLocalizations.of(context)!.workplaceCommitteeProcedureSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -158,8 +159,8 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
               icon: Icons.photo_camera_outlined,
               iconColor: Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Evidence Checklist',
-              subtitle: 'What evidence to collect',
+              title: AppLocalizations.of(context)!.evidenceChecklistTitle,
+              subtitle: AppLocalizations.of(context)!.evidenceChecklistSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -176,8 +177,8 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
               icon: Icons.description_outlined,
               iconColor: Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Draft Complaint Generator',
-              subtitle: 'Step-by-step complaint form',
+              title: AppLocalizations.of(context)!.draftComplaintGeneratorTitle,
+              subtitle: AppLocalizations.of(context)!.draftComplaintGeneratorSubtitle,
               onTap: () {
                 Navigator.push(
                   context,
@@ -194,8 +195,8 @@ class _WomenHarassmentLawsScreenState extends State<WomenHarassmentLawsScreen> {
               icon: Icons.play_circle_outline,
               iconColor: Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Scenario Simulator',
-              subtitle: 'Learn harassment-related scenarios',
+              title: AppLocalizations.of(context)!.harassmentScenarioSimulatorTitle,
+              subtitle: AppLocalizations.of(context)!.harassmentScenarioSimulatorSubtitle,
               onTap: () {
                 Navigator.push(
                   context,

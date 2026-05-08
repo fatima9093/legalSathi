@@ -763,7 +763,7 @@ class _ChatScreenState extends State<ChatScreen> {
     Clipboard.setData(ClipboardData(text: msg.text));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Copied to clipboard'),
+        content: Text(AppLocalizations.of(context)!.copiedToClipboard),
         backgroundColor: const Color(0xFF00401A),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 2),
@@ -778,8 +778,8 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Delete message?'),
-        content: const Text('This message will be removed from the chat.'),
+        title: Text(AppLocalizations.of(context)!.deleteMessageConfirm),
+        content: Text(AppLocalizations.of(context)!.deleteMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -947,7 +947,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Icons.copy_outlined,
                   color: Color(0xFF00401A),
                 ),
-                title: const Text('Copy'),
+                title: Text(AppLocalizations.of(context)!.copyAction),
                 onTap: () {
                   Navigator.pop(ctx);
                   _copyMessage(msg);
@@ -959,7 +959,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     Icons.edit_outlined,
                     color: Color(0xFF00401A),
                   ),
-                  title: const Text('Edit & Resend'),
+                  title: Text(AppLocalizations.of(context)!.editAndResendAction),
                   onTap: () {
                     Navigator.pop(ctx);
                     _editMessage(index);
@@ -971,7 +971,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     Icons.refresh_outlined,
                     color: Color(0xFF00401A),
                   ),
-                  title: const Text('Regenerate'),
+                  title: Text(AppLocalizations.of(context)!.regenerate),
                   onTap: () {
                     Navigator.pop(ctx);
                     _regenerateMessage(index);
@@ -982,7 +982,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Icons.share_outlined,
                   color: Color(0xFF00401A),
                 ),
-                title: const Text('Share'),
+                title: Text(AppLocalizations.of(context)!.share),
                 onTap: () {
                   Navigator.pop(ctx);
                   Share.share(msg.text, subject: 'Legal Sathi Answer');
@@ -990,9 +990,9 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
+                title: Text(
+                  AppLocalizations.of(context)!.delete,
+                  style: const TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -1251,9 +1251,9 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Legal Assistant',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.legalAssistant,
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
@@ -1261,8 +1261,8 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             Text(
               _isAgentActive
-                  ? 'Deep analysis active…'
-                  : '$_preferredLanguage • Your legal assistant',
+                  ? AppLocalizations.of(context)!.deepAnalysisActive
+                  : '${AppLocalizations.of(context)!.yourLegalAssistant}',
               style: TextStyle(
                 color: _isAgentActive
                     ? const Color(0xFF00401A)
@@ -1273,7 +1273,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             // Display User ID for testing
             Text(
-              'User ID: ${Supabase.instance.client.auth.currentUser?.id ?? "Not logged in"}',
+              '${AppLocalizations.of(context)!.userId}: ${Supabase.instance.client.auth.currentUser?.id ?? AppLocalizations.of(context)!.notLoggedIn}',
               style: TextStyle(
                 color: Colors.grey.shade500,
                 fontSize: 10,
@@ -2197,7 +2197,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         // Copy
                         _MsgActionBtn(
                           icon: Icons.copy_outlined,
-                          tooltip: 'Copy',
+                          tooltip: AppLocalizations.of(context)!.copyAction,
                           onTap: () => _copyMessage(message),
                         ),
                         if (message.isUser) ...[
@@ -2212,7 +2212,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           const SizedBox(width: 4),
                           _MsgActionBtn(
                             icon: Icons.refresh_outlined,
-                            tooltip: 'Regenerate',
+                            tooltip: AppLocalizations.of(context)!.regenerate,
                             onTap: () => _regenerateMessage(idx),
                           ),
                           const SizedBox(width: 4),
@@ -2237,7 +2237,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         const SizedBox(width: 4),
                         _MsgActionBtn(
                           icon: Icons.share_outlined,
-                          tooltip: 'Share',
+                          tooltip: AppLocalizations.of(context)!.share,
                           onTap: () => Share.share(
                             message.text,
                             subject: 'Legal Sathi Answer',
@@ -2246,7 +2246,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         const SizedBox(width: 4),
                         _MsgActionBtn(
                           icon: Icons.delete_outline,
-                          tooltip: 'Delete',
+                          tooltip: AppLocalizations.of(context)!.delete,
                           color: Colors.red.shade300,
                           onTap: () => _deleteMessage(idx),
                         ),
@@ -2479,7 +2479,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Icons.edit_outlined,
                   color: Color(0xFF00401A),
                 ),
-                title: const Text('Rename'),
+                title: Text(AppLocalizations.of(context)!.rename),
                 onTap: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -2492,9 +2492,9 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
-                title: const Text(
-                  'Delete',
-                  style: TextStyle(color: Colors.red),
+                title: Text(
+                  AppLocalizations.of(context)!.delete,
+                  style: const TextStyle(color: Colors.red),
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -2514,7 +2514,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Chat'),
+          title: Text(AppLocalizations.of(context)!.deleteChatAction),
           content: Text('Are you sure you want to delete "${chat.title}"?'),
           actions: [
             TextButton(
@@ -2552,7 +2552,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 );
               },
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(
+                AppLocalizations.of(context)!.delete,
+                style: const TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );

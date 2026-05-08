@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../screen_with_nav.dart';
 import 'evidence_extractor_screen.dart';
 import 'fia_complaint_generator.dart';
+
 
 class ExtractedEvidenceResultsScreen extends StatefulWidget {
   final List<EvidenceFile> uploadedFiles;
@@ -89,36 +91,38 @@ class _ExtractedEvidenceResultsScreenState
   }
 
   Future<void> _exportAsPDF() async {
+    final loc = AppLocalizations.of(context)!;
+
     final pdf = pw.Document();
     final summary = StringBuffer()
-      ..writeln('Threat Message Evidence Report')
-      ..writeln('Files analyzed: ${_extractedEvidence.totalFilesAnalyzed}')
+      ..writeln(loc.pdfTitle)
+      ..writeln(loc.filesAnalyzed)
       ..writeln('')
-      ..writeln('Threat Classifications:');
+      ..writeln(loc.threatClassifications);
     for (final t in _extractedEvidence.threats) {
-      summary.writeln('- ${t.type} (${t.severity}, ${t.confidence}% confidence)');
+      summary.writeln('- ${t.type} (${t.severity}, ${t.confidence}% ${loc.confidence})');
     }
     summary
       ..writeln('')
-      ..writeln('Timestamps:');
+      ..writeln(loc.timestamps);
     for (final x in _extractedEvidence.timestamps) {
       summary.writeln('- $x');
     }
     summary
       ..writeln('')
-      ..writeln('Phone Numbers:');
+      ..writeln(loc.phoneNumbers);
     for (final x in _extractedEvidence.phoneNumbers) {
       summary.writeln('- $x');
     }
     summary
       ..writeln('')
-      ..writeln('URLs:');
+      ..writeln(loc.urls);
     for (final x in _extractedEvidence.urls) {
       summary.writeln('- $x');
     }
     summary
       ..writeln('')
-      ..writeln('Key Phrases:');
+      ..writeln(loc.keyPhrases);
     for (final x in _extractedEvidence.keyPhrases) {
       summary.writeln('- $x');
     }
@@ -142,6 +146,7 @@ class _ExtractedEvidenceResultsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -151,8 +156,8 @@ class _ExtractedEvidenceResultsScreenState
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Extracted Evidence',
+        title: Text(
+          loc.extractedEvidence,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -176,7 +181,7 @@ class _ExtractedEvidenceResultsScreenState
 
               // Extracted Timestamps
               if (_extractedEvidence.timestamps.isNotEmpty) ...[
-                _buildSectionHeader('Extracted Timestamps', Icons.access_time),
+                _buildSectionHeader( loc.timestamps, Icons.access_time),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
@@ -196,7 +201,7 @@ class _ExtractedEvidenceResultsScreenState
 
               // Phone Numbers
               if (_extractedEvidence.phoneNumbers.isNotEmpty) ...[
-                _buildSectionHeader('Phone Numbers Found', Icons.phone),
+                _buildSectionHeader(loc.phoneNumbersFound, Icons.phone),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
@@ -216,7 +221,7 @@ class _ExtractedEvidenceResultsScreenState
 
               // URLs/Links
               if (_extractedEvidence.urls.isNotEmpty) ...[
-                _buildSectionHeader('URLs/Links Found', Icons.link),
+                _buildSectionHeader(loc.urlsFound, Icons.link),
                 const SizedBox(height: 12),
                 Container(
                   decoration: BoxDecoration(
@@ -237,7 +242,7 @@ class _ExtractedEvidenceResultsScreenState
               // Key Threatening Phrases
               if (_extractedEvidence.keyPhrases.isNotEmpty) ...[
                 _buildSectionHeader(
-                  'Key Threatening Phrases',
+                  loc.keyThreatPhrases,
                   Icons.warning_amber,
                 ),
                 const SizedBox(height: 12),
@@ -270,14 +275,14 @@ class _ExtractedEvidenceResultsScreenState
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.description),
-                      SizedBox(width: 8),
+                      const Icon(Icons.description),
+                      const SizedBox(width: 8),
                       Text(
-                        'Use in FIA Complaint',
-                        style: TextStyle(
+                         loc.useInFIAComplaint,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -299,14 +304,14 @@ class _ExtractedEvidenceResultsScreenState
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.download, color: Color(0xFF00401A)),
-                      SizedBox(width: 8),
+                      const Icon(Icons.download, color: Color(0xFF00401A)),
+                      const SizedBox(width: 8),
                       Text(
-                        'Export as PDF',
-                        style: TextStyle(
+                        loc.exportAsPDF,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF00401A),
@@ -336,7 +341,7 @@ class _ExtractedEvidenceResultsScreenState
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'This evidence is court-admissible. Keep original files safe and secure.',
+                        loc.evidenceNotice,
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.orange[800],
@@ -355,6 +360,7 @@ class _ExtractedEvidenceResultsScreenState
   }
 
   Widget _buildThreatCard(ThreatClassification threat) {
+    final loc = AppLocalizations.of(context)!; 
     Color severityColor = threat.severity == 'High'
         ? Colors.red
         : threat.severity == 'Medium'
@@ -396,7 +402,7 @@ class _ExtractedEvidenceResultsScreenState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${threat.severity} Risk • ${threat.confidence}% confidence',
+                  '${threat.severity} ${loc.risk} • ${threat.confidence}% ${loc.confidence}',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
@@ -449,6 +455,7 @@ class _ExtractedEvidenceResultsScreenState
   }
 
   Widget _buildPhoneItem(String phone) {
+    final loc = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -469,9 +476,9 @@ class _ExtractedEvidenceResultsScreenState
             onTap: () {
               Clipboard.setData(ClipboardData(text: phone));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Phone number copied'),
-                  duration: Duration(seconds: 1),
+                SnackBar(
+                  content: Text(loc.phoneCopied),
+                  duration: const Duration(seconds: 1),
                 ),
               );
             },

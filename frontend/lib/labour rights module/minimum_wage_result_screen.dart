@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import 'back_pay_calculator_screen.dart';
 import 'file_general_complaint_screen.dart';
 import 'package:front_end/models/wage_check_context.dart';
@@ -38,7 +39,7 @@ class MinimumWageResultScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text('Wage Check Result'),
+        title: Text(AppLocalizations.of(context)!.wageCheckResultTitle),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
@@ -74,7 +75,7 @@ class MinimumWageResultScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          isUnderpaid ? 'Underpaid' : 'Compliant',
+                          isUnderpaid ? AppLocalizations.of(context)!.underpaidStatus : AppLocalizations.of(context)!.compliantStatus,
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
@@ -88,8 +89,8 @@ class MinimumWageResultScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       isUnderpaid
-                          ? 'Your salary is below the legal minimum wage'
-                          : 'Your salary meets the legal minimum wage',
+                          ? AppLocalizations.of(context)!.underpaidMessage
+                          : AppLocalizations.of(context)!.compliantMessage,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 14,
@@ -101,9 +102,9 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              const Text(
-                'Wage Breakdown',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.wageBreakdownTitle,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
@@ -123,14 +124,14 @@ class MinimumWageResultScreen extends StatelessWidget {
                     _buildBreakdownRow(
                       icon: Icons.attach_money,
                       iconColor: const Color(0xFF6B9B7F),
-                      label: 'Your Salary',
+                      label: AppLocalizations.of(context)!.yourSalaryLabel,
                       value: 'Rs. ${userSalary.toStringAsFixed(0)}',
                     ),
                     const SizedBox(height: 16),
                     _buildBreakdownRow(
                       icon: Icons.description,
                       iconColor: const Color(0xFF6B9B7F),
-                      label: 'Legal Minimum Wage',
+                      label: AppLocalizations.of(context)!.legalMinimumWageLabel,
                       value: 'Rs. ${minimumWage.toStringAsFixed(0)}',
                     ),
                     const SizedBox(height: 16),
@@ -139,7 +140,7 @@ class MinimumWageResultScreen extends StatelessWidget {
                       iconColor: isUnderpaid
                           ? const Color(0xFFC41C3B)
                           : const Color(0xFF4A7C5C),
-                      label: 'Difference',
+                      label: AppLocalizations.of(context)!.differenceLabel,
                       value:
                           '${isUnderpaid ? '- ' : '+ '}Rs. ${difference.abs().toStringAsFixed(0)}',
                       valueColor: isUnderpaid
@@ -151,9 +152,9 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              const Text(
-                'Explanation',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.explanationTitle,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
@@ -169,8 +170,8 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
                 child: Text(
                   isUnderpaid
-                      ? 'Your monthly salary of Rs. ${userSalary.toStringAsFixed(0)} is below the legal minimum wage of Rs. ${minimumWage.toStringAsFixed(0)} for $workerType workers in $province. Your employer is legally required to pay you at least the minimum wage.\n\nYou are being underpaid by Rs. ${difference.abs().toStringAsFixed(0)} per month. This may violate labour laws and you may claim the difference subject to proof and process.'
-                      : 'Your monthly salary of Rs. ${userSalary.toStringAsFixed(0)} is at or above the reference minimum of Rs. ${minimumWage.toStringAsFixed(0)} for $workerType workers in $province.\n\nYou are Rs. ${difference.abs().toStringAsFixed(0)} above the reference minimum per month. Keep salary slips and bank records as evidence.',
+                      ? AppLocalizations.of(context)!.underpaidExplanation
+                      : AppLocalizations.of(context)!.compliantExplanation,
                   style: const TextStyle(
                     fontSize: 13,
                     color: Colors.grey,
@@ -180,9 +181,9 @@ class MinimumWageResultScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 28),
-              const Text(
-                'Legal Reference',
-                style: TextStyle(
+              Text(
+                AppLocalizations.of(context)!.legalReferenceTitle,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
@@ -207,9 +208,9 @@ class MinimumWageResultScreen extends StatelessWidget {
                           size: 24,
                         ),
                         const SizedBox(width: 12),
-                        const Text(
-                          'Minimum Wages Ordinance 1961',
-                          style: TextStyle(
+                        Text(
+                          AppLocalizations.of(context)!.minimumWagesOrdinanceLabel,
+                          style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: Colors.black,
@@ -218,9 +219,9 @@ class MinimumWageResultScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Under Section 3 of the Minimum Wages Ordinance 1961, all employers must pay workers at least the minimum wage rate notified by the provincial government.\n\nFailure to do so is a punishable offense.',
-                      style: TextStyle(
+                    Text(
+                      AppLocalizations.of(context)!.minimumWagesOrdinanceText,
+                      style: const TextStyle(
                         fontSize: 13,
                         color: Colors.grey,
                         fontWeight: FontWeight.w400,
@@ -259,17 +260,17 @@ class MinimumWageResultScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
-                        'File Labour Complaint',
-                        style: TextStyle(
+                        AppLocalizations.of(context)!.fileLabourComplaintButton,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: Colors.white, size: 20),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.arrow_forward, color: Colors.white, size: 20),
                     ],
                   ),
                 ),
@@ -301,9 +302,9 @@ class MinimumWageResultScreen extends StatelessWidget {
                       width: 2,
                     ),
                   ),
-                  child: const Text(
-                    'Calculate Back Pay Owed',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.calculateBackPayButton,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: Color(0xFF00401A),

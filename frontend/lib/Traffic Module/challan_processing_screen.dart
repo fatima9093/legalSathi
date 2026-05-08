@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'challan_data_model.dart';
 import 'challan_details_screen.dart';
@@ -52,12 +53,13 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
   }
 
   Future<void> _runExtraction() async {
+     final loc = AppLocalizations.of(context)!;
     try {
       if (mounted) {
         setState(() {
           _statusLabel = widget.fileType == 'pdf'
-              ? 'Extracting text from PDF…'
-              : 'Running OCR on image…';
+              ? loc.extractingPdfText
+              : loc.runningOcr;
         });
       }
 
@@ -81,7 +83,7 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Could not process challan: $e'),
+           content: Text(loc.couldNotProcessChallan(e.toString())),
           backgroundColor: Colors.red,
         ),
       );
@@ -91,6 +93,7 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -100,8 +103,8 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Processing Challan',
+        title:  Text(
+           loc.processingChallan,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -128,8 +131,8 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
-                'Extracting Challan Details',
+               Text(
+                loc.extractingChallanDetails,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
@@ -137,23 +140,12 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                 ),
               ),
               const SizedBox(height: 12),
-              RichText(
+              Text(
+                loc.pleaseWaitAiReading,
                 textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-                  children: const [
-                    TextSpan(text: 'Please wait while '),
-                    TextSpan(
-                      text: 'AI reads',
-                      style: TextStyle(
-                        color: Color(0xFF00401A),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    TextSpan(text: ' your challan'),
-                  ],
-                ),
-              ),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey.shade600,),),
               const SizedBox(height: 32),
               Container(
                 width: double.infinity,

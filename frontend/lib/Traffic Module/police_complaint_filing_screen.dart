@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'police_ai_complaint_generator_screen.dart';
 import 'traffic_contact_launcher.dart';
@@ -9,6 +10,7 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -18,9 +20,9 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Complaint Filing Paths',
-          style: TextStyle(
+        title: Text(
+           loc.complaintFilingPaths,
+            style: TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -47,8 +49,8 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Where to File Your Complaint',
+               Text(
+                loc.whereToFileComplaint,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
@@ -58,7 +60,7 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Choose the most convenient option',
+                loc.chooseOption,
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 32),
@@ -66,9 +68,9 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 icon: Icons.phone,
                 iconColor: const Color(0xFF00401A),
                 iconBgColor: const Color(0xFFE6F7F0),
-                title: 'Provincial Helpline',
-                subtitle: 'Call 1915 (Punjab, Sindh, KPK)',
-                actionText: 'Call Now',
+                 title: loc.helpline,
+                  subtitle: loc.helplineDesc,
+                  actionText: loc.callNow,
                 onTap: () => TrafficContactLauncher.dial(
                   context,
                   TrafficPoliceContacts.helpline1915,
@@ -79,9 +81,9 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 icon: Icons.chat_bubble_outline,
                 iconColor: const Color(0xFF00401A),
                 iconBgColor: const Color(0xFFE6F7F0),
-                title: 'IG / Police WhatsApp',
-                subtitle: 'Opens WhatsApp with a pre-filled message',
-                actionText: 'Open WhatsApp',
+                title: loc.whatsapp,
+                subtitle: loc.whatsappDesc,
+                actionText: loc.openWhatsapp,
                 onTap: () => TrafficContactLauncher.whatsAppComplaint(context),
               ),
               const SizedBox(height: 12),
@@ -89,9 +91,9 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 icon: Icons.public,
                 iconColor: const Color(0xFF00401A),
                 iconBgColor: const Color(0xFFE6F7F0),
-                title: 'SafeCity / PSCA',
-                subtitle: 'Official Safe Cities Punjab site',
-                actionText: 'Visit Website',
+                title: loc.safeCity,
+              subtitle: loc.safeCityDesc,
+              actionText: loc.visitWebsite,
                 onTap: () => TrafficContactLauncher.openHttpUrl(
                   context,
                   TrafficPoliceContacts.safeCityWebsite,
@@ -102,9 +104,9 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 icon: Icons.location_on_outlined,
                 iconColor: const Color(0xFF6B21A8),
                 iconBgColor: const Color(0xFFF3E8FF),
-                title: 'Police Khidmat Markaz',
-                subtitle: 'Find a service centre on the map',
-                actionText: 'Find Location',
+                title: loc.khidmatMarkaz,
+              subtitle: loc.khidmatMarkazDesc,
+              actionText: loc.findLocation,
                 onTap: () => TrafficContactLauncher.openMapsSearch(
                   context,
                   TrafficPoliceContacts.mapsKhidmatMarkazQuery,
@@ -115,9 +117,9 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 icon: Icons.phone_in_talk,
                 iconColor: const Color(0xFFD97706),
                 iconBgColor: const Color(0xFFFFF9E6),
-                title: '1787 Complaint Helpline',
-                subtitle: 'National police complaint line',
-                actionText: 'Call Now',
+                title: loc.helpline1787,
+              subtitle: loc.helpline1787Desc,
+              actionText: loc.callNow,
                 onTap: () => TrafficContactLauncher.dial(
                   context,
                   TrafficPoliceContacts.helpline1787,
@@ -128,9 +130,9 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 icon: Icons.mail_outline,
                 iconColor: const Color(0xFF00401A),
                 iconBgColor: const Color(0xFFE6EFEA),
-                title: 'Written Complaint',
-                subtitle: 'Addresses, copy, maps & online portal',
-                actionText: 'Get Address',
+                title: loc.writtenComplaint,
+                subtitle: loc.writtenComplaintDesc,
+                actionText: loc.getAddress,
                 onTap: () =>
                     TrafficContactLauncher.showWrittenComplaintAddressesSheet(
                   context,
@@ -147,8 +149,8 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Contact Information',
+                     Text(
+                      loc.contactInformation,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -156,15 +158,11 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _buildContactInfo(
-                      'Punjab: 1915 or complaint.punjabpolice.gov.pk',
-                    ),
-                    _buildContactInfo('Sindh: 1915 or sindhpolice.gov.pk'),
-                    _buildContactInfo('KPK: 1915 or kppolice.gov.pk'),
-                    _buildContactInfo(
-                      'Islamabad: 1715 or islamabadpolice.gov.pk',
-                    ),
-                  ],
+                     _buildContactInfo(loc.punjabContact),
+                  _buildContactInfo(loc.sindhContact),
+                  _buildContactInfo(loc.kpkContact),
+                  _buildContactInfo(loc.islamabadContact),
+                ],
                 ),
               ),
               const SizedBox(height: 24),
@@ -191,12 +189,12 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.description, size: 20),
-                      SizedBox(width: 8),
+                    children: [
+                      const Icon(Icons.description, size: 20),
+                      const SizedBox(width: 8),
                       Text(
-                        'Generate AI Complaint Letter',
-                        style: TextStyle(
+                        loc.generateAIComplaint,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -213,8 +211,7 @@ class PoliceComplaintFilingScreen extends StatelessWidget {
                   color: const Color(0xFFFFF9E6),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
-                  'File complaint within 7 days for best results',
+                child:  Text(loc.fileWithinDays,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
                 ),

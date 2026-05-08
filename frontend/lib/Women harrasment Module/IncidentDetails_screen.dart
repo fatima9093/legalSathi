@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'uploadEvidence_screen.dart';
 import 'package:front_end/models/complaint_model.dart';
@@ -24,15 +25,18 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
   String? selectedHarassmentType;
   bool _isLoading = false;
 
-  final List<String> harassmentTypes = [
-    'Verbal harassment',
-    'Physical harassment',
-    'Sexual harassment',
-    'Cyber harassment',
-    'Stalking',
-    'Intimidation',
-    'Other',
+List<String> getHarassmentTypes(BuildContext context) {
+  final loc = AppLocalizations.of(context)!;
+  return [
+    loc.verbalHarassment,
+    loc.physicalHarassment,
+    loc.sexualHarassment,
+    loc.cyberHarassment,
+    loc.stalking,
+    loc.intimidation,
+    loc.other,
   ];
+}
 
   @override
   void initState() {
@@ -71,33 +75,28 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
   Future<void> _saveAndContinue() async {
     // Validate fields
     if (!Validators.isNonEmpty(_dateController.text)) {
-      Validators.showError(context, 'Please select the incident date.');
-      return;
+     Validators.showError(context, AppLocalizations.of(context)!.errorSelectDate);
     }
 
     if (selectedHarassmentType == null) {
-      Validators.showError(context, 'Please select the type of harassment.');
+      Validators.showError(context, AppLocalizations.of(context)!.errorSelectHarassmentType);
+
       return;
     }
 
     if (!Validators.isNonEmpty(_descriptionController.text)) {
-      Validators.showError(context, 'Please describe the incident in detail.');
+     Validators.showError(context, AppLocalizations.of(context)!.errorDescription);
+
       return;
     }
 
     if (!Validators.isNonEmpty(_accusedNameController.text)) {
-      Validators.showError(
-        context,
-        'Please enter the name of the accused person.',
-      );
+      Validators.showError(context, AppLocalizations.of(context)!.errorAccusedName);
       return;
     }
 
     if (!Validators.isNonEmpty(_accusedDesignationController.text)) {
-      Validators.showError(
-        context,
-        'Please enter the designation of the accused person.',
-      );
+     Validators.showError(context, AppLocalizations.of(context)!.errorAccusedDesignation);
       return;
     }
 
@@ -111,8 +110,8 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(result['message'] ?? 'Failed to load complaint'),
-          backgroundColor: Colors.red,
+          content: 
+          Text(AppLocalizations.of(context)!.failedToLoad),
         ),
       );
       return;
@@ -136,8 +135,8 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
 
     if (saveResult['success']) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Incident details saved successfully'),
+        SnackBar(
+          content:Text(AppLocalizations.of(context)!.incidentSaved),
           backgroundColor: Colors.green,
         ),
       );
@@ -152,7 +151,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(saveResult['message'] ?? 'Failed to save'),
+          content: Text(AppLocalizations.of(context)!.failedToSave),
           backgroundColor: Colors.red,
         ),
       );
@@ -181,10 +180,10 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                         icon: const Icon(Icons.arrow_back, color: Colors.black),
                         onPressed: () => Navigator.pop(context),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Ombudsperson Complaint',
-                          style: TextStyle(
+                          AppLocalizations.of(context)!.ombudspersonComplaint,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -211,27 +210,15 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                   padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                   child: Row(
                     children: [
-                      _buildStep(number: '1', label: 'Info', isCompleted: true),
-                      _buildStepLine(),
-                      _buildStep(
-                        number: '2',
-                        label: 'Incident',
-                        isActive: true,
-                      ),
-                      _buildStepLine(),
-                      _buildStep(
-                        number: '3',
-                        label: 'Evidence',
-                        isActive: false,
-                      ),
-                      _buildStepLine(),
-                      _buildStep(
-                        number: '4',
-                        label: 'Preview',
-                        isActive: false,
-                      ),
-                      _buildStepLine(),
-                      _buildStep(number: '5', label: 'Submit', isActive: false),
+                      _buildStep(number: '1', label: AppLocalizations.of(context)!.info, isCompleted: true),
+
+_buildStep(number: '2', label: AppLocalizations.of(context)!.incident, isActive: true),
+
+_buildStep(number: '3', label: AppLocalizations.of(context)!.evidence, isActive: false),
+
+_buildStep(number: '4', label: AppLocalizations.of(context)!.preview, isActive: false),
+
+_buildStep(number: '5', label: AppLocalizations.of(context)!.submit, isActive: false),
                     ],
                   ),
                 ),
@@ -250,8 +237,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'Incident Details',
+                    Text(AppLocalizations.of(context)!.incidentDetails,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -259,8 +245,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      'Describe what happened',
+                    Text(AppLocalizations.of(context)!.describeWhatHappened,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade600,
@@ -269,7 +254,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 24),
 
                     // Date of Incident
-                    _buildLabel('Date of Incident'),
+                    _buildLabel(AppLocalizations.of(context)!.dateOfIncident),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _dateController,
@@ -279,12 +264,12 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 20),
 
                     // Type of Harassment
-                    _buildLabel('Type of Harassment'),
+                    _buildLabel(AppLocalizations.of(context)!.typeOfHarassment),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: harassmentTypes.map((type) {
+                      children: getHarassmentTypes(context).map((type) {
                         return _buildChoiceChip(type);
                       }).toList(),
                     ),
@@ -292,7 +277,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 20),
 
                     // Detailed Description
-                    _buildLabel('Detailed Description'),
+                   _buildLabel(AppLocalizations.of(context)!.detailedDescription),
                     const SizedBox(height: 8),
                     TextField(
                       controller: _descriptionController,
@@ -347,8 +332,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Need help writing?',
+                                Text(AppLocalizations.of(context)!.needHelpWriting,
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -356,8 +340,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
-                                  'Include: What happened, when, where, who was involved, and any witnesses',
+                                Text(AppLocalizations.of(context)!.helpDescription,
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey.shade700,
@@ -374,7 +357,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 20),
 
                     // Accused Person's Name
-                    _buildLabel('Accused Person\'s Name'),
+                    _buildLabel(AppLocalizations.of(context)!.accusedName),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _accusedNameController,
@@ -384,7 +367,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                     const SizedBox(height: 20),
 
                     // Accused Person's Designation
-                    _buildLabel('Accused Person\'s Designation'),
+                    _buildLabel(AppLocalizations.of(context)!.accusedDesignation),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _accusedDesignationController,
@@ -422,8 +405,7 @@ class _IncidentDetailsScreenState extends State<IncidentDetailsScreen> {
                             strokeWidth: 2,
                           ),
                         )
-                      : const Text(
-                          'Continue to Evidence',
+                      : Text(AppLocalizations.of(context)!.continueToEvidence,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

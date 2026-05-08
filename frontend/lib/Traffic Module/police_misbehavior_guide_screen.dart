@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 import 'police_complaint_filing_screen.dart';
 import 'police_immediate_steps_screen.dart';
@@ -10,6 +11,7 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -19,8 +21,8 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Police Misbehavior Guide',
+        title:  Text(
+          loc.policeMisbehaviorGuide,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -70,8 +72,8 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Know Your Rights',
+                           Text(
+                             loc.knowYourRights,
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
@@ -80,7 +82,7 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Steps to take if officer misbehaves',
+                            loc.stepsIfMisbehaves,
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey.shade700,
@@ -96,8 +98,8 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Section title
-              const Text(
-                'What Counts as Misbehavior?',
+               Text(
+                loc.whatCountsMisbehavior,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -110,9 +112,9 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
               // Misbehavior items
               _buildMisbehaviorItem(
                 icon: Icons.error_outline,
-                title: 'Asking for Bribe',
-                description: 'Officer demands money instead of issuing challan',
-                severity: 'Serious',
+                title: loc.bribeTitle,
+                      description: loc.bribeDesc,
+                      severity: loc.serious,
                 severityColor: const Color(0xFFDC2626),
               ),
 
@@ -120,10 +122,9 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
 
               _buildMisbehaviorItem(
                 icon: Icons.error_outline,
-                title: 'Threatening Behavior',
-                description:
-                    'Verbal threats, intimidation, or aggressive conduct',
-                severity: 'Serious',
+                title: loc.threatTitle,
+                      description: loc.threatDesc,
+                      severity: loc.serious,
                 severityColor: const Color(0xFFDC2626),
               ),
 
@@ -131,9 +132,9 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
 
               _buildMisbehaviorItem(
                 icon: Icons.warning_amber_outlined,
-                title: 'Taking Keys/Documents Illegally',
-                description: 'Confiscating items without proper authority',
-                severity: 'Moderate',
+                title: loc.illegalConfiscationTitle,
+                      description: loc.illegalConfiscationDesc,
+                      severity: loc.moderate,
                 severityColor: const Color(0xFFD97706),
               ),
 
@@ -141,9 +142,9 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
 
               _buildMisbehaviorItem(
                 icon: Icons.warning_amber_outlined,
-                title: 'Wrong Challan',
-                description: 'Issuing challan for violation you did not commit',
-                severity: 'Moderate',
+                title: loc.wrongChallanTitle,
+                      description: loc.wrongChallanDesc,
+                      severity: loc.moderate,
                 severityColor: const Color(0xFFD97706),
               ),
 
@@ -151,9 +152,9 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
 
               _buildMisbehaviorItem(
                 icon: Icons.error_outline,
-                title: 'Harassment',
-                description: 'Gender-based or personal harassment',
-                severity: 'Serious',
+                 title: loc.harassmentTitle,
+                      description: loc.harassmentDesc,
+                      severity: loc.serious,
                 severityColor: const Color(0xFFDC2626),
               ),
 
@@ -183,16 +184,16 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
-                        'View Immediate Steps',
-                        style: TextStyle(
+                        loc.viewImmediateSteps,
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, size: 18),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.arrow_forward, size: 18),
                     ],
                   ),
                 ),
@@ -223,8 +224,8 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'File Complaint Now',
+                  child: Text(
+                     loc.fileComplaintNow,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
@@ -241,7 +242,7 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Document everything: time, place, officer ID, and witnesses',
+                  loc.documentTip,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
                 ),
@@ -265,7 +266,7 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                         TrafficPoliceContacts.helpline1915,
                       ),
                       icon: const Icon(Icons.phone, size: 20),
-                      label: const Text('Call 1915'),
+                      label: Text(loc.call1915),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF00401A),
                         side: const BorderSide(color: Color(0xFF00401A)),
@@ -286,7 +287,7 @@ class PoliceMisbehaviorGuideScreen extends StatelessWidget {
                         );
                       },
                       icon: const Icon(Icons.route, size: 20),
-                      label: const Text('Complaint paths'),
+                      label: Text(loc.complaintPaths),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00401A),
                         foregroundColor: Colors.white,

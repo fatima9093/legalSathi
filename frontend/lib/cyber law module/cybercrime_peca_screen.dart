@@ -7,6 +7,7 @@ import 'package:front_end/cyber%20law%20module/report_fake_account_screen.dart';
 import 'package:front_end/cyber%20law%20module/evidence_extractor_screen.dart';
 import 'package:front_end/scenario_simulator_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class CyberCrimePECAScreen extends StatefulWidget {
   const CyberCrimePECAScreen({super.key});
@@ -35,9 +36,9 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Cyber Crime (PECA)',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.cyberCrimePeca,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -48,15 +49,15 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header with Urdu text
+            // Header with Urdu text (localized)
             Container(
               width: double.infinity,
               color: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              child: const Text(
-                'سائبر کرائم',
+              child: Text(
+                AppLocalizations.of(context)!.cyberCrimeUrdu,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black54,
                   height: 1.5,
@@ -72,7 +73,7 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: 'Search sections...',
+                  hintText: AppLocalizations.of(context)!.searchSections,
                   hintStyle: TextStyle(
                     color: Colors.grey.shade400,
                     fontSize: 14,
@@ -99,8 +100,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               icon: Icons.shield_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Online Harassment Explainer',
-              subtitle: 'PECA Section 24 overview',
+              title: AppLocalizations.of(context)!.onlineHarassmentPeca,
+              subtitle: AppLocalizations.of(context)!.pecaSection24Overview,
               onTap: () {
                 Navigator.push(
                   context,
@@ -117,8 +118,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               icon: Icons.info_outline,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Blackmail Handling Flow',
-              subtitle: 'Steps to handle blackmail',
+              title: AppLocalizations.of(context)!.blackmailHandling,
+              subtitle: AppLocalizations.of(context)!.stepsToHandleBlackmail,
               onTap: () {
                 Navigator.push(
                   context,
@@ -135,8 +136,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               icon: Icons.description_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Fake Account Reporting',
-              subtitle: 'Report fake social profiles',
+              title: AppLocalizations.of(context)!.reportFakeAccount,
+              subtitle: AppLocalizations.of(context)!.reportFakeSocialProfiles,
               onTap: () {
                 Navigator.push(
                   context,
@@ -153,8 +154,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               icon: Icons.folder_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Threat Message Evidence',
-              subtitle: 'Preserve digital evidence',
+              title: AppLocalizations.of(context)!.threatMessageEvidence,
+              subtitle: AppLocalizations.of(context)!.preserveDigitalEvidence,
               onTap: () {
                 Navigator.push(
                   context,
@@ -171,8 +172,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               icon: Icons.description_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'FIA Complaint Generator',
-              subtitle: 'Draft FIA cyber complaint',
+              title: AppLocalizations.of(context)!.fiaCyberCrime,
+              subtitle: AppLocalizations.of(context)!.draftFiaCyberComplaint,
               onTap: () {
                 Navigator.push(
                   context,
@@ -189,8 +190,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               icon: Icons.image_outlined,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Screenshot Reader',
-              subtitle: 'Extract timestamps & numbers',
+              title: AppLocalizations.of(context)!.screenshotReader,
+              subtitle: AppLocalizations.of(context)!.extractTimestampsNumbers,
               onTap: () {
                 Navigator.push(
                   context,
@@ -207,8 +208,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
               icon: Icons.info_outline,
               iconColor: const Color(0xFF00401A),
               iconBgColor: const Color(0xFFE6EFEA),
-              title: 'Scenario Simulator',
-              subtitle: 'Learn cyber crime scenarios',
+              title: AppLocalizations.of(context)!.scenarioSimulator,
+              subtitle: AppLocalizations.of(context)!.learnCyberCrimeScenarios,
               onTap: () {
                 Navigator.push(
                   context,

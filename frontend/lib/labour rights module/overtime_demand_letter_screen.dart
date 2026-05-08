@@ -5,6 +5,7 @@ import 'package:front_end/models/overtime_context.dart';
 import 'package:front_end/services/labour_wage_record_service.dart';
 
 import '../screen_with_nav.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 /// Formal demand letter for unpaid overtime (reuses same DB pattern as minimum wage tools).
 class OvertimeDemandLetterScreen extends StatefulWidget {
@@ -40,18 +41,16 @@ class _OvertimeDemandLetterScreenState extends State<OvertimeDemandLetterScreen>
     }
     if (res['needAuth'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Sign in to save this letter snapshot to your account.'),
-          backgroundColor: Color(0xFFD97706),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.signInToSaveLetter),
+          backgroundColor: const Color(0xFFD97706),
         ),
       );
     } else if (res['missingTable'] == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Run supabase_labour_wage_records_complete.sql in Supabase SQL Editor.',
-          ),
-          backgroundColor: Color(0xFFD97706),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.runSupabaseScriptNote),
+          backgroundColor: const Color(0xFFD97706),
         ),
       );
     }
@@ -94,9 +93,9 @@ Date: $d''';
   void _copy() {
     Clipboard.setData(ClipboardData(text: _letterBody()));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Letter copied to clipboard'),
-        backgroundColor: Color(0xFF00401A),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.letterCopiedMessage),
+        backgroundColor: const Color(0xFF00401A),
       ),
     );
   }
@@ -112,9 +111,9 @@ Date: $d''';
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Draft Demand Letter',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context)!.draftDemandLetterTitle,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -127,9 +126,9 @@ Date: $d''';
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Unpaid overtime — demand letter',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context)!.unpaidOvertimeLetterTitle,
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
@@ -137,7 +136,7 @@ Date: $d''';
             ),
             const SizedBox(height: 8),
             Text(
-              'Edit placeholders in brackets before sending. Amounts follow your calculator inputs.',
+              AppLocalizations.of(context)!.editPlaceholdersNote,
               style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
             ),
             const SizedBox(height: 16),
@@ -171,9 +170,9 @@ Date: $d''';
                 ),
                 onPressed: _copy,
                 icon: const Icon(Icons.copy, color: Colors.white, size: 20),
-                label: const Text(
-                  'Copy full letter',
-                  style: TextStyle(
+                label: Text(
+                  AppLocalizations.of(context)!.copyFullLetterButton,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
