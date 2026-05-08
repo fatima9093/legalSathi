@@ -11,10 +11,11 @@ Returns the full structured OrchestratorResponse.
 """
 from __future__ import annotations
 
-import logging, time
-from typing import Any, Dict, List, Optional
+import logging, time, asyncio, json
+from typing import Any, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel
+from openai import AsyncOpenAI
 
 import groq_config  # noqa: F401
 from conversation_context import build_contextual_query
@@ -22,6 +23,10 @@ from law_retrieval_agent  import LawRetrievalError,  run_law_retrieval_agent
 from verification_agent   import VerificationReport,  run_verification_agent
 from explanation_agent    import ExplanationError,    run_explanation_agent
 from guidance_agent       import GuidanceError,       run_guidance_agent
+from groq_config          import GROQ_MODEL_STRONG, _GROQ_API_KEY, _GROQ_BASE_URL
+
+# Initialize Groq client (AsyncOpenAI-compatible)
+_CLIENT = AsyncOpenAI(api_key=_GROQ_API_KEY, base_url=_GROQ_BASE_URL)
 
 logger = logging.getLogger(__name__)
 
@@ -181,7 +186,196 @@ def _infer_module_from_query(query: str) -> Optional[str]:
             best_module = module_name
     return best_module if best_score > 0 else None
 
+
 # ---------------------------------------------------------------------------
+# ENHANCEMENT 5A: Smart Second-Pass Trigger Logic
+# ---------------------------------------------------------------------------
+
+class SecondPassDecision(BaseModel):
+    """Decision criteria for running second retrieval pass."""
+    should_run: bool
+    reason: str
+    signals: Dict[str, bool] = {}
+    confidence_threshold_override: Optional[float] = None
+
+
+def _should_run_second_pass_smart(
+    query: str,
+    verified_count: int,
+    overall_confidence: float,
+    report: VerificationReport,
+    enable_smart_second_pass: bool = True,
+) -> SecondPassDecision:
+    """
+    ENHANCEMENT 5A: Multi-signal decision logic for second pass.
+    Replaces fixed 0.55 threshold with contextual evaluation.
+    
+    Signals evaluated:
+    1. low_verified_count: < 2 verified chunks (high risk)
+    2. low_confidence: < 0.55 overall confidence
+    3. sensitive_query: Query contains sensitive keywords (should retry)
+    4. no_official_sources: No official gov sources found (verify more)
+    5. high_freshness_uncertainty: Can't determine if current law
+    """
+    if not enable_smart_second_pass:
+        # Fall back to simple threshold
+        return SecondPassDecision(
+            should_run=(verified_count < 2) or (overall_confidence < 0.55),
+            reason="Simple threshold check (smart pass disabled)",
+            signals={},
+        )
+    
+    signals = {}
+    
+    # Signal 1: Low verified count (high risk)
+    signals["low_verified_count"] = verified_count < 2
+    
+    # Signal 2: Low confidence
+    signals["low_confidence"] = overall_confidence < 0.55
+    
+    # Signal 3: Sensitive query (harassment, abuse, violence, urgent)
+    q = (query or "").lower()
+    sensitive_keywords = ["harass", "abuse", "violence", "assault", "emergency", "urgent", "threat", "scared"]
+    signals["sensitive_query"] = any(k in q for k in sensitive_keywords)
+    
+    # Signal 4: No official sources
+    official_count = sum(
+        1
+        for c in report.verified
+        if c.source_type == "official_web" or ".gov.pk" in (c.source_url or "")
+    )
+    signals["no_official_sources"] = official_count == 0 and len(report.verified) > 0
+    
+    # Signal 5: Freshness uncertainty / stale mixed status
+    signals["high_freshness_uncertainty"] = report.freshness_status in {"unknown", "mixed", "stale"}
+    
+    # Decision logic
+    true_signals = sum(1 for v in signals.values() if v)
+    
+    if true_signals >= 3:
+        # Strong evidence for second pass
+        return SecondPassDecision(
+            should_run=True,
+            reason=f"Multiple risk signals detected ({true_signals} of 5)",
+            signals=signals,
+            confidence_threshold_override=0.30,
+        )
+    elif true_signals == 2:
+        # Moderate evidence for second pass
+        return SecondPassDecision(
+            should_run=True,
+            reason=f"Moderate risk signals detected ({true_signals} of 5)",
+            signals=signals,
+            confidence_threshold_override=0.35,
+        )
+    elif signals.get("sensitive_query") or signals.get("no_official_sources"):
+        # Always retry for sensitive or unofficial queries
+        return SecondPassDecision(
+            should_run=True,
+            reason="Sensitive or unofficial query - retrying for official sources",
+            signals=signals,
+            confidence_threshold_override=0.35,
+        )
+    else:
+        # Evidence sufficient
+        return SecondPassDecision(
+            should_run=False,
+            reason="Evidence sufficient - second pass not needed",
+            signals=signals,
+        )
+
+
+# ---------------------------------------------------------------------------
+# ENHANCEMENT 5B: Query Ambiguity Detection
+# ---------------------------------------------------------------------------
+
+class AmbiguityDetection(BaseModel):
+    """Query ambiguity analysis."""
+    is_ambiguous: bool
+    ambiguity_score: float  # 0.0-1.0
+    ambiguities: List[str] = []
+    suggested_clarifications: List[str] = []
+
+
+async def _detect_query_ambiguity(
+    query: str,
+    enable_ambiguity_detection: bool = True,
+) -> AmbiguityDetection:
+    """
+    ENHANCEMENT 5B: LLM-based query ambiguity detection.
+    
+    Detects unclear, vague, or multi-faceted queries and suggests clarifications.
+    Helps users provide better context for more accurate answers.
+    """
+    if not enable_ambiguity_detection:
+        return AmbiguityDetection(
+            is_ambiguous=False,
+            ambiguity_score=0.0,
+            ambiguities=[],
+            suggested_clarifications=[],
+        )
+    
+    try:
+        # Use LLM to analyze query clarity
+        prompt = f"""Analyze this legal query for ambiguity and vagueness.
+
+Query: "{query}"
+
+Return a JSON object with:
+{{
+  "is_ambiguous": bool (true if query is unclear/vague),
+  "ambiguity_score": float (0.0-1.0, 1.0 = very ambiguous),
+  "ambiguities": ["issue1", "issue2"],  // What's unclear?
+  "suggested_clarifications": ["clarification1", "clarification2"]  // Helpful follow-ups
+}}
+
+Examples of helpful clarifications:
+- "Which city/province are you in?" (for location-specific laws)
+- "When did this happen?" (for timeliness)
+- "Are you the employer or employee?" (for role clarity)
+- "Is this about wages, termination, or safety?" (for specific issue)
+
+Be concise. Focus on legally relevant clarifications."""
+        
+        resp = await _CLIENT.chat.completions.create(
+            model=GROQ_MODEL_STRONG,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.3,
+        )
+        
+        import json
+        data = json.loads(resp.choices[0].message.content or "{}")
+        
+        result = AmbiguityDetection(
+            is_ambiguous=data.get("is_ambiguous", False),
+            ambiguity_score=float(data.get("ambiguity_score", 0.0)),
+            ambiguities=data.get("ambiguities", []),
+            suggested_clarifications=data.get("suggested_clarifications", []),
+        )
+        
+        if result.is_ambiguous:
+            logger.info(
+                "[Ambiguity] Detected ambiguity (score: %.2f) for query: %s | "
+                "Issues: %s | Clarifications: %s",
+                result.ambiguity_score,
+                query[:50],
+                ", ".join(result.ambiguities[:2]),
+                ", ".join(result.suggested_clarifications[:2]),
+            )
+        
+        return result
+    
+    except Exception as exc:
+        logger.warning(f"[Ambiguity] Detection failed: {exc}")
+        return AmbiguityDetection(
+            is_ambiguous=False,
+            ambiguity_score=0.0,
+            ambiguities=[],
+            suggested_clarifications=[],
+        )
 async def run_orchestrator(
     query: str,
     module: Optional[str]            = None,
@@ -192,12 +386,24 @@ async def run_orchestrator(
     official_links_hint: Optional[Dict[str, str]] = None,
     conversation_id: Optional[str]   = None,
     conversation_history: Optional[List[Dict[str, Any]]] = None,
+    enable_smart_second_pass: bool   = True,
+    enable_ambiguity_detection: bool = True,
 ) -> OrchestratorResponse:
     query = (query or "").strip()
     if not query:
         raise OrchestratorError("Query must not be empty.")
     if module is not None and module not in _VALID_MODULES:
         raise OrchestratorError(f"Invalid module \"{module}\".")
+
+    # ---- ENHANCEMENT 5B: Query Ambiguity Detection --------------------------
+    ambiguity_result = await _detect_query_ambiguity(query, enable_ambiguity_detection)
+    if ambiguity_result.is_ambiguous and ambiguity_result.ambiguity_score > 0.65:
+        logger.warning(
+            "[Orchestrator] High ambiguity detected (%.2f). Suggesting clarifications.",
+            ambiguity_result.ambiguity_score
+        )
+        # Could notify user in UI, but continue processing
+        # In production, might prompt for clarification before proceeding
 
     context_result = await build_contextual_query(
         query=query,
@@ -245,11 +451,22 @@ async def run_orchestrator(
 
     verified_dicts: List[Dict[str, Any]] = _select_context_chunks(report)
 
-    needs_research_pass = (len(report.verified) < 2) or (report.overall_confidence < 0.55)
-    if needs_research_pass:
+    # ---- ENHANCEMENT 5A: Smart Second-Pass Trigger Logic --------------------
+    second_pass_decision = _should_run_second_pass_smart(
+        query=resolved_query,
+        verified_count=len(report.verified),
+        overall_confidence=report.overall_confidence,
+        report=report,
+        enable_smart_second_pass=enable_smart_second_pass,
+    )
+    
+    if second_pass_decision.should_run:
         logger.info(
-            "[Orchestrator] Low evidence detected (verified=%d, conf=%.2f). Running second retrieval pass.",
-            len(report.verified), report.overall_confidence
+            "[Orchestrator] Triggering second pass: %s | "
+            "Signals: %s | Confidence threshold override: %s",
+            second_pass_decision.reason,
+            {k: v for k, v in second_pass_decision.signals.items() if v},
+            second_pass_decision.confidence_threshold_override,
         )
         try:
             extra_raw = await run_law_retrieval_agent(
@@ -260,18 +477,30 @@ async def run_orchestrator(
             merged_raw = _merge_chunks(raw_chunks, extra_raw, max_items=30)
             if len(merged_raw) > len(raw_chunks):
                 raw_chunks = merged_raw
+                min_score = second_pass_decision.confidence_threshold_override or 0.35
                 report = await run_verification_agent(
                     query=resolved_query,
                     raw_chunks=raw_chunks,
-                    min_overall_score=0.30 if report.overall_confidence < 0.40 else 0.35,
+                    min_overall_score=min_score,
                 )
                 verified_dicts = _select_context_chunks(report)
                 logger.info(
-                    "[Orchestrator] Second pass improved evidence: verified=%d conf=%.2f",
-                    len(report.verified), report.overall_confidence
+                    "[Orchestrator] Second pass complete: verified=%d conf=%.2f "
+                    "| Reason: %s",
+                    len(report.verified),
+                    report.overall_confidence,
+                    second_pass_decision.reason,
                 )
         except Exception as exc:
             logger.warning("[Orchestrator] Second retrieval pass failed: %s", exc)
+    else:
+        logger.debug(
+            "[Orchestrator] Second pass skipped: %s | "
+            "Verified=%d, Confidence=%.2f",
+            second_pass_decision.reason,
+            len(report.verified),
+            report.overall_confidence,
+        )
 
     logger.info("[Orchestrator] Stage 2 complete: %d verified  conf=%.2f",
                 len(report.verified), report.overall_confidence)
@@ -351,4 +580,10 @@ async def run_orchestrator(
                 elapsed, response.confidence_score, len(steps), len(response.key_points))
     return response
 
-__all__ = ["OrchestratorError", "OrchestratorResponse", "run_orchestrator"]
+__all__ = [
+    "OrchestratorError",
+    "OrchestratorResponse",
+    "SecondPassDecision",
+    "AmbiguityDetection",
+    "run_orchestrator",
+]

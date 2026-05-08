@@ -36,10 +36,9 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
 
   Future<void> _uploadScreenshots() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.image,
         allowMultiple: true,
-        allowCompression: true,
         withData: true,
       );
 

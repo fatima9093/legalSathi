@@ -391,7 +391,7 @@ class _AIEvidenceReviewScreenState extends State<AIEvidenceReviewScreen> {
 
   Future<void> _pickFiles(List<String> extensions) async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: extensions,
         allowMultiple: true,

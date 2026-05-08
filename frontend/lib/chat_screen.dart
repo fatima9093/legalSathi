@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,6 +17,7 @@ import 'package:front_end/widgets/agent_status_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 class ChatScreen extends StatefulWidget {
   final ModuleType? selectedModule;
 
@@ -148,11 +149,11 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Debug: Print user ID to console
     final userId = Supabase.instance.client.auth.currentUser?.id;
     print('🔍 DEBUG: Your User ID: $userId');
-    
+
     _speech = stt.SpeechToText();
     _conversationId = _newConversationId();
 
@@ -782,7 +783,7 @@ class _ChatScreenState extends State<ChatScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text((AppLocalizations.of(context)!.cancel))
+            child: Text((AppLocalizations.of(context)!.cancel)),
           ),
           TextButton(
             onPressed: () {
@@ -890,7 +891,7 @@ class _ChatScreenState extends State<ChatScreen> {
   // ── Upload file ────────────────────────────────────────────────────────────
   Future<void> _uploadFile() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         allowMultiple: false,
         type: FileType.custom,
         allowedExtensions: ['pdf', 'txt', 'doc', 'docx', 'png', 'jpg', 'jpeg'],
@@ -2518,8 +2519,7 @@ class _ChatScreenState extends State<ChatScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-               child: Text((AppLocalizations.of(context)!.cancel)
-                      ),
+              child: Text((AppLocalizations.of(context)!.cancel)),
             ),
             TextButton(
               onPressed: () {

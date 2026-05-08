@@ -125,7 +125,7 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
     }
 
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
         withData: true,

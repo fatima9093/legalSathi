@@ -5,7 +5,6 @@ import 'package:front_end/models/complaint_model.dart';
 import 'package:intl/intl.dart';
 
 class PdfGeneratorService {
-  
   Future<Uint8List> generateComplaintPDF(ComplaintModel complaint) async {
     final pdf = pw.Document();
     final now = DateTime.now();
@@ -57,10 +56,7 @@ class PdfGeneratorService {
           pw.SizedBox(height: 24),
 
           // To Address
-          pw.Text(
-            'To,',
-            style: const pw.TextStyle(fontSize: 12),
-          ),
+          pw.Text('To,', style: const pw.TextStyle(fontSize: 12)),
           pw.Text(
             'The Federal Ombudsperson',
             style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
@@ -91,8 +87,14 @@ class PdfGeneratorService {
 
           // Incident Details Section
           _buildSection('INCIDENT DETAILS:', [
-            {'label': 'Date of Incident', 'value': complaint.incidentDate ?? 'N/A'},
-            {'label': 'Type of Harassment', 'value': complaint.harassmentType ?? 'N/A'},
+            {
+              'label': 'Date of Incident',
+              'value': complaint.incidentDate ?? 'N/A',
+            },
+            {
+              'label': 'Type of Harassment',
+              'value': complaint.harassmentType ?? 'N/A',
+            },
           ]),
 
           pw.SizedBox(height: 16),
@@ -125,13 +127,17 @@ class PdfGeneratorService {
           // Accused Person Section
           _buildSection('ACCUSED PERSON:', [
             {'label': 'Name', 'value': complaint.accusedName ?? 'N/A'},
-            {'label': 'Designation', 'value': complaint.accusedDesignation ?? 'N/A'},
+            {
+              'label': 'Designation',
+              'value': complaint.accusedDesignation ?? 'N/A',
+            },
           ]),
 
           pw.SizedBox(height: 20),
 
           // Evidence Files Section
-          if (complaint.evidenceFiles != null && complaint.evidenceFiles!.isNotEmpty) ...[
+          if (complaint.evidenceFiles != null &&
+              complaint.evidenceFiles!.isNotEmpty) ...[
             pw.Text(
               'EVIDENCE FILES ATTACHED:',
               style: pw.TextStyle(
@@ -141,28 +147,30 @@ class PdfGeneratorService {
               ),
             ),
             pw.SizedBox(height: 8),
-            ...complaint.evidenceFiles!.map((file) => pw.Padding(
-              padding: const pw.EdgeInsets.only(bottom: 4, left: 8),
-              child: pw.Row(
-                children: [
-                  pw.Container(
-                    width: 4,
-                    height: 4,
-                    decoration: const pw.BoxDecoration(
-                      color: PdfColors.green900,
-                      shape: pw.BoxShape.circle,
+            ...complaint.evidenceFiles!.map(
+              (file) => pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 4, left: 8),
+                child: pw.Row(
+                  children: [
+                    pw.Container(
+                      width: 4,
+                      height: 4,
+                      decoration: const pw.BoxDecoration(
+                        color: PdfColors.green900,
+                        shape: pw.BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  pw.SizedBox(width: 8),
-                  pw.Expanded(
-                    child: pw.Text(
-                      '${file.fileName} (${file.fileType}) - ${(file.fileSize ?? 0) ~/ 1024} KB',
-                      style: const pw.TextStyle(fontSize: 10),
+                    pw.SizedBox(width: 8),
+                    pw.Expanded(
+                      child: pw.Text(
+                        '${file.fileName} (${file.fileType}) - ${(file.fileSize ?? 0) ~/ 1024} KB',
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )),
+            ),
             pw.SizedBox(height: 20),
           ],
 
@@ -202,11 +210,7 @@ class PdfGeneratorService {
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Container(
-                    width: 200,
-                    height: 1,
-                    color: PdfColors.black,
-                  ),
+                  pw.Container(width: 200, height: 1, color: PdfColors.black),
                   pw.SizedBox(height: 4),
                   pw.Text(
                     'Complainant Signature',
@@ -214,26 +218,25 @@ class PdfGeneratorService {
                   ),
                   pw.Text(
                     complaint.fullName ?? 'N/A',
-                    style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
               pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Container(
-                    width: 150,
-                    height: 1,
-                    color: PdfColors.black,
-                  ),
+                  pw.Container(width: 150, height: 1, color: PdfColors.black),
                   pw.SizedBox(height: 4),
-                  pw.Text(
-                    'Date',
-                    style: const pw.TextStyle(fontSize: 10),
-                  ),
+                  pw.Text('Date', style: const pw.TextStyle(fontSize: 10)),
                   pw.Text(
                     dateFormat.format(now),
-                    style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -250,13 +253,70 @@ class PdfGeneratorService {
             children: [
               pw.Text(
                 'Generated by Legal Sathi App',
-                style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+                style: const pw.TextStyle(
+                  fontSize: 9,
+                  color: PdfColors.grey700,
+                ),
               ),
               pw.Text(
                 'Complaint ID: ${complaint.complaintId ?? "N/A"}',
-                style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+                style: const pw.TextStyle(
+                  fontSize: 9,
+                  color: PdfColors.grey700,
+                ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+
+    return pdf.save();
+  }
+
+  Future<Uint8List> generateTemplatePdf(String title, String body) async {
+    final pdf = pw.Document();
+    final now = DateTime.now();
+    final dateFormat = DateFormat('dd MMM yyyy');
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(40),
+        build: (context) => [
+          pw.Container(
+            padding: const pw.EdgeInsets.all(16),
+            decoration: pw.BoxDecoration(
+              color: PdfColors.green900,
+              borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+            ),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  title,
+                  style: pw.TextStyle(
+                    fontSize: 16,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.white,
+                  ),
+                ),
+                pw.SizedBox(height: 8),
+                pw.Text(
+                  'Generated by Legal Sathi on ${dateFormat.format(now)}',
+                  style: const pw.TextStyle(
+                    fontSize: 10,
+                    color: PdfColors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          pw.SizedBox(height: 24),
+          pw.Text(
+            body,
+            style: const pw.TextStyle(fontSize: 11, height: 1.5),
+            textAlign: pw.TextAlign.justify,
           ),
         ],
       ),
@@ -286,34 +346,37 @@ class PdfGeneratorService {
           ),
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: items.map((item) => pw.Padding(
-              padding: const pw.EdgeInsets.only(bottom: 6),
-              child: pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.SizedBox(
-                    width: 120,
-                    child: pw.Text(
-                      '${item['label']!}:',
-                      style: pw.TextStyle(
-                        fontSize: 10,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+            children: items
+                .map(
+                  (item) => pw.Padding(
+                    padding: const pw.EdgeInsets.only(bottom: 6),
+                    child: pw.Row(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.SizedBox(
+                          width: 120,
+                          child: pw.Text(
+                            '${item['label']!}:',
+                            style: pw.TextStyle(
+                              fontSize: 10,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        pw.Expanded(
+                          child: pw.Text(
+                            item['value']!,
+                            style: const pw.TextStyle(fontSize: 10),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  pw.Expanded(
-                    child: pw.Text(
-                      item['value']!,
-                      style: const pw.TextStyle(fontSize: 10),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
+                )
+                .toList(),
           ),
         ),
       ],
     );
   }
 }
-

@@ -31,8 +31,179 @@ class ExplanationOutput(BaseModel):
     key_points: List[str]
     references: Dict[str, str]
 
+
+# =========================================================================
+# ENHANCEMENT 3A: Structured Knowledge Extraction
+# =========================================================================
+
+class StructuredExplanation(BaseModel):
+    """Enhanced explanation with machine-readable structured fields."""
+    summary:           str
+    key_points:        List[str]
+    definitions:       Dict[str, str]  # Legal terms defined
+    citations:         List[Dict[str, str]]  # Act/Section references
+    procedures:        List[str]  # Step-by-step procedures
+    exceptions:        List[str]  # Important exceptions
+    penalties:         List[Dict[str, str]]  # Penalties if violated
+    references:        Dict[str, str]
+    language:          str = "English"
+
+
+async def _extract_structured_knowledge(
+    summary: str,
+    key_points: List[str],
+    query: str,
+    language: str = "English"
+) -> Dict[str, Any]:
+    """
+    Extract machine-readable structured knowledge from explanation.
+    Useful for app to display as cards/sections.
+    """
+    extraction_prompt = f"""Extract structured legal knowledge from this content:
+
+Summary: {summary}
+
+Key Points:
+{chr(10).join(f"- {kp}" for kp in key_points[:5])}
+
+Query: {query}
+
+Respond with ONLY valid JSON with these fields:
+- definitions: dict of legal terms used (term: definition)
+- citations: list of acts/sections referenced (each with 'act', 'section', 'description')
+- procedures: list of procedural steps
+- exceptions: list of important exceptions
+- penalties: list of penalties (each with 'violation', 'penalty')
+
+Example response:
+{{
+  "definitions": {{"harassment": "Unwanted conduct creating hostile environment"}},
+  "citations": [{{"act": "Protection against Harassment of Women at Workplace Act 2010", "section": "Section 3", "description": "Definition of harassment"}}],
+  "procedures": ["Step 1: Document incidents", "Step 2: Report to committee"],
+  "exceptions": ["If complaint is false"],
+  "penalties": [{{"violation": "Making false complaint", "penalty": "Fine up to Rs 50,000"}}]
+}}
+"""
+    
+    try:
+        resp = await _CLIENT.chat.completions.create(
+            model=GROQ_MODEL_STRONG,
+            messages=[{"role": "user", "content": extraction_prompt}],
+            temperature=0.1,
+            max_tokens=1500
+        )
+        
+        data = _strip_json(resp.choices[0].message.content or "{}")
+        return {
+            "definitions": data.get("definitions", {}),
+            "citations": data.get("citations", []),
+            "procedures": data.get("procedures", []),
+            "exceptions": data.get("exceptions", []),
+            "penalties": data.get("penalties", [])
+        }
+    except Exception as exc:
+        logger.warning(f"Structured knowledge extraction failed: {exc}")
+        return {
+            "definitions": {},
+            "citations": [],
+            "procedures": [],
+            "exceptions": [],
+            "penalties": []
+        }
+
+
+async def run_explanation_agent_structured(
+    chunks: List[Dict[str, Any]],
+    language: str = "English",
+    max_key_points: int = 8,
+    query: str = "",
+) -> StructuredExplanation:
+    """
+    Generate structured explanation with definitions, citations, and procedures.
+    Better for mobile app UI - can display as cards/sections.
+    """
+    # First: Get plain-language explanation
+    base_explanation = await run_explanation_agent(chunks, language, max_key_points, query)
+    
+    # Second: Extract structured knowledge
+    structured = await _extract_structured_knowledge(
+        base_explanation.summary,
+        base_explanation.key_points,
+        query,
+        language
+    )
+    
+    return StructuredExplanation(
+        summary=base_explanation.summary,
+        key_points=base_explanation.key_points,
+        definitions=structured["definitions"],
+        citations=structured["citations"],
+        procedures=structured["procedures"],
+        exceptions=structured["exceptions"],
+        penalties=structured["penalties"],
+        references=base_explanation.references,
+        language=language
+    )
+
+
+# =========================================================================
+# ENHANCEMENT 3B: Multilingual Support
+# =========================================================================
+
+LANGUAGE_CONFIGS = {
+    "English": {
+        "name": "English",
+        "legal_terms": ["Act", "Section", "Clause", "Provision", "Right"]
+    },
+    "Urdu": {
+        "name": "اردو",
+        "legal_terms": ["آرڈیننس", "شق", "حکم", "حق"]
+    },
+    "Punjabi": {
+        "name": "پنجابی",
+        "legal_terms": ["قانون", "حصہ", "حکم"]
+    }
+}
+
+
+async def run_explanation_agent_multilingual(
+    chunks: List[Dict[str, Any]],
+    languages: List[str] = None,
+    max_key_points: int = 8,
+    query: str = "",
+) -> Dict[str, ExplanationOutput]:
+    """
+    Generate explanations in multiple languages simultaneously.
+    Supports English, Urdu, Punjabi.
+    """
+    if languages is None:
+        languages = ["English"]  # Default
+    
+    results: Dict[str, ExplanationOutput] = {}
+    
+    for lang in languages:
+        try:
+            if lang not in LANGUAGE_CONFIGS:
+                logger.warning(f"Language {lang} not configured, skipping")
+                continue
+            
+            explanation = await run_explanation_agent(chunks, lang, max_key_points, query)
+            results[lang] = explanation
+            logger.info(f"[Multilingual] Generated explanation in {lang}")
+        except Exception as exc:
+            logger.warning(f"Multilingual explanation for {lang} failed: {exc}")
+    
+    return results
+
+
 class ExplanationError(Exception):
     pass
+
+
+# =========================================================================
+# Original Functions
+# =========================================================================
+
 
 # ---------------------------------------------------------------------------
 def _build_context(chunks: List[Dict[str, Any]]) -> str:
@@ -182,4 +353,12 @@ async def run_explanation_agent(
                                    references=_build_refs(chunks))
     return _enforce_query_focus(output, q)
 
-__all__ = ["ExplanationError", "ExplanationOutput", "run_explanation_agent"]
+
+__all__ = [
+    "ExplanationError",
+    "ExplanationOutput",
+    "StructuredExplanation",
+    "run_explanation_agent",
+    "run_explanation_agent_structured",
+    "run_explanation_agent_multilingual",
+]

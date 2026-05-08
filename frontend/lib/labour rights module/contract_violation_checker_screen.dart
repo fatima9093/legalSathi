@@ -44,7 +44,7 @@ class _ContractViolationCheckerScreenState
 
   Future<void> _pickPdf() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['pdf'],
         withData: true,
@@ -77,7 +77,7 @@ class _ContractViolationCheckerScreenState
 
   Future<void> _pickImageGallery() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['jpg', 'jpeg', 'png', 'webp'],
         withData: true,

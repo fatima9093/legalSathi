@@ -20,7 +20,7 @@ class _ScreenshotEvidenceReaderScreenState
 
   Future<void> _uploadScreenshot() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.image,
         allowMultiple: false,
         withData: true,

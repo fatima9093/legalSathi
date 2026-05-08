@@ -21,12 +21,17 @@ from dotenv import load_dotenv
 
 # Agent orchestrator — imported lazily so the existing RAG path is unaffected
 # if the openai-agents package is not installed.
+_AGENTS_IMPORT_ERROR: Optional[str] = None
 try:
     from agent_orchestrator import OrchestratorError, OrchestratorResponse, run_orchestrator
     _AGENTS_AVAILABLE = True
-except ImportError:
+except ImportError as exc:
     _AGENTS_AVAILABLE = False
-    print("⚠️  agent_orchestrator not found — /api/ask/agent endpoint will be unavailable.")
+    _AGENTS_IMPORT_ERROR = str(exc)
+    print(
+        "⚠️  agent_orchestrator import failed — /api/ask/agent endpoint will be unavailable."
+        f"\n   → Import error: {_AGENTS_IMPORT_ERROR}"
+    )
 
 try:
     from verification_agent import run_verification_agent
@@ -68,12 +73,10 @@ print("🔄 Loading ChromaDB...")
 BASE_DIR = Path(__file__).resolve().parent
 CHROMA_DB_PATH = BASE_DIR / "chroma_db"
 client = chromadb.PersistentClient(path=str(CHROMA_DB_PATH))
-embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"
-)
+embedding_function = embedding_functions.DefaultEmbeddingFunction()
 
 try:
-    collection = client.get_collection(
+    collection = client.get_or_create_collection(
         name="legal_documents",
         embedding_function=embedding_function
     )
@@ -510,7 +513,8 @@ async def ask_question(request: QuestionRequest):
             raise HTTPException(
                 status_code=501,
                 detail="Multi-agent pipeline is not installed. "
-                       "Run: pip install openai-agents beautifulsoup4",
+                       "Run: pip install -r Backend/requirements.txt"
+                       + (f" | Import error: {_AGENTS_IMPORT_ERROR}" if _AGENTS_IMPORT_ERROR else ""),
             )
         if not GROQ_API_KEY_FOR_AGENTS:
             raise HTTPException(
@@ -837,13 +841,14 @@ async def ask_question_agent(request: QuestionRequest):
     :class:`AgentAnswerResponse` directly, making the richer schema explicit
     for clients that always want the full structured guidance output.
 
-    Requires ``OPENAI_API_KEY`` to be configured in the server environment.
+    Requires ``GROQ_API_KEY`` to be configured in the server environment.
     """
     if not _AGENTS_AVAILABLE:
         raise HTTPException(
             status_code=501,
             detail="Multi-agent pipeline is not installed. "
-                   "Run: pip install openai-agents beautifulsoup4",
+                   "Run: pip install -r Backend/requirements.txt"
+                   + (f" | Import error: {_AGENTS_IMPORT_ERROR}" if _AGENTS_IMPORT_ERROR else ""),
         )
     if not GROQ_API_KEY_FOR_AGENTS:
         raise HTTPException(

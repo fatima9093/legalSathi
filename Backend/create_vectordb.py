@@ -1,5 +1,4 @@
 import os
-import shutil
 import warnings
 from pathlib import Path
 
@@ -12,28 +11,19 @@ from chromadb.utils import embedding_functions
 
 print("Starting vector database creation...")
 
-# Remove old chroma_db folder if it exists (fixes schema mismatch from different ChromaDB versions)
+# Reuse the existing database folder if it exists; deleting it can fail on
+# Windows when another process has the SQLite file open.
 BASE_DIR = Path(__file__).resolve().parent
 chroma_path = BASE_DIR / "chroma_db"
-if chroma_path.exists():
-    print("Removing old chroma_db folder (different schema)...")
-    shutil.rmtree(chroma_path)
 
 # Initialize ChromaDB
 client = chromadb.PersistentClient(path=str(chroma_path))
 
-# Use sentence transformers for embeddings
-embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"
-)
+# Use Chroma's default embedding function for a lighter startup path
+embedding_function = embedding_functions.DefaultEmbeddingFunction()
 
-# Create collection (delete if exists for fresh start)
-try:
-    client.delete_collection("legal_documents")
-except:
-    pass
-
-collection = client.create_collection(
+# Create or reuse collection
+collection = client.get_or_create_collection(
     name="legal_documents",
     embedding_function=embedding_function
 )

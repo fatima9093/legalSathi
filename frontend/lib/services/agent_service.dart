@@ -252,10 +252,13 @@ class AgentService {
         onStageChanged?.call(AgentPipelineStage.error);
         throw Exception('No relevant documents found: $detail');
       } else if (response.statusCode == 501) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final detail = data['detail'] as String? ?? response.body;
         onStageChanged?.call(AgentPipelineStage.error);
         throw Exception(
-          'Multi-agent pipeline is not available on this server. '
-          'Ensure OPENAI_API_KEY is set and openai-agents is installed.',
+          'Multi-agent pipeline is not available on this server.\n\n'
+          'Server detail: $detail\n\n'
+          'Check GROQ_API_KEY and backend startup logs.',
         );
       } else {
         onStageChanged?.call(AgentPipelineStage.error);

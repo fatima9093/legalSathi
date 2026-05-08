@@ -363,10 +363,9 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
 
   Future<void> _uploadScreenshots() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.image,
         allowMultiple: true,
-        allowCompression: true,
         withData: true,
       );
 
@@ -384,7 +383,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
 
   Future<void> _uploadTextLogs() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['txt', 'pdf'],
         allowMultiple: true,
@@ -549,7 +548,9 @@ class _ExtractingEvidenceLoadingScreenState
     );
   }
 
-  Future<ExtractedEvidence> _extractEvidenceData(List<EvidenceFile> files) async {
+  Future<ExtractedEvidence> _extractEvidenceData(
+    List<EvidenceFile> files,
+  ) async {
     if (mounted) setState(() => _status = 'Reading files...');
     final chunks = <String>[];
 
@@ -604,26 +605,70 @@ class _ExtractingEvidenceLoadingScreenState
 
     final lower = text.toLowerCase();
     final threats = <ThreatClassification>[];
-    if (_hasAny(lower, ['pay', 'money', 'transfer', 'send me', 'bitcoin', 'easypaisa'])) {
-      threats.add(ThreatClassification(type: 'Blackmail / Extortion', confidence: 90, severity: 'High'));
+    if (_hasAny(lower, [
+      'pay',
+      'money',
+      'transfer',
+      'send me',
+      'bitcoin',
+      'easypaisa',
+    ])) {
+      threats.add(
+        ThreatClassification(
+          type: 'Blackmail / Extortion',
+          confidence: 90,
+          severity: 'High',
+        ),
+      );
     }
     if (_hasAny(lower, ['kill', 'hurt', 'attack', 'violence', 'acid'])) {
-      threats.add(ThreatClassification(type: 'Violence Threat', confidence: 88, severity: 'High'));
+      threats.add(
+        ThreatClassification(
+          type: 'Violence Threat',
+          confidence: 88,
+          severity: 'High',
+        ),
+      );
     }
     if (_hasAny(lower, ['leak', 'share your photo', 'viral', 'expose'])) {
-      threats.add(ThreatClassification(type: 'Privacy Violation Threat', confidence: 86, severity: 'High'));
+      threats.add(
+        ThreatClassification(
+          type: 'Privacy Violation Threat',
+          confidence: 86,
+          severity: 'High',
+        ),
+      );
     }
     if (_hasAny(lower, ['abuse', 'harass', 'stalk', 'threat'])) {
-      threats.add(ThreatClassification(type: 'Online Harassment', confidence: 82, severity: 'Medium'));
+      threats.add(
+        ThreatClassification(
+          type: 'Online Harassment',
+          confidence: 82,
+          severity: 'Medium',
+        ),
+      );
     }
     if (threats.isEmpty && text.trim().isNotEmpty) {
-      threats.add(ThreatClassification(type: 'Suspicious / abusive communication', confidence: 68, severity: 'Medium'));
+      threats.add(
+        ThreatClassification(
+          type: 'Suspicious / abusive communication',
+          confidence: 68,
+          severity: 'Medium',
+        ),
+      );
     }
 
-    final phraseMatches = RegExp(
-      r'''("[^"]{6,80}"|'[^']{6,80}'|(?:pay|send|leak|kill|hurt|viral|share)[^\n\r]{0,80})''',
-      caseSensitive: false,
-    ).allMatches(text).map((m) => m.group(0)!.trim()).where((s) => s.length > 6).toSet().take(8).toList();
+    final phraseMatches =
+        RegExp(
+              r'''("[^"]{6,80}"|'[^']{6,80}'|(?:pay|send|leak|kill|hurt|viral|share)[^\n\r]{0,80})''',
+              caseSensitive: false,
+            )
+            .allMatches(text)
+            .map((m) => m.group(0)!.trim())
+            .where((s) => s.length > 6)
+            .toSet()
+            .take(8)
+            .toList();
 
     return ExtractedEvidence(
       timestamps: timestamps,

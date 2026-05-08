@@ -34,7 +34,7 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
 
   Future<void> _pickFiles(String fileType) async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         allowMultiple: true,
         type: FileType.any,
         withData: true, // Important for web

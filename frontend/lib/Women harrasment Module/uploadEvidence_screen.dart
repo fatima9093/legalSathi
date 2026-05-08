@@ -48,25 +48,25 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
 
       // Different file types
       if (fileType == 'screenshot') {
-        result = await FilePicker.platform.pickFiles(
+        result = await FilePicker.pickFiles(
           type: FileType.image,
           allowMultiple: true,
           withData: true, // Important for web - loads bytes
         );
       } else if (fileType == 'audio') {
-        result = await FilePicker.platform.pickFiles(
+        result = await FilePicker.pickFiles(
           type: FileType.audio,
           allowMultiple: true,
           withData: true,
         );
       } else if (fileType == 'video') {
-        result = await FilePicker.platform.pickFiles(
+        result = await FilePicker.pickFiles(
           type: FileType.video,
           allowMultiple: true,
           withData: true,
         );
       } else {
-        result = await FilePicker.platform.pickFiles(
+        result = await FilePicker.pickFiles(
           type: FileType.any,
           allowMultiple: true,
           withData: true,
