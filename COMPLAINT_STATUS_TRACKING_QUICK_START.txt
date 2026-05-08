@@ -1,0 +1,129 @@
+COMPLAINT STATUS TRACKING SYSTEM - QUICK START
+
+STATUS VALUES:
+- Submitted: Initial status when complaint is created
+- Under Review: Admin/system is reviewing the complaint
+- In Progress: Complaint is being actively processed
+- Resolved: Complaint has been resolved
+
+FILES CREATED:
+
+MODELS:
+- lib/models/complaint_status_model.dart
+  - ComplaintStatus enum (submitted, underReview, inProgress, resolved)
+  - ComplaintStatusHistory model
+
+SERVICES:
+- lib/services/complaint_status_service.dart
+  - getComplaintStatus()
+  - getStatusHistory()
+  - updateComplaintStatus()
+  - getComplaintsByStatus()
+  - getStatusStatistics()
+  - subscribeToStatusChanges() (real-time)
+
+WIDGETS:
+- lib/widgets/complaint_status_timeline.dart
+  - Shows status progress bar
+  - Displays timeline of status changes
+- lib/widgets/complaint_status_update_dialog.dart
+  - Admin interface to update status with notes
+- lib/widgets/status_badge.dart
+  - Displays status as badge (compact or full)
+
+PROVIDERS:
+- lib/providers/complaint_status_provider.dart
+  - State management for complaint status
+  - Real-time subscription handling
+
+SCREENS:
+- lib/screens/complaint_status_detail_screen.dart
+  - Shows current status
+  - Displays timeline
+  - Admin button to update status
+
+BACKEND:
+- Backend/complaint_status_helper.py
+  - Python helper for backend operations
+  - Methods: submit_complaint(), start_review(), mark_in_progress(), resolve_complaint()
+
+DATABASE:
+- supabase_complaint_status.sql
+  - Creates status field in complaints table
+  - Creates complaint_status_history table
+  - Sets up RLS policies
+  - Creates triggers for auto-update timestamps
+
+INTEGRATION STEPS:
+
+1. RUN DATABASE MIGRATION:
+   - Open Supabase Dashboard → SQL Editor
+   - Copy supabase_complaint_status.sql
+   - Execute the migration
+
+2. UPDATE COMPLAINT MODEL (Optional):
+   Update complaint_model.dart if needed to include status enum usage
+
+3. USE IN SCREENS:
+   
+   // Show status detail screen
+   Navigator.push(
+     context,
+     MaterialPageRoute(
+       builder: (context) => ComplaintStatusDetailScreen(
+         complaintId: 'complaint-id',
+         complaintTitle: 'Complaint Title',
+       ),
+     ),
+   );
+
+4. DISPLAY STATUS IN LIST:
+   
+   // In complaint list item
+   StatusBadge(
+     status: ComplaintStatus.fromString(complaint['status']),
+     compact: true,
+   )
+
+5. BACKEND INTEGRATION:
+   
+   from complaint_status_helper import ComplaintStatusHelper
+   
+   # Submit complaint
+   ComplaintStatusHelper.submit_complaint(complaint_id, user_id)
+   
+   # Start review
+   ComplaintStatusHelper.start_review(complaint_id, reviewer_id)
+   
+   # Mark in progress
+   ComplaintStatusHelper.mark_in_progress(complaint_id, handler_id)
+   
+   # Resolve
+   ComplaintStatusHelper.resolve_complaint(complaint_id, resolution, handler_id)
+
+6. REAL-TIME UPDATES:
+   The system uses Supabase real-time subscriptions.
+   Status updates will automatically reflect in the UI without page refresh.
+
+7. ADMIN PANEL:
+   Add ComplaintStatusDetailScreen to admin dashboard
+   The FAB button allows admins to update status
+
+FEATURES:
+✓ Status tracking with 4 predefined states
+✓ Status history timeline
+✓ Real-time UI updates
+✓ Admin interface to change status
+✓ Notes/comments on status changes
+✓ Status statistics/reporting
+✓ User isolation via RLS policies
+✓ Automatic timestamp updates
+✓ Backend helper methods
+
+TESTING:
+1. Create a complaint
+2. Navigate to ComplaintStatusDetailScreen
+3. Verify timeline shows initial "Submitted" status
+4. Click FAB to update status
+5. Verify history updates and timeline reflects change
+6. Check backend logs for status update events

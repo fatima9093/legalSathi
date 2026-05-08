@@ -58,6 +58,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     if (value.length < 6) {
       return 'Password must be at least 6 characters';
     }
+    if (!RegExp(r'[A-Z]').hasMatch(value) ||
+        !RegExp(r'[a-z]').hasMatch(value) ||
+        !RegExp(r'[0-9]').hasMatch(value) ||
+        !RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Use uppercase, lowercase, number, and symbol';
+    }
     return null;
   }
 
@@ -98,6 +104,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             backgroundColor: Colors.green,
           ),
         );
+
+        if (result['needsVerification'] == true) {
+          Navigator.pop(context);
+          return;
+        }
 
         // Navigate to home screen
         Navigator.pushReplacement(
@@ -333,6 +344,15 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                             });
                           },
                         ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    Text(
+                      'Password must be 6+ characters and include uppercase, lowercase, number, and symbol.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
                       ),
                     ),
 

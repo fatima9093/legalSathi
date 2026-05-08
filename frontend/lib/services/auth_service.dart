@@ -21,7 +21,8 @@ class AuthService {
     final user = _authUser;
     if (user == null) return null;
     final meta = user.userMetadata;
-    final name = meta?['full_name'] as String? ?? meta?['full_name']?.toString();
+    final name =
+        meta?['full_name'] as String? ?? meta?['full_name']?.toString();
     return AppUser(
       id: user.id,
       email: user.email,
@@ -33,18 +34,40 @@ class AuthService {
   /// current user when first listened to (so UI sees session right after login).
   Stream<AppUser?> get authStateChanges {
     final current = currentUser;
-    final fromAuth = _client.auth.onAuthStateChange.map((event) {
-      final user = event.session?.user;
-      if (user == null) return null;
-      final meta = user.userMetadata;
-      final name = meta?['full_name'] as String? ?? meta?['full_name']?.toString();
-      return AppUser(
-        id: user.id,
-        email: user.email,
-        displayName: name?.isNotEmpty == true ? name : null,
-      );
+    return Stream<AppUser?>.multi((controller) {
+      controller.add(current);
+
+      final subscription = _client.auth.onAuthStateChange.listen((event) {
+        final user = event.session?.user;
+        if (user == null) {
+          controller.add(null);
+          return;
+        }
+        final meta = user.userMetadata;
+        final name =
+            meta?['full_name'] as String? ?? meta?['full_name']?.toString();
+        controller.add(
+          AppUser(
+            id: user.id,
+            email: user.email,
+            displayName: name?.isNotEmpty == true ? name : null,
+          ),
+        );
+      });
+
+      controller.onCancel = () async {
+        await subscription.cancel();
+      };
     });
-    return Stream.fromIterable([current]).asyncExpand((_) => fromAuth);
+  }
+
+  bool isStrongPassword(String value) {
+    final password = value.trim();
+    if (password.length < 8) return false;
+    if (!RegExp(r'[A-Z]').hasMatch(password)) return false;
+    if (!RegExp(r'[a-z]').hasMatch(password)) return false;
+    if (!RegExp(r'[0-9]').hasMatch(password)) return false;
+    return RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(password);
   }
 
   Future<Map<String, dynamic>> signUp({
@@ -53,6 +76,14 @@ class AuthService {
     required String fullName,
   }) async {
     try {
+      if (!isStrongPassword(password)) {
+        return {
+          'success': false,
+          'message':
+              'Password must be at least 8 characters and include uppercase, lowercase, number, and symbol.',
+        };
+      }
+
       final response = await _client.auth.signUp(
         email: email.trim(),
         password: password,
@@ -66,9 +97,13 @@ class AuthService {
           fullName: fullName,
           email: email.trim(),
         );
+        final needsEmailVerification = response.session == null;
         return {
           'success': true,
-          'message': 'Account created successfully!',
+          'needsVerification': needsEmailVerification,
+          'message': needsEmailVerification
+              ? 'Account created. Check your email to verify your account before signing in.'
+              : 'Account created successfully!',
           'user': AppUser(
             id: user.id,
             email: user.email,
@@ -91,13 +126,16 @@ class AuthService {
           message = 'Please enter a valid email address';
           break;
         default:
-          message = e.message.isNotEmpty ? e.message : 'An error occurred. Please try again';
+          message = e.message.isNotEmpty
+              ? e.message
+              : 'An error occurred. Please try again';
       }
       return {'success': false, 'message': message};
     } catch (e, stackTrace) {
       debugPrint('SignUp error: $e');
       debugPrint('Stack: $stackTrace');
-      final String message = e.toString().contains('SocketException') ||
+      final String message =
+          e.toString().contains('SocketException') ||
               e.toString().contains('network')
           ? 'No internet connection. Please check your network and try again'
           : 'Something went wrong. Please try again';
@@ -119,7 +157,10 @@ class AuthService {
       if (user != null) {
         await _upsertProfile(
           uid: user.id,
-          fullName: (user.userMetadata?['full_name'] ?? user.email?.split('@').first) as String? ?? '',
+          fullName:
+              (user.userMetadata?['full_name'] ?? user.email?.split('@').first)
+                  as String? ??
+              '',
           email: user.email ?? email.trim(),
         );
         return {
@@ -137,19 +178,24 @@ class AuthService {
       final msg = e.message.toLowerCase();
       String message;
       if (msg.contains('email not confirmed')) {
-        message = 'Please confirm your email first. Check your inbox for the link from Supabase, then try signing in again.';
+        message =
+            'Please confirm your email first. Check your inbox for the link from Supabase, then try signing in again.';
       } else if (msg.contains('invalid login credentials')) {
-        message = 'Incorrect password or email. Check both and try again, or use "Forgot password".';
+        message =
+            'Incorrect password or email. Check both and try again, or use "Forgot password".';
       } else if (msg.contains('invalid email')) {
         message = 'Please enter a valid email address';
       } else {
-        message = e.message.isNotEmpty ? e.message : 'Failed to sign in. Please try again';
+        message = e.message.isNotEmpty
+            ? e.message
+            : 'Failed to sign in. Please try again';
       }
       return {'success': false, 'message': message};
     } catch (e, stackTrace) {
       debugPrint('SignIn error: $e');
       debugPrint('Stack: $stackTrace');
-      final String message = e.toString().contains('SocketException') ||
+      final String message =
+          e.toString().contains('SocketException') ||
               e.toString().contains('network')
           ? 'No internet connection. Please check your network and try again'
           : 'Sign in failed. Please check your email, password, and internet connection';
@@ -158,25 +204,28 @@ class AuthService {
   }
 
   Future<void> signOut() async {
-    await _client.auth.signOut();
+    await _client.auth.signOut(scope: SignOutScope.local);
   }
 
   Future<Map<String, dynamic>> resetPassword(String email) async {
     try {
       await _client.auth.resetPasswordForEmail(email.trim());
-      return {
-        'success': true,
-        'message': 'Password reset email sent',
-      };
+      return {'success': true, 'message': 'Password reset email sent'};
     } on AuthException catch (e) {
-      String message = e.message.isNotEmpty ? e.message : 'Failed to send reset email';
+      String message = e.message.isNotEmpty
+          ? e.message
+          : 'Failed to send reset email';
       return {'success': false, 'message': message};
     }
   }
 
   Future<Map<String, dynamic>?> getUserData(String uid) async {
     try {
-      final res = await _client.from('profiles').select().eq('id', uid).maybeSingle();
+      final res = await _client
+          .from('profiles')
+          .select()
+          .eq('id', uid)
+          .maybeSingle();
       if (res != null) {
         return Map<String, dynamic>.from(res as Map);
       }

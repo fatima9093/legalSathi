@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../screen_with_nav.dart';
 import '../services/challan_text_extraction_service.dart';
 import '../services/evidence_analysis_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'analysis_result_screen.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 
@@ -108,7 +109,10 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
 
     setState(() => _currentStep = 1);
 
-    final analysis = await EvidenceAnalysisService.analyze(ocr);
+    final analysis = await EvidenceAnalysisService.analyze(
+      ocr,
+      userId: Supabase.instance.client.auth.currentUser?.id,
+    );
 
     setState(() => _currentStep = 2);
 
@@ -157,10 +161,7 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
                 if (_error != null) ...[
                   Icon(Icons.error_outline, size: 56, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text(
-                    _error!,
-                    textAlign: TextAlign.center,
-                  ),
+                  Text(_error!, textAlign: TextAlign.center),
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: () => Navigator.pop(context),
@@ -174,9 +175,7 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
                       alignment: Alignment.center,
                       children: [
                         CircularProgressIndicator(
-                          value: _done
-                              ? 1
-                              : (_currentStep / 3).clamp(0.0, 1.0),
+                          value: _done ? 1 : (_currentStep / 3).clamp(0.0, 1.0),
                           strokeWidth: 6,
                           color: const Color(0xFF00401A),
                         ),
@@ -201,9 +200,7 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
 
                   const SizedBox(height: 8),
 
-                  Text(
-                    widget.isDemo ? l10n.demoMode : l10n.ocrMode,
-                  ),
+                  Text(widget.isDemo ? l10n.demoMode : l10n.ocrMode),
 
                   const SizedBox(height: 32),
 
@@ -225,9 +222,7 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
-                              completed
-                                  ? Icons.check
-                                  : Icons.circle_outlined,
+                              completed ? Icons.check : Icons.circle_outlined,
                               color: Colors.white,
                               size: 20,
                             ),
@@ -237,8 +232,9 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
                             child: Text(
                               _stepTitles[index],
                               style: TextStyle(
-                                fontWeight:
-                                    active ? FontWeight.w600 : FontWeight.w500,
+                                fontWeight: active
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
                               ),
                             ),
                           ),

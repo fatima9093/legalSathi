@@ -9,7 +9,7 @@ os.environ["ANONYMIZED_TELEMETRY"] = "false"
 import groq_config  # noqa: F401 — side-effects: sets default Groq client
 
 import json
-from fastapi import FastAPI, File, HTTPException, Request as FastAPIRequest, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request as FastAPIRequest, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Any, AsyncIterator, Dict, List, Optional, Union
@@ -18,6 +18,13 @@ import chromadb
 from chromadb.utils import embedding_functions
 from groq import Groq
 from dotenv import load_dotenv
+# Notifications helper
+try:
+    from notification_helper import NotificationHelper
+    _NOTIFICATIONS_AVAILABLE = True
+except Exception:
+    _NOTIFICATIONS_AVAILABLE = False
+
 
 # Agent orchestrator — imported lazily so the existing RAG path is unaffected
 # if the openai-agents package is not installed.
@@ -52,6 +59,37 @@ try:
 except ImportError:
     _SUPABASE_AVAILABLE = False
     print("⚠️  supabase_client not found — language persistence will be unavailable.")
+
+# Import documents helper for dynamic document management
+try:
+    from documents_helper import (
+        get_all_documents,
+        get_documents_by_module,
+        add_document_to_module,
+        remove_document,
+        AllDocuments,
+        ModuleDocuments,
+    )
+    _DOCUMENTS_HELPER_AVAILABLE = True
+except ImportError as exc:
+    _DOCUMENTS_HELPER_AVAILABLE = False
+    print(f"⚠️  documents_helper not found: {exc}")
+
+# Import user documents helper
+try:
+    from user_documents_helper import (
+        UserDocument,
+        UserDocumentsResponse,
+        DocumentUploadRequest,
+        get_document_icon,
+        get_document_color,
+        get_document_display_name,
+        format_file_size,
+    )
+    _USER_DOCUMENTS_HELPER_AVAILABLE = True
+except ImportError as exc:
+    _USER_DOCUMENTS_HELPER_AVAILABLE = False
+    print(f"⚠️  user_documents_helper not found: {exc}")
 
 # Load environment variables from Backend/.env regardless of cwd
 BASE_DIR = Path(__file__).resolve().parent
@@ -345,6 +383,8 @@ async def extract_challan_text(file: UploadFile = File(...)):
 class EvidenceAnalyzeRequest(BaseModel):
     """OCR or pasted text from a screenshot / document for domain classification."""
     text: str = Field(..., min_length=1)
+    user_id: Optional[str] = None
+    complaint_id: Optional[str] = None
 
 
 class EvidenceAnalyzeResponse(BaseModel):
@@ -352,6 +392,15 @@ class EvidenceAnalyzeResponse(BaseModel):
     tags: List[str]
     relevant_laws: List[str]
     summary: str = ""
+
+
+class EvidenceUploadResponse(BaseModel):
+    success: bool
+    evidence_id: Optional[str] = None
+    file_name: Optional[str] = None
+    storage_path: Optional[str] = None
+    public_url: Optional[str] = None
+    message: str = ""
 
 
 def _parse_llm_json_object(raw: str) -> Optional[Dict[str, Any]]:
@@ -478,16 +527,172 @@ Rules: Output valid JSON only. English. Not legal advice — indicative referenc
                 laws = [str(x).strip() for x in laws if str(x).strip()][:8]
                 if not laws:
                     laws = ["Verify applicable statute with a qualified lawyer or official source."]
-                return EvidenceAnalyzeResponse(
+                result = EvidenceAnalyzeResponse(
                     classified_domain=domain,
                     tags=tags if tags else ["Document review"],
                     relevant_laws=laws,
                     summary=summary,
                 )
+                if _NOTIFICATIONS_AVAILABLE and request.user_id:
+                    try:
+                        target_id = request.complaint_id or request.user_id
+                        NotificationHelper.notify_evidence_processed(request.user_id, target_id)
+                    except Exception:
+                        pass
+                return result
         except Exception as exc:
             print(f"⚠️ evidence analyze LLM failed, using fallback: {exc}")
 
-    return _fallback_evidence_analysis(text)
+    fallback = _fallback_evidence_analysis(text)
+    if _NOTIFICATIONS_AVAILABLE and request.user_id:
+        try:
+            target_id = request.complaint_id or request.user_id
+            NotificationHelper.notify_evidence_processed(request.user_id, target_id)
+        except Exception:
+            pass
+    return fallback
+
+
+@app.post("/api/documents/upload", response_model=EvidenceUploadResponse)
+async def upload_evidence_file(
+    file: UploadFile = File(...),
+    user_id: str = Form(...),
+    complaint_id: Optional[str] = Form(None),
+    source_module: Optional[str] = Form(None),
+    file_type: Optional[str] = Form(None),
+):
+    """Upload an evidence/document file to Supabase Storage and save metadata."""
+    if not _SUPABASE_AVAILABLE:
+        raise HTTPException(status_code=501, detail="Supabase storage is not configured")
+
+    raw = await file.read()
+    if not raw:
+        raise HTTPException(status_code=400, detail="Empty file upload")
+
+    max_bytes = int(os.getenv("MAX_FILE_SIZE", str(10 * 1024 * 1024)))
+    if len(raw) > max_bytes:
+        raise HTTPException(status_code=413, detail="File exceeds the maximum allowed size")
+
+    try:
+        import uuid
+
+        evidence_id = str(uuid.uuid4())
+        safe_name = re.sub(r"[^a-zA-Z0-9._-]", "_", file.filename or "evidence")
+        storage_path = f"evidence_files/{user_id}/{evidence_id}_{safe_name}"
+
+        public_url = None
+        try:
+            from supabase_client import get_supabase_client
+
+            client = get_supabase_client()
+            if client is None:
+                raise RuntimeError("Supabase client not available")
+
+            bucket = client.storage.from_("evidence_files")
+            bucket.upload(storage_path, raw, file_options={"content-type": file.content_type or "application/octet-stream"})
+            try:
+                public_url = bucket.get_public_url(storage_path)
+            except Exception:
+                public_url = None
+
+            row = {
+                "id": evidence_id,
+                "user_id": user_id,
+                "complaint_id": complaint_id,
+                "file_name": file.filename or safe_name,
+                "file_type": file_type or (file.content_type or "application/octet-stream"),
+                "mime_type": file.content_type or "application/octet-stream",
+                "storage_path": storage_path,
+                "public_url": public_url,
+                "file_size": len(raw),
+                "source_module": source_module,
+                "uploaded_at": datetime.now(timezone.utc).isoformat(),
+            }
+            client.table("evidence_files").insert(row).execute()
+        except Exception as storage_exc:
+            print(f"⚠️ evidence storage failed, saving metadata only: {storage_exc}")
+            if _SUPABASE_AVAILABLE:
+                from supabase_client import get_supabase_client
+
+                client = get_supabase_client()
+                if client is not None:
+                    client.table("evidence_files").insert({
+                        "id": evidence_id,
+                        "user_id": user_id,
+                        "complaint_id": complaint_id,
+                        "file_name": file.filename or safe_name,
+                        "file_type": file_type or (file.content_type or "application/octet-stream"),
+                        "mime_type": file.content_type or "application/octet-stream",
+                        "storage_path": storage_path,
+                        "public_url": None,
+                        "file_size": len(raw),
+                        "source_module": source_module,
+                        "uploaded_at": datetime.now(timezone.utc).isoformat(),
+                    }).execute()
+
+        if _NOTIFICATIONS_AVAILABLE:
+            try:
+                NotificationHelper.create_notification(
+                    user_id=user_id,
+                    title="Evidence Uploaded",
+                    message=f"Your file '{file.filename or safe_name}' was uploaded successfully.",
+                    action_type="evidence",
+                    action_id=complaint_id or evidence_id,
+                )
+            except Exception:
+                pass
+
+        return EvidenceUploadResponse(
+            success=True,
+            evidence_id=evidence_id,
+            file_name=file.filename or safe_name,
+            storage_path=storage_path,
+            public_url=public_url,
+            message="Evidence uploaded successfully",
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to upload evidence: {exc}") from exc
+
+
+# ----------------------------
+# Notifications endpoints
+# ----------------------------
+
+
+@app.post("/api/notifications/{notification_id}/mark_read")
+async def api_mark_notification_read(notification_id: str):
+    """Mark a single notification as read (best-effort)."""
+    if not _NOTIFICATIONS_AVAILABLE:
+        raise HTTPException(status_code=500, detail="Notifications subsystem unavailable")
+
+    try:
+        result = NotificationHelper.mark_notification_read(notification_id)
+        if not result.get("success"):
+            raise HTTPException(status_code=500, detail=result.get("error") or "Could not mark read")
+        return {"success": True, "notification_id": notification_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
+
+@app.post("/api/notifications/user/{user_id}/mark_all_read")
+async def api_mark_all_notifications_read(user_id: str):
+    """Mark all notifications as read for a user (best-effort)."""
+    if not _NOTIFICATIONS_AVAILABLE:
+        raise HTTPException(status_code=500, detail="Notifications subsystem unavailable")
+
+    try:
+        result = NotificationHelper.mark_all_read_for_user(user_id)
+        if not result.get("success"):
+            raise HTTPException(status_code=500, detail=result.get("error") or "Could not mark all read")
+        return {"success": True, "user_id": user_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/api/ask", response_model=Union[AgentAnswerResponse, AnswerResponse])
@@ -1171,6 +1376,565 @@ async def get_supported_languages():
         ],
         "default_language": "English"
     }
+
+
+# ============================================================================
+# Notifications Endpoints
+# ============================================================================
+
+
+class NotificationCreateRequest(BaseModel):
+    user_id: str
+    title: str
+    message: str
+    action_type: Optional[str] = None
+    action_id: Optional[str] = None
+
+
+class NotificationMarkReadRequest(BaseModel):
+    notification_id: str
+
+
+@app.post("/api/notifications")
+async def create_notification_endpoint(request: NotificationCreateRequest):
+    """Create a notification for a specific user."""
+    if not _NOTIFICATIONS_AVAILABLE:
+        raise HTTPException(status_code=501, detail="Notifications helper not available")
+
+    res = NotificationHelper.create_notification(
+        user_id=request.user_id,
+        title=request.title,
+        message=request.message,
+        action_type=request.action_type,
+        action_id=request.action_id,
+    )
+    if not res.get("success"):
+        raise HTTPException(status_code=500, detail=res.get("error") or "Failed to create notification")
+    return {"success": True, "notification": res.get("data")}
+
+
+@app.get("/api/user/{user_id}/notifications")
+async def get_user_notifications_endpoint(user_id: str, unread_only: bool = False):
+    """Fetch notifications for a user. Set `unread_only=true` to fetch only unread."""
+    if not _NOTIFICATIONS_AVAILABLE:
+        raise HTTPException(status_code=501, detail="Notifications helper not available")
+
+    res = NotificationHelper.get_user_notifications(user_id=user_id, unread_only=unread_only)
+    if not res.get("success"):
+        raise HTTPException(status_code=500, detail=res.get("error") or "Failed to fetch notifications")
+    return {"success": True, "notifications": res.get("data")}
+
+
+@app.post("/api/notifications/{notification_id}/mark_read")
+async def mark_notification_read_endpoint(notification_id: str):
+    """Mark a notification as read by id."""
+    if not _NOTIFICATIONS_AVAILABLE:
+        raise HTTPException(status_code=501, detail="Notifications helper not available")
+
+    res = NotificationHelper.mark_notification_read(notification_id=notification_id)
+    if not res.get("success"):
+        raise HTTPException(status_code=500, detail=res.get("error") or "Failed to mark notification as read")
+    return {"success": True, "updated": res.get("data")}
+
+
+@app.get("/api/user/{user_id}/notifications/count")
+async def get_unread_count_endpoint(user_id: str):
+    """Return unread notifications count for a user."""
+    if not _NOTIFICATIONS_AVAILABLE:
+        raise HTTPException(status_code=501, detail="Notifications helper not available")
+
+    res = NotificationHelper.get_user_notifications(user_id=user_id, unread_only=True)
+    if not res.get("success"):
+        raise HTTPException(status_code=500, detail=res.get("error") or "Failed to fetch notifications")
+    data = res.get("data") or []
+    return {"success": True, "unread_count": len(data)}
+
+
+# ============================================================================
+# Documents Endpoints
+# ============================================================================
+
+@app.get("/api/documents", response_model=AllDocuments)
+async def get_all_documents_endpoint():
+    """
+    Get all documents across all legal modules.
+    
+    Documents are organized by:
+    - Module (Women Harassment, Cyber Law, Labour Rights, Road Laws)
+    - Category within each module (Guidelines, Legal Resources, Contacts)
+    
+    Each document can be:
+    - PDF file
+    - Text file
+    - External link
+    
+    Returns:
+        AllDocuments with all modules, categories, and documents
+    """
+    if not _DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="Documents helper not available"
+        )
+    
+    try:
+        documents = get_all_documents()
+        return documents
+    except Exception as e:
+        print(f"❌ Error fetching documents: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching documents: {str(e)}"
+        )
+
+
+@app.get("/api/documents/{module_id}", response_model=ModuleDocuments)
+async def get_module_documents(module_id: str):
+    """
+    Get documents for a specific module.
+    
+    Args:
+        module_id: Module identifier (women_harassment, cyber_law, labour_rights, road_laws)
+    
+    Returns:
+        ModuleDocuments with categories and documents for the specified module
+    """
+    if not _DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="Documents helper not available"
+        )
+    
+    # Normalize module_id (convert from underscore to match registry keys)
+    normalized_id = module_id.lower().replace("-", "_")
+    
+    try:
+        documents = get_documents_by_module(normalized_id)
+        if not documents:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Module '{module_id}' not found. Available modules: "
+                        "women_harassment, cyber_law, labour_rights, road_laws"
+            )
+        return documents
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error fetching documents for module {module_id}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching documents: {str(e)}"
+        )
+
+
+@app.post("/api/documents/{module_id}/add")
+async def add_document_endpoint(module_id: str, document: Dict[str, Any]):
+    """
+    Add a new document to a module (for administrative use).
+    Allows modules to dynamically register their own documents.
+    
+    Args:
+        module_id: Module to add document to
+        document: Document data with keys: id, title, type, url, size?, description?, category?
+    
+    Returns:
+        Success message
+    """
+    if not _DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="Documents helper not available"
+        )
+    
+    normalized_id = module_id.lower().replace("-", "_")
+    category = document.get("category", "Other")
+    
+    try:
+        success = add_document_to_module(
+            normalized_id,
+            category,
+            document
+        )
+        if not success:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Module '{module_id}' not found"
+            )
+        return {
+            "success": True,
+            "message": f"Document added to {normalized_id}/{category}",
+            "document_id": document.get("id")
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error adding document: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error adding document: {str(e)}"
+        )
+
+
+@app.delete("/api/documents/{module_id}/{document_id}")
+async def remove_document_endpoint(module_id: str, document_id: str):
+    """
+    Remove a document from a module.
+    
+    Args:
+        module_id: Module containing the document
+        document_id: ID of the document to remove
+    
+    Returns:
+        Success message
+    """
+    if not _DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="Documents helper not available"
+        )
+    
+    normalized_id = module_id.lower().replace("-", "_")
+    
+    try:
+        success = remove_document(normalized_id, document_id)
+        if not success:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Document '{document_id}' not found in module '{module_id}'"
+            )
+        return {
+            "success": True,
+            "message": f"Document '{document_id}' removed from {normalized_id}"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error removing document: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error removing document: {str(e)}"
+        )
+
+
+# ============================================================================
+# User Documents Endpoints - Personal/Generated Documents
+# ============================================================================
+
+@app.get("/api/user/{user_id}/documents", response_model=UserDocumentsResponse)
+async def get_user_documents(user_id: str):
+    """
+    Get all documents belonging to a specific user.
+    
+    Documents are personal files that users generate, download, or upload:
+    - Complaint generator outputs
+    - Filled templates
+    - Generated PDFs
+    - Uploaded evidence files
+    
+    Args:
+        user_id: UUID of the user
+    
+    Returns:
+        UserDocumentsResponse with list of documents and storage info
+    """
+    if not _USER_DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="User documents helper not available"
+        )
+    
+    if not _SUPABASE_AVAILABLE:
+        # Return empty list if Supabase not configured
+        print(f"⚠️  Supabase unavailable for user documents")
+        return UserDocumentsResponse(
+            user_id=user_id,
+            documents=[],
+            total_count=0,
+            used_bytes=0
+        )
+    
+    try:
+        from supabase_client import supabase_client
+        
+        # Query user's documents
+        response = supabase_client.table("user_documents").select(
+            "*"
+        ).eq(
+            "user_id", user_id
+        ).eq(
+            "is_deleted", False
+        ).order(
+            "created_at", desc=True
+        ).execute()
+        
+        documents = []
+        total_used_bytes = 0
+        
+        for row in response.data:
+            doc = UserDocument(
+                id=row['id'],
+                user_id=row['user_id'],
+                filename=row['filename'],
+                title=row.get('title'),
+                description=row.get('description'),
+                document_type=row['document_type'],
+                file_url=row['file_url'],
+                file_size=row.get('file_size'),
+                mime_type=row.get('mime_type'),
+                source_module=row.get('source_module'),
+                related_complaint_id=row.get('related_complaint_id'),
+                tags=row.get('tags'),
+                created_at=row['created_at'],
+                updated_at=row.get('updated_at'),
+                is_deleted=row.get('is_deleted', False)
+            )
+            documents.append(doc)
+            if row.get('file_size'):
+                total_used_bytes += row['file_size']
+        
+        return UserDocumentsResponse(
+            user_id=user_id,
+            documents=documents,
+            total_count=len(documents),
+            used_bytes=total_used_bytes
+        )
+    except Exception as e:
+        print(f"❌ Error fetching user documents: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error fetching documents: {str(e)}"
+        )
+
+
+@app.post("/api/user/{user_id}/documents", response_model=Dict[str, Any])
+async def save_user_document(user_id: str, request: DocumentUploadRequest):
+    """
+    Save a new document for a user.
+    
+    Used when:
+    - User generates a complaint PDF
+    - User downloads a template
+    - User uploads evidence files
+    - App generates a document
+    
+    Args:
+        user_id: UUID of the user
+        request: Document metadata
+    
+    Returns:
+        Document info and file URL
+    """
+    if not _USER_DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="User documents helper not available"
+        )
+    
+    if not _SUPABASE_AVAILABLE:
+        raise HTTPException(
+            status_code=501,
+            detail="Document storage not configured"
+        )
+    
+    # Validate document type
+    from user_documents_helper import DOCUMENT_TYPES
+    if request.document_type not in DOCUMENT_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid document type. Must be one of: {', '.join(DOCUMENT_TYPES.keys())}"
+        )
+    
+    try:
+        from supabase_client import supabase_client
+        import uuid
+        
+        # Generate document ID
+        doc_id = str(uuid.uuid4())
+        
+        # Prepare storage path
+        storage_path = f"user_documents/{user_id}/{doc_id}/{request.filename}"
+        
+        # Note: Actual file upload would happen separately with the file content
+        # This endpoint just saves the metadata
+        
+        # Insert into database
+        response = supabase_client.table("user_documents").insert({
+            "id": doc_id,
+            "user_id": user_id,
+            "filename": request.filename,
+            "title": request.title,
+            "description": request.description,
+            "document_type": request.document_type,
+            "storage_path": storage_path,
+            "file_url": f"/documents/{doc_id}/{request.filename}",
+            "file_size": request.file_size,
+            "mime_type": request.mime_type,
+            "source_module": request.source_module,
+            "related_complaint_id": request.related_complaint_id,
+            "tags": request.tags or [],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }).execute()
+        
+        if response.data:
+            doc_data = response.data[0]
+            # Notify user that document is ready (best-effort, don't fail on errors)
+            try:
+                if _NOTIFICATIONS_AVAILABLE:
+                    try:
+                        NotificationHelper.notify_document_ready(user_id, doc_id, request.document_type)
+                    except Exception as _:
+                        pass
+            except Exception:
+                pass
+            return {
+                "success": True,
+                "document_id": doc_id,
+                "filename": request.filename,
+                "document_type": request.document_type,
+                "file_url": doc_data['file_url'],
+                "storage_path": storage_path,
+                "message": f"Document '{request.filename}' saved successfully"
+            }
+        else:
+            raise Exception("Failed to save document to database")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error saving user document: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error saving document: {str(e)}"
+        )
+
+
+@app.delete("/api/user/{user_id}/documents/{document_id}")
+async def delete_user_document(user_id: str, document_id: str):
+    """
+    Soft-delete a user's document.
+    
+    Args:
+        user_id: UUID of the user
+        document_id: UUID of the document to delete
+    
+    Returns:
+        Success message
+    """
+    if not _USER_DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="User documents helper not available"
+        )
+    
+    if not _SUPABASE_AVAILABLE:
+        raise HTTPException(
+            status_code=501,
+            detail="Document storage not configured"
+        )
+    
+    try:
+        from supabase_client import supabase_client
+        
+        # Soft delete: mark as deleted
+        response = supabase_client.table("user_documents").update({
+            "is_deleted": True,
+            "deleted_at": datetime.now(timezone.utc).isoformat()
+        }).eq(
+            "id", document_id
+        ).eq(
+            "user_id", user_id
+        ).execute()
+        
+        if response.data:
+            return {
+                "success": True,
+                "message": f"Document deleted successfully",
+                "document_id": document_id
+            }
+        else:
+            raise HTTPException(
+                status_code=404,
+                detail="Document not found or already deleted"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error deleting user document: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error deleting document: {str(e)}"
+        )
+
+
+@app.get("/api/user/{user_id}/documents/stats")
+async def get_user_documents_stats(user_id: str):
+    """
+    Get storage statistics for a user's documents.
+    
+    Args:
+        user_id: UUID of the user
+    
+    Returns:
+        Storage usage and quota information
+    """
+    if not _USER_DOCUMENTS_HELPER_AVAILABLE:
+        raise HTTPException(
+            status_code=500,
+            detail="User documents helper not available"
+        )
+    
+    if not _SUPABASE_AVAILABLE:
+        return {
+            "user_id": user_id,
+            "total_documents": 0,
+            "total_size_bytes": 0,
+            "quota_bytes": 100 * 1024 * 1024,
+            "used_percentage": 0,
+            "documents_by_type": {}
+        }
+    
+    try:
+        from supabase_client import supabase_client
+        
+        # Get documents for user
+        response = supabase_client.table("user_documents").select(
+            "id, document_type, file_size"
+        ).eq(
+            "user_id", user_id
+        ).eq(
+            "is_deleted", False
+        ).execute()
+        
+        total_size = 0
+        docs_by_type = {}
+        
+        for row in response.data:
+            doc_type = row['document_type']
+            size = row.get('file_size', 0)
+            
+            total_size += size
+            docs_by_type[doc_type] = docs_by_type.get(doc_type, 0) + 1
+        
+        quota = 100 * 1024 * 1024  # 100 MB
+        used_percentage = (total_size / quota * 100) if quota > 0 else 0
+        
+        return {
+            "user_id": user_id,
+            "total_documents": len(response.data),
+            "total_size_bytes": total_size,
+            "quota_bytes": quota,
+            "used_percentage": round(used_percentage, 2),
+            "documents_by_type": docs_by_type,
+            "quota_warning": used_percentage > 80
+        }
+        
+    except Exception as e:
+        print(f"❌ Error getting document stats: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error getting stats: {str(e)}"
+        )
 
 
 if __name__ == "__main__":

@@ -3,6 +3,9 @@ import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:front_end/services/challan_text_extraction_service.dart';
+import 'package:front_end/services/evidence_analysis_service.dart';
 import 'evidence_analysis_result_screen.dart';
 
 class AIEvidenceReviewScreen extends StatefulWidget {
@@ -14,6 +17,7 @@ class AIEvidenceReviewScreen extends StatefulWidget {
 
 class _AIEvidenceReviewScreenState extends State<AIEvidenceReviewScreen> {
   List<PlatformFile> uploadedFiles = [];
+  bool _isAnalyzing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -200,9 +204,7 @@ class _AIEvidenceReviewScreenState extends State<AIEvidenceReviewScreen> {
 
                 // Analyze button
                 ElevatedButton(
-                  onPressed: () {
-                    _analyzeEvidence();
-                  },
+                  onPressed: _isAnalyzing ? null : _analyzeEvidence,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF00401A),
                     foregroundColor: Colors.white,
@@ -431,60 +433,76 @@ class _AIEvidenceReviewScreenState extends State<AIEvidenceReviewScreen> {
   }
 
   void _analyzeEvidence() {
-    // Show loading dialog with text
+    if (uploadedFiles.isEmpty) return;
+
+    setState(() => _isAnalyzing = true);
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        child: Container(
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(
-                width: 60,
-                height: 60,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00401A)),
-                  strokeWidth: 5,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Analyzing your evidence...',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade700,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: Color(0xFF00401A)),
       ),
     );
 
-    // Simulate AI analysis
-    Future.delayed(const Duration(seconds: 3), () {
+    Future(() async {
+      final extractedParts = <String>[];
+
+      for (final file in uploadedFiles) {
+        try {
+          Uint8List? bytes = file.bytes;
+          if (bytes == null && !kIsWeb && file.path != null) {
+            bytes = await File(file.path!).readAsBytes();
+          }
+
+          if (bytes == null || bytes.isEmpty) {
+            extractedParts.add(file.name);
+            continue;
+          }
+
+          final isPdf =
+              file.extension?.toLowerCase() == 'pdf' ||
+              file.name.toLowerCase().endsWith('.pdf');
+          final ocr = await ChallanTextExtractionService.extractRawText(
+            bytes: bytes,
+            fileName: file.name,
+            fileType: isPdf ? 'pdf' : 'image',
+          );
+
+          if (ocr.trim().isNotEmpty) {
+            extractedParts.add(ocr.trim());
+          } else {
+            extractedParts.add(file.name);
+          }
+        } catch (_) {
+          extractedParts.add(file.name);
+        }
+      }
+
+      final combined = extractedParts.join('\n\n');
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      final analysis = await EvidenceAnalysisService.analyze(
+        combined,
+        userId: userId,
+      );
+
       if (!mounted) return;
+      Navigator.pop(context);
 
-      Navigator.pop(context); // Close loading dialog
-
-      // Navigate to analysis result screen
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              EvidenceAnalysisResultScreen(evidenceCount: uploadedFiles.length),
+          builder: (context) => EvidenceAnalysisResultScreen(
+            evidenceCount: uploadedFiles.length,
+            analysisSummary: analysis.summary,
+            tags: analysis.tags,
+            laws: analysis.relevantLaws,
+          ),
         ),
       );
+    }).whenComplete(() {
+      if (mounted) {
+        setState(() => _isAnalyzing = false);
+      }
     });
   }
 }

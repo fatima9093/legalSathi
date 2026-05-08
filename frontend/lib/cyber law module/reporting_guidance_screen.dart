@@ -4,6 +4,7 @@ import 'package:front_end/l10n/app_localizations.dart';
 import 'fia_complaint_generator.dart';
 import 'package:front_end/services/challan_text_extraction_service.dart';
 import 'package:front_end/services/evidence_analysis_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ReportingGuidanceScreen extends StatefulWidget {
   final String profileUrl;
@@ -40,7 +41,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
   }
 
   Future<void> _analyzeInput() async {
-     final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context)!;
     final platformSteps = _getPlatformSteps(widget.platform);
     final tips = <String>[
       loc.tipSaveScreenshots,
@@ -50,7 +51,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
     ];
 
     final profileInfo = [
-     if (widget.profileUrl.trim().isNotEmpty)
+      if (widget.profileUrl.trim().isNotEmpty)
         '${loc.urlLabel}: ${widget.profileUrl.trim()}',
       if (widget.username.trim().isNotEmpty)
         '${loc.usernameLabel}: ${widget.username.trim()}',
@@ -58,13 +59,17 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
     ].join('\n');
 
     final evidenceText = await _extractEvidenceText(widget.uploadedFiles);
-    final combined = [profileInfo, evidenceText]
-        .where((e) => e.trim().isNotEmpty)
-        .join('\n\n');
+    final combined = [
+      profileInfo,
+      evidenceText,
+    ].where((e) => e.trim().isNotEmpty).join('\n\n');
 
     EvidenceAnalysisResult? analysis;
     if (combined.trim().length >= 15) {
-      analysis = await EvidenceAnalysisService.analyze(combined);
+      analysis = await EvidenceAnalysisService.analyze(
+        combined,
+        userId: Supabase.instance.client.auth.currentUser?.id,
+      );
     }
 
     final legal = <String>[
@@ -96,8 +101,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
 
   @override
   Widget build(BuildContext context) {
-     final loc = AppLocalizations.of(context)!;
-
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -117,9 +121,9 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
           ),
         ),
       ),
-     body: _isLoading
-    ? _buildLoadingScreen(AppLocalizations.of(context)!)
-    : _buildResultsScreen(AppLocalizations.of(context)!),
+      body: _isLoading
+          ? _buildLoadingScreen(AppLocalizations.of(context)!)
+          : _buildResultsScreen(AppLocalizations.of(context)!),
     );
   }
 
@@ -138,7 +142,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-             loc.analyzingAccount,
+            loc.analyzingAccount,
             style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
         ],
@@ -189,7 +193,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            loc.fakeAccountDetected,
+                          loc.fakeAccountDetected,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
@@ -198,7 +202,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                           loc.followStepsReport,
+                          loc.followStepsReport,
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.red.shade600,
@@ -219,7 +223,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    '${loc.referenceId}: ${widget.reportId}',
+                  '${loc.referenceId}: ${widget.reportId}',
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ),
@@ -241,7 +245,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(
+                    Text(
                       loc.aiSummary,
                       style: TextStyle(
                         fontSize: 14,
@@ -277,7 +281,8 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(loc.howToReport(widget.platform),
+                  Text(
+                    loc.howToReport(widget.platform),
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -285,10 +290,9 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ..._reportingSteps
-                      .asMap()
-                      .entries
-                      .map((e) => _buildStepItem(e.key + 1, e.value)),
+                  ..._reportingSteps.asMap().entries.map(
+                    (e) => _buildStepItem(e.key + 1, e.value),
+                  ),
                 ],
               ),
             ),
@@ -308,7 +312,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
+                  Text(
                     loc.legalOptions,
                     style: TextStyle(
                       fontSize: 15,
@@ -329,7 +333,9 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                         ..._legalOptions.asMap().entries.map((entry) {
                           return Padding(
                             padding: EdgeInsets.only(
-                              bottom: entry.key == _legalOptions.length - 1 ? 0 : 12,
+                              bottom: entry.key == _legalOptions.length - 1
+                                  ? 0
+                                  : 12,
                             ),
                             child: _buildLegalOption(entry.value),
                           );
@@ -357,7 +363,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                   loc.protectionTips,
+                    loc.protectionTips,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -428,7 +434,7 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
                   ),
                 ),
                 child: Text(
-                 loc.reportAnotherAccount,
+                  loc.reportAnotherAccount,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -553,7 +559,8 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
       final bytes = f.bytes;
       if (bytes == null || bytes.isEmpty) continue;
       final n = f.name.toLowerCase();
-      final isImage = n.endsWith('.jpg') ||
+      final isImage =
+          n.endsWith('.jpg') ||
           n.endsWith('.jpeg') ||
           n.endsWith('.png') ||
           n.endsWith('.webp');

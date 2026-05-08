@@ -20,13 +20,20 @@ class EvidenceAnalysisResult {
     final tags = json['tags'];
     final laws = json['relevant_laws'];
     return EvidenceAnalysisResult(
-      classifiedDomain: (json['classified_domain'] as String?)?.trim() ??
+      classifiedDomain:
+          (json['classified_domain'] as String?)?.trim() ??
           'Unclassified document',
       tags: tags is List
-          ? tags.map((e) => e.toString().trim()).where((s) => s.isNotEmpty).toList()
+          ? tags
+                .map((e) => e.toString().trim())
+                .where((s) => s.isNotEmpty)
+                .toList()
           : const [],
       relevantLaws: laws is List
-          ? laws.map((e) => e.toString().trim()).where((s) => s.isNotEmpty).toList()
+          ? laws
+                .map((e) => e.toString().trim())
+                .where((s) => s.isNotEmpty)
+                .toList()
           : const [],
       summary: (json['summary'] as String?)?.trim() ?? '',
     );
@@ -51,8 +58,16 @@ class EvidenceAnalysisResult {
 class EvidenceAnalysisService {
   static const String _url = 'http://localhost:8000/api/evidence/analyze-text';
 
-  static Future<EvidenceAnalysisResult> analyze(String extractedText) async {
-    final body = jsonEncode({'text': extractedText});
+  static Future<EvidenceAnalysisResult> analyze(
+    String extractedText, {
+    String? userId,
+    String? complaintId,
+  }) async {
+    final body = jsonEncode({
+      'text': extractedText,
+      if (userId != null) 'user_id': userId,
+      if (complaintId != null) 'complaint_id': complaintId,
+    });
     try {
       final response = await http
           .post(

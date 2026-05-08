@@ -4,8 +4,17 @@ import 'draft_complaint_generator_screen.dart';
 
 class EvidenceAnalysisResultScreen extends StatelessWidget {
   final int evidenceCount;
+  final String? analysisSummary;
+  final List<String> tags;
+  final List<String> laws;
 
-  const EvidenceAnalysisResultScreen({super.key, required this.evidenceCount});
+  const EvidenceAnalysisResultScreen({
+    super.key,
+    required this.evidenceCount,
+    this.analysisSummary,
+    this.tags = const [],
+    this.laws = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +27,8 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(AppLocalizations.of(context)!.aiEvidenceReview,
+        title: Text(
+          AppLocalizations.of(context)!.aiEvidenceReview,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -51,7 +61,8 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(AppLocalizations.of(context)!.uploadYourEvidence,
+                  Text(
+                    AppLocalizations.of(context)!.uploadYourEvidence,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -60,7 +71,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                     AppLocalizations.of(context)!.aiAnalyzeText,
+                    AppLocalizations.of(context)!.aiAnalyzeText,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
@@ -104,7 +115,8 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(AppLocalizations.of(context)!.mediumEvidence,
+                              Text(
+                                AppLocalizations.of(context)!.mediumEvidence,
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -113,7 +125,9 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                 AppLocalizations.of(context)!.basedOnEvidence(evidenceCount),
+                                AppLocalizations.of(
+                                  context,
+                                )!.basedOnEvidence(evidenceCount),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey.shade700,
@@ -126,12 +140,68 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                       AppLocalizations.of(context)!.evidenceStrengthDescription,
-                        style:TextStyle(fontSize: 14,
+                      AppLocalizations.of(context)!.evidenceStrengthDescription,
+                      style: TextStyle(
+                        fontSize: 14,
                         color: Colors.grey.shade800,
                         height: 1.5,
                       ),
                     ),
+                    if (analysisSummary != null &&
+                        analysisSummary!.trim().isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        analysisSummary!,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade800,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                    if (tags.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: tags
+                            .map(
+                              (tag) => Chip(
+                                label: Text(tag),
+                                backgroundColor: const Color(0xFFE6EFEA),
+                                labelStyle: const TextStyle(
+                                  color: Color(0xFF00401A),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
+                    if (laws.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.aiSuggestionsTitle,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      ...laws.map(
+                        (law) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            '• $law',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade800,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -145,7 +215,8 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppLocalizations.of(context)!.aiSuggestionsTitle,
+                  Text(
+                    AppLocalizations.of(context)!.aiSuggestionsTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -169,7 +240,7 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                   ),
                   _buildSuggestionItem(
                     number: 4,
-                    text:  AppLocalizations.of(context)!.suggestion4,
+                    text: AppLocalizations.of(context)!.suggestion4,
                   ),
                   _buildSuggestionItem(
                     number: 5,
@@ -206,7 +277,8 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: Text(AppLocalizations.of(context)!.continueToDraft,
+                    child: Text(
+                      AppLocalizations.of(context)!.continueToDraft,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -231,7 +303,8 @@ class EvidenceAnalysisResultScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text(AppLocalizations.of(context)!.uploadMoreEvidence,
+                    child: Text(
+                      AppLocalizations.of(context)!.uploadMoreEvidence,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

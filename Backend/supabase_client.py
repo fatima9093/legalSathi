@@ -151,3 +151,13 @@ def check_languages_available() -> bool:
     """
     client = _init_supabase()
     return client is not None
+
+
+# Expose a module-level `supabase` client for simpler imports from other helpers.
+# This will initialize lazily when the module is imported.
+supabase = _init_supabase()
+
+
+def get_supabase_client():
+    """Return the active supabase client or initialize it."""
+    return _init_supabase()
