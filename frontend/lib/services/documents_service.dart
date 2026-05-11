@@ -1,5 +1,5 @@
-import 'package:front_end/models/http_client.dart';
-import 'package:front_end/models/api_result.dart';
+import 'package:front_end/services/http_client_wrapper.dart';
+import 'package:front_end/models/error_models.dart';
 
 /// Models for documents API
 
@@ -144,7 +144,7 @@ class AllDocuments {
 /// Documents Service for API calls
 
 class DocumentsService {
-  final HttpClient _httpClient;
+  final HttpClientWrapper _httpClient;
   final String _baseUrl = 'http://localhost:8000';
 
   DocumentsService(this._httpClient);

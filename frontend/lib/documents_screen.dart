@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
-import 'package:front_end/models/http_client.dart';
+import 'package:front_end/services/http_client_wrapper.dart';
 import 'package:front_end/services/documents_service.dart';
 import 'package:front_end/services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,7 +21,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   @override
   void initState() {
     super.initState();
-    final httpClient = HttpClient();
+    final httpClient = HttpClientWrapper();
     _documentsService = DocumentsService(httpClient);
     _authService = AuthService();
     _documentsFuture = _fetchUserDocuments();
