@@ -4,6 +4,8 @@ import 'package:front_end/women_harrasment_module/women_harrasment_law_screen.da
 import 'package:front_end/cyber_law_module/cybercrime_peca_screen.dart';
 import 'package:front_end/labour_rights_module/labour_rights_screen.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/services/recent_activity_service.dart';
+import 'package:front_end/models/recent_activity_model.dart';
 import 'package:front_end/notifications_screen.dart';
 import 'package:front_end/profile_screen.dart';
 import 'package:front_end/chat_screen.dart';
@@ -24,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   final AuthService _authService = AuthService();
+  final RecentActivityService _activityService = RecentActivityService();
 
   @override
   Widget build(BuildContext context) {
@@ -432,56 +435,94 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
+                  child: FutureBuilder(
+                    future: _activityService.getRecentActivities(limit: 3),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Container(
                           decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Icons.description_outlined,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              (AppLocalizations.of(context)!.firDraft),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withValues(alpha: 0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
                               ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: const Center(
+                            child: SizedBox(
+                              height: 40,
+                              width: 40,
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              AppLocalizations.of(context)!.created2HoursAgo,
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
+                          ),
+                        );
+                      }
+
+                      final activities = snapshot.data ?? [];
+
+                      if (activities.isEmpty) {
+                        // Show placeholder when no activities
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withValues(alpha: 0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
                               ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.history,
+                                size: 40,
+                                color: Colors.grey[400],
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No Recent Activity',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Your activities will appear here',
+                                style: TextStyle(
+                                  color: Colors.grey[400],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      // Display activities as a list
+                      return Column(
+                        children: List.generate(activities.length, (index) {
+                          final activity = activities[index];
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              bottom: index < activities.length - 1 ? 12 : 0,
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            child: _buildActivityCard(activity),
+                          );
+                        }),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -666,5 +707,109 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  /// Build a single recent activity card
+  Widget _buildActivityCard(RecentActivityModel activity) {
+    // Determine the icon based on activity type
+    IconData iconData;
+    Color iconBgColor = const Color(0xFF00401A).withValues(alpha: 0.1);
+    Color iconColor = const Color(0xFF00401A);
+
+    switch (activity.type) {
+      case 'draft_complaint':
+        iconData = Icons.description_outlined;
+        iconBgColor = Colors.blue.withValues(alpha: 0.1);
+        iconColor = Colors.blue;
+        break;
+      case 'document_upload':
+        iconData = Icons.upload_file_outlined;
+        iconBgColor = Colors.green.withValues(alpha: 0.1);
+        iconColor = Colors.green;
+        break;
+      case 'complaint_filed':
+        iconData = Icons.check_circle_outline;
+        iconBgColor = Colors.purple.withValues(alpha: 0.1);
+        iconColor = Colors.purple;
+        break;
+      case 'chat_query':
+        iconData = Icons.chat_bubble_outline;
+        iconBgColor = Colors.orange.withValues(alpha: 0.1);
+        iconColor = Colors.orange;
+        break;
+      default:
+        iconData = Icons.history;
+        iconBgColor = Colors.grey.withValues(alpha: 0.1);
+        iconColor = Colors.grey;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: iconBgColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(iconData, color: iconColor, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  activity.title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    color: Colors.black,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatTimestamp(activity.timestamp),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Format timestamp to human-readable format
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+    }
   }
 }
