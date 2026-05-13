@@ -43,7 +43,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.radiusCard),
         ),
-        shadowColor: Colors.black.withOpacity(0.08),
+        shadowColor: Colors.black.withValues(alpha: 0.08),
         margin: const EdgeInsets.symmetric(
           horizontal: AppConstants.spacingMedium,
           vertical: AppConstants.spacingSmall,
@@ -76,10 +76,10 @@ class AppTheme {
                 Set<WidgetState> states,
               ) {
                 if (states.contains(WidgetState.hovered)) {
-                  return Colors.white.withOpacity(0.1);
+                  return Colors.white.withValues(alpha: 0.1);
                 }
                 if (states.contains(WidgetState.pressed)) {
-                  return Colors.white.withOpacity(0.2);
+                  return Colors.white.withValues(alpha: 0.2);
                 }
                 return null;
               }),
@@ -117,7 +117,7 @@ class AppTheme {
                 Set<WidgetState> states,
               ) {
                 if (states.contains(WidgetState.hovered)) {
-                  return AppColors.primaryLight.withOpacity(0.5);
+                  return AppColors.primaryLight.withValues(alpha: 0.5);
                 }
                 if (states.contains(WidgetState.pressed)) {
                   return AppColors.primaryLight;
@@ -149,10 +149,10 @@ class AppTheme {
                 Set<WidgetState> states,
               ) {
                 if (states.contains(WidgetState.hovered)) {
-                  return AppColors.primaryLight.withOpacity(0.3);
+                  return AppColors.primaryLight.withValues(alpha: 0.3);
                 }
                 if (states.contains(WidgetState.pressed)) {
-                  return AppColors.primaryLight.withOpacity(0.5);
+                  return AppColors.primaryLight.withValues(alpha: 0.5);
                 }
                 return null;
               }),

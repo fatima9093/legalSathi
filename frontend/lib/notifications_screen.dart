@@ -72,7 +72,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: ListView.separated(
                 padding: const EdgeInsets.all(16),
                 itemCount: _items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final n = _items[index];
                   return GestureDetector(
@@ -112,14 +112,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
         border: read
             ? null
-            : Border.all(color: Colors.blueAccent.withOpacity(0.6), width: 1),
+            : Border.all(
+                color: Colors.blueAccent.withValues(alpha: 0.6),
+                width: 1,
+              ),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(

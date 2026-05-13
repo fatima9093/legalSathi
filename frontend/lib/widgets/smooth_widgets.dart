@@ -46,7 +46,7 @@ class _SmoothCardState extends State<SmoothCard>
           borderRadius: BorderRadius.circular(AppConstants.radiusCard),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(_isHovered ? 0.12 : 0.06),
+              color: Colors.black.withValues(alpha: _isHovered ? 0.12 : 0.06),
               blurRadius: _isHovered ? 16 : 8,
               offset: Offset(0, _isHovered ? 6 : 2),
               spreadRadius: 0,
@@ -145,7 +145,7 @@ class _SmoothListTileState extends State<SmoothListTile> {
             borderRadius: BorderRadius.circular(AppConstants.radiusCard),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(_isHovered ? 0.08 : 0.03),
+                color: Colors.black.withValues(alpha: _isHovered ? 0.08 : 0.03),
                 blurRadius: _isHovered ? 12 : 8,
                 offset: Offset(0, _isHovered ? 4 : 2),
               ),
@@ -244,7 +244,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           boxShadow: _isHovered && widget.onPressed != null
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 12,
                     offset: const Offset(0, 6),
                   ),
@@ -312,7 +312,7 @@ class _SecondaryButtonState extends State<SecondaryButton> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppConstants.radiusButton),
           color: _isHovered && widget.onPressed != null
-              ? AppColors.primaryLight.withOpacity(0.3)
+              ? AppColors.primaryLight.withValues(alpha: 0.3)
               : Colors.transparent,
         ),
         child: OutlinedButton(
@@ -366,7 +366,7 @@ class _SmoothSearchBarState extends State<SmoothSearchBar> {
         boxShadow: _isFocused
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.15),
+                  color: AppColors.primary.withValues(alpha: 0.15),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),

@@ -65,7 +65,9 @@ class EvidenceAnalysisService {
   }) async {
     final body = jsonEncode({
       'text': extractedText,
+      // ignore: use_null_aware_elements
       if (userId != null) 'user_id': userId,
+      // ignore: use_null_aware_elements
       if (complaintId != null) 'complaint_id': complaintId,
     });
     try {

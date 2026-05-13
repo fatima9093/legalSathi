@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:front_end/create_account/signin_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
 import 'package:front_end/services/scenario_service.dart';
 import 'package:front_end/chat_screen.dart';
@@ -32,11 +34,50 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
   void initState() {
     super.initState();
     _initializeScenario();
+    // Check guest access
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkGuestAccess();
+    });
   }
 
   void _initializeScenario() {
     moduleConfig = _scenarioService.getModuleScenarios(widget.moduleType);
     selectedScenario = moduleConfig.getDefaultScenario();
+  }
+
+  void _checkGuestAccess() {
+    final isGuest = Supabase.instance.client.auth.currentUser == null;
+    if (isGuest && mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text('Limited Access'),
+          content: const Text(
+            'Scenario simulations with progress tracking are available for signed-in users. You can still view the scenarios as a guest.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Continue as Guest'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignInScreen()),
+                );
+              },
+              child: const Text('Sign In'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   void _selectScenario(Scenario scenario) {
@@ -204,7 +245,10 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
         ),
         title: Text(
           AppLocalizations.of(context)!.simulate,
-          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -372,7 +416,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
           border: Border.all(color: Colors.grey[200]!),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

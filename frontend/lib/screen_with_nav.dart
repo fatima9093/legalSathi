@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'labour rights module/minimum_wage_checker_screen.dart';
-import 'labour rights module/labour_rights_screen.dart';
-import 'cyber law module/blackmail_handling_screen.dart';
-import 'cyber law module/cybercrime_peca_screen.dart';
-import 'cyber law module/fia_complaint_generator.dart';
-import 'cyber law module/generated_complaint_screen.dart';
-import 'cyber law module/onlineHarrasment_screen.dart';
-import 'cyber law module/safety_guidance_result_screen.dart';
+import 'labour_rights_module/minimum_wage_checker_screen.dart';
+import 'labour_rights_module/labour_rights_screen.dart';
+import 'cyber_law_module/blackmail_handling_screen.dart';
+import 'cyber_law_module/cybercrime_peca_screen.dart';
+import 'cyber_law_module/fia_complaint_generator.dart';
+import 'cyber_law_module/generated_complaint_screen.dart';
+import 'cyber_law_module/online_harrasment_screen.dart';
 // Import all your other screens...
 
 // Bottom Navigation Bar Builder
@@ -89,9 +88,7 @@ class _ScreensWithNavState extends State<ScreensWithNav> {
       case 'safety_guidance_result_screen':
         // This route should not be used directly - navigate via blackmail_handling_screen
         return const Scaffold(
-          body: Center(
-            child: Text('Please use Blackmail Handling Flow'),
-          ),
+          body: Center(child: Text('Please use Blackmail Handling Flow')),
         );
 
       // Add all your 15+ screens here

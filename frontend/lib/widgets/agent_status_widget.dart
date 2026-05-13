@@ -110,12 +110,12 @@ class _AgentStatusWidgetState extends State<AgentStatusWidget>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isError
-              ? const Color(0xFFF44336).withOpacity(0.4)
-              : const Color(0xFF00401A).withOpacity(0.15),
+              ? const Color(0xFFF44336).withValues(alpha: 0.4)
+              : const Color(0xFF00401A).withValues(alpha: 0.15),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -132,8 +132,8 @@ class _AgentStatusWidgetState extends State<AgentStatusWidget>
                 height: 32,
                 decoration: BoxDecoration(
                   color: isError
-                      ? const Color(0xFFF44336).withOpacity(0.12)
-                      : const Color(0xFF00401A).withOpacity(0.1),
+                      ? const Color(0xFFF44336).withValues(alpha: 0.12)
+                      : const Color(0xFF00401A).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -196,7 +196,7 @@ class _AgentStatusWidgetState extends State<AgentStatusWidget>
                   child: Container(
                     height: 2,
                     color: leftDone
-                        ? const Color(0xFF00401A).withOpacity(0.4)
+                        ? const Color(0xFF00401A).withValues(alpha: 0.4)
                         : Colors.grey.shade200,
                   ),
                 );
@@ -246,7 +246,7 @@ class _StagePill extends StatelessWidget {
     final Color activeColor = isError ? const Color(0xFFF44336) : config.color;
 
     final Color bgColor = isCompleted || isActive
-        ? activeColor.withOpacity(isActive ? 0.12 : 0.08)
+        ? activeColor.withValues(alpha: isActive ? 0.12 : 0.08)
         : Colors.grey.shade100;
 
     final Color iconColor = isCompleted || isActive
@@ -282,7 +282,7 @@ class _StagePill extends StatelessWidget {
                 ? Border.all(color: activeColor, width: 2)
                 : Border.all(
                     color: isCompleted
-                        ? activeColor.withOpacity(0.3)
+                        ? activeColor.withValues(alpha: 0.3)
                         : Colors.grey.shade200,
                   ),
           ),
@@ -412,7 +412,7 @@ class _AgentResponseCardState extends State<AgentResponseCard> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: const Color(0xFF00401A).withOpacity(0.08),
+                color: const Color(0xFF00401A).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
@@ -463,7 +463,7 @@ class _AgentResponseCardState extends State<AgentResponseCard> {
               color: const Color(0xFFFFF3E0),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: const Color(0xFFFF9800).withOpacity(0.3),
+                color: const Color(0xFFFF9800).withValues(alpha: 0.3),
               ),
             ),
             child: Row(
@@ -575,9 +575,9 @@ class _Section extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.04),
+        color: color.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.15)),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
       ),
       child: Column(
         children: [
@@ -607,7 +607,7 @@ class _Section extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.12),
+                      color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -625,7 +625,7 @@ class _Section extends StatelessWidget {
                         ? Icons.keyboard_arrow_up_rounded
                         : Icons.keyboard_arrow_down_rounded,
                     size: 18,
-                    color: color.withOpacity(0.7),
+                    color: color.withValues(alpha: 0.7),
                   ),
                 ],
               ),

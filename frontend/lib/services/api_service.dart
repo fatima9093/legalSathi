@@ -14,7 +14,6 @@ class ApiService {
 
   ApiService._internal();
 
-  final HttpClientWrapper _httpClient = HttpClientWrapper();
   final ErrorHandlerService _errorHandler = ErrorHandlerService();
 
   // Base URL - update this to your backend

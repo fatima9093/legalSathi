@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:front_end/services/notification_service.dart';
 import 'package:front_end/models/notification_model.dart';
 
@@ -60,8 +61,8 @@ class NotificationIntegrationExamples {
     _notificationService.subscribeToNotifications(
       userId: userId,
       onNotification: onNewNotification,
-      onError: (error) {
-        print('Real-time error: $error');
+      onError: (dynamic error) {
+        debugPrint('Real-time subscription error: $error');
       },
     );
   }

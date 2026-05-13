@@ -141,9 +141,7 @@ class ComplaintStatusService {
           .match({'user_id': userId, 'status': status.value})
           .order('created_at', ascending: false);
 
-      return ApiResult<List<Map<String, dynamic>>>.success(
-        response as List<Map<String, dynamic>>,
-      );
+      return ApiResult<List<Map<String, dynamic>>>.success(response);
     } catch (e, st) {
       debugPrint('Error fetching complaints by status: $e\n$st');
       return ApiResult<List<Map<String, dynamic>>>.failure(

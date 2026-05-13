@@ -87,7 +87,9 @@ class HelpCenterScreen extends StatelessWidget {
                     icon: Icons.menu_book,
                     iconColor: const Color(0xFF00401A),
                     title: AppLocalizations.of(context)!.howToUseLegalSathi,
-                    subtitle: AppLocalizations.of(context)!.learnBasicsNavigatingApp,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!.learnBasicsNavigatingApp,
                     onTap: () {},
                   ),
 
@@ -97,7 +99,9 @@ class HelpCenterScreen extends StatelessWidget {
                     icon: Icons.camera_alt_outlined,
                     iconColor: const Color(0xFF00401A),
                     title: AppLocalizations.of(context)!.howToUploadEvidence,
-                    subtitle: AppLocalizations.of(context)!.stepByStepGuideUploadingDocuments,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!.stepByStepGuideUploadingDocuments,
                     onTap: () {},
                   ),
 
@@ -285,7 +289,7 @@ class HelpCenterScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -333,7 +337,7 @@ class HelpCenterScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

@@ -17,6 +17,7 @@ import 'package:front_end/widgets/agent_status_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:front_end/create_account/signin_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   final ModuleType? selectedModule;
@@ -150,9 +151,10 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
 
-    // Debug: Print user ID to console
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    print('🔍 DEBUG: Your User ID: $userId');
+    // Check if user is guest
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkGuestAccess();
+    });
 
     _speech = stt.SpeechToText();
     _conversationId = _newConversationId();
@@ -181,9 +183,110 @@ class _ChatScreenState extends State<ChatScreen> {
     return '$hour:${now.minute.toString().padLeft(2, '0')} $period';
   }
 
+  void _checkGuestAccess() {
+    final isGuest = Supabase.instance.client.auth.currentUser == null;
+    if (isGuest && mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          backgroundColor: Colors.white,
+          title: const Row(
+            children: [
+              Icon(Icons.info_outline, color: Color(0xFF00401A)),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Chat Limited for Guests',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'As a guest, you can view information and answers, but cannot save conversations. Creating an account lets you:',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                '✓ Save all conversations',
+                style: TextStyle(fontSize: 13),
+              ),
+              const Text(
+                '✓ Access chat history anytime',
+                style: TextStyle(fontSize: 13),
+              ),
+              const Text(
+                '✓ Track your questions',
+                style: TextStyle(fontSize: 13),
+              ),
+              const Text(
+                '✓ Get personalized guidance',
+                style: TextStyle(fontSize: 13),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Continue as Guest',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignInScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00401A),
+              ),
+              child: const Text(
+                'Sign In',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Future<void> _sendMessage() async {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
+
+    // Check if guest trying to send message
+    final isGuest = Supabase.instance.client.auth.currentUser == null;
+    if (isGuest && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign in to save and continue your conversations'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
     if (_isLoading) {
       // Interrupt current generation and start new one
       _stopGeneration();
@@ -871,11 +974,9 @@ class _ChatScreenState extends State<ChatScreen> {
         '${dir.path}/legalsathi_chat_${DateTime.now().millisecondsSinceEpoch}.txt',
       );
       await file.writeAsString(buf.toString());
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        subject: 'Legal Sathi Chat Export',
-        text: 'Here is my Legal Sathi conversation.',
-      );
+      await Share.shareXFiles([
+        XFile(file.path),
+      ], subject: 'Legal Sathi Chat Export');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -959,7 +1060,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     Icons.edit_outlined,
                     color: Color(0xFF00401A),
                   ),
-                  title: Text(AppLocalizations.of(context)!.editAndResendAction),
+                  title: Text(
+                    AppLocalizations.of(context)!.editAndResendAction,
+                  ),
                   onTap: () {
                     Navigator.pop(ctx);
                     _editMessage(index);
@@ -1262,7 +1365,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Text(
               _isAgentActive
                   ? AppLocalizations.of(context)!.deepAnalysisActive
-                  : '${AppLocalizations.of(context)!.yourLegalAssistant}',
+                  : AppLocalizations.of(context)!.yourLegalAssistant,
               style: TextStyle(
                 color: _isAgentActive
                     ? const Color(0xFF00401A)
@@ -2659,7 +2762,7 @@ class _TypingDotsState extends State<_TypingDots>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _ctrl,
-      builder: (_, __) {
+      builder: (_, _) {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: List.generate(3, (i) {
@@ -2738,7 +2841,7 @@ class _StreamingMarkdownState extends State<_StreamingMarkdown>
     }
     return AnimatedBuilder(
       animation: _blink,
-      builder: (_, __) {
+      builder: (_, _) {
         final cursor = _blink.value > 0.5 ? '▌' : '';
         final displayData = widget.data.isEmpty ? cursor : widget.data + cursor;
         return MarkdownBody(

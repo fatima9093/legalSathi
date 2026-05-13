@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:front_end/Traffic%20Module/Road_traffic_law_Screen.dart';
-import 'package:front_end/Women%20harrasment%20Module/womenHarrasmentLaw_Screen.dart';
-import 'package:front_end/cyber%20law%20module/cybercrime_peca_screen.dart';
-import 'package:front_end/labour%20rights%20module/labour_rights_screen.dart';
+import 'package:front_end/traffic_module/road_traffic_law_screen.dart';
+import 'package:front_end/women_harrasment_module/women_harrasment_law_screen.dart';
+import 'package:front_end/cyber_law_module/cybercrime_peca_screen.dart';
+import 'package:front_end/labour_rights_module/labour_rights_screen.dart';
 import 'package:front_end/services/auth_service.dart';
 import 'package:front_end/notifications_screen.dart';
 import 'package:front_end/profile_screen.dart';
 import 'package:front_end/chat_screen.dart';
-import 'package:front_end/documents_screen.dart';
+import 'package:front_end/screens/dynamic_documents_screen.dart';
 import 'package:front_end/scenario_simulator_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
-import 'package:front_end/Traffic%20Module/traffic_challan_ocr_screen.dart';
-import 'package:front_end/cyber%20law%20module/draft_document_type_screen.dart';
+import 'package:front_end/traffic_module/traffic_challan_ocr_screen.dart';
+import 'package:front_end/cyber_law_module/draft_document_type_screen.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
+            leading: SizedBox.shrink(),
             actions: [
               IconButton(
                 icon: const Icon(Icons.notifications_none, color: Colors.black),
@@ -55,7 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileScreen(),
+                    ),
                   );
                 },
               ),
@@ -67,7 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -87,162 +93,127 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                       ),
                       if (user != null)
-                    TextButton(
-                      onPressed: () async {
-                        await _authService.signOut();
-                        if (context.mounted) {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            '/onboarding',
-                          );
-                        }
-                      },
-                      child:  Text(
-                        (AppLocalizations.of(context)!.language),
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Search Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ChatScreen()),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
+                        TextButton(
+                          onPressed: () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text(
+                                  AppLocalizations.of(context)!.logout,
+                                ),
+                                content: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.areYouSureYouWantToLogout,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.cancel,
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    style: TextButton.styleFrom(
+                                      foregroundColor: Colors.red,
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.logout,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirmed == true && context.mounted) {
+                              await _authService.signOut();
+                              if (context.mounted) {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/onboarding',
+                                );
+                              }
+                            }
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.logout,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-                  child: TextField(
-                    enabled: false,
-                    decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)!.askALegalQuestion,
-                      hintStyle: TextStyle(color: Colors.grey[400]),
-                      prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                const SizedBox(height: 16),
+
+                // Guest Message
+                if (user == null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF00401A),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome as Guest',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Sign up to unlock full features, save documents, and track your cases.',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.white.withValues(alpha: 0.9),
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/onboarding',
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFF00401A),
+                              minimumSize: const Size(double.infinity, 40),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Sign Up Now',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-            // Legal Categories
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child:  Text(
-                AppLocalizations.of(context)!.legalCategoies,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Category Cards Grid
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                children: [
-                  _buildCategoryButton(
-                    title: 'Women\nHarrassment',
-                    subtitle: 'Protection laws and\ncomplaint',
-                    urduText: 'خواتین کی جنسی و زبانی زیادتی',
-                    icon: Icons.shield,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const WomenHarassmentLawsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildCategoryButton(
-                    title: 'Road & Traffic\nLaw',
-                    subtitle: 'Traffic violations\nand fines',
-                    urduText: 'ٹریفک قوانین',
-                    icon: Icons.directions_car,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RoadTrafficLawScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildCategoryButton(
-                    title: 'Labour Rights',
-                    subtitle: 'Employment rights\nand wages',
-                    urduText: 'مزدوری حقوق',
-                    icon: Icons.business_center,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LabourRightsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildCategoryButton(
-                    title: 'Cyber Crime\n(PECA)',
-                    subtitle: 'Online harassment\nand digital crimes',
-                    urduText: 'سائبر جرائم',
-                    icon: Icons.security,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CyberCrimePECAScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Quick Actions
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                crossAxisCount: 4,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                children: [
-                  _buildQuickAction(
-                     AppLocalizations.of(context)!.askAi,
-                    Icons.chat_bubble_outline,
+                // Search Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -251,182 +222,332 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                  ),
-                  _buildQuickAction(
-                    AppLocalizations.of(context)!.uploadEvidence,
-                    Icons.camera_alt_outlined,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TrafficChallanOCRScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildQuickAction(
-                    AppLocalizations.of(context)!.draftDocument,
-                    Icons.local_offer_outlined,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DraftDocumentTypeScreen(
-                            extractedText: '',
-                            classifiedDomain: '',
-                            tags: [],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildQuickAction(
-                    AppLocalizations.of(context)!.simulate,
-                    Icons.play_circle_outline,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ScenarioSimulatorScreen(
-                            moduleType: ModuleType.general,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Recent Activity
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child:  Text(
-                AppLocalizations.of(context)!.recentActivity,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
+                    child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(
-                        Icons.description_outlined,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                         Text((
-                          AppLocalizations.of(context)!.firDraft),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                      child: TextField(
+                        enabled: false,
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(
+                            context,
+                          )!.askALegalQuestion,
+                          hintStyle: TextStyle(color: Colors.grey[400]),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: Colors.grey[400],
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          AppLocalizations.of(context)!.created2HoursAgo,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 12,
-                          ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Legal Categories
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.legalCategoies,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Category Cards Grid
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    children: [
+                      _buildCategoryButton(
+                        title: 'Women\nHarrassment',
+                        subtitle: 'Protection laws and\ncomplaint',
+                        urduText: 'خواتین کی جنسی و زبانی زیادتی',
+                        icon: Icons.shield,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const WomenHarassmentLawsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildCategoryButton(
+                        title: 'Road & Traffic\nLaw',
+                        subtitle: 'Traffic violations\nand fines',
+                        urduText: 'ٹریفک قوانین',
+                        icon: Icons.directions_car,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const RoadTrafficLawScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildCategoryButton(
+                        title: 'Labour Rights',
+                        subtitle: 'Employment rights\nand wages',
+                        urduText: 'مزدوری حقوق',
+                        icon: Icons.business_center,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const LabourRightsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildCategoryButton(
+                        title: 'Cyber Crime\n(PECA)',
+                        subtitle: 'Online harassment\nand digital crimes',
+                        urduText: 'سائبر جرائم',
+                        icon: Icons.security,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const CyberCrimePECAScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Quick Actions
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GridView.count(
+                    crossAxisCount: 4,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    children: [
+                      _buildQuickAction(
+                        AppLocalizations.of(context)!.askAi,
+                        Icons.chat_bubble_outline,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ChatScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildQuickAction(
+                        AppLocalizations.of(context)!.uploadEvidence,
+                        Icons.camera_alt_outlined,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const TrafficChallanOCRScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildQuickAction(
+                        AppLocalizations.of(context)!.draftDocument,
+                        Icons.local_offer_outlined,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const DraftDocumentTypeScreen(
+                                    extractedText: '',
+                                    classifiedDomain: '',
+                                    tags: [],
+                                  ),
+                            ),
+                          );
+                        },
+                      ),
+                      _buildQuickAction(
+                        AppLocalizations.of(context)!.simulate,
+                        Icons.play_circle_outline,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ScenarioSimulatorScreen(
+                                    moduleType: ModuleType.general,
+                                  ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Recent Activity
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    AppLocalizations.of(context)!.recentActivity,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                  ],
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.description_outlined,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              (AppLocalizations.of(context)!.firDraft),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              AppLocalizations.of(context)!.created2HoursAgo,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 24),
+              ],
             ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const ChatScreen()),
-          );
-        },
-        backgroundColor: const Color(0xFF00401A),
-        child: const Icon(Icons.mic, color: Colors.white, size: 28),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-          if (index == 1) {
-            // Navigate to Chat screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ChatScreen()),
-            );
-          } else if (index == 2) {
-            // Navigate to Documents screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DocumentsScreen()),
-            );
-          } else if (index == 3) {
-            // Navigate to Profile screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            );
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: 'Chat',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.folder_outlined),
-            label: 'Documents',
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ChatScreen()),
+              );
+            },
+            backgroundColor: const Color(0xFF00401A),
+            child: const Icon(Icons.mic, color: Colors.white, size: 28),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+              if (index == 1) {
+                // Navigate to Chat screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ChatScreen()),
+                );
+              } else if (index == 2) {
+                // Navigate to Documents screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DynamicDocumentsScreen(),
+                  ),
+                );
+              } else if (index == 3) {
+                // Navigate to Profile screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ProfileScreen(),
+                  ),
+                );
+              }
+            },
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat_bubble_outline),
+                label: 'Chat',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.folder_outlined),
+                label: 'Documents',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline),
+                label: 'Profile',
+              ),
+            ],
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: const Color(0xFF00401A),
+            unselectedItemColor: Colors.grey,
           ),
-        ],
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF00401A),
-        unselectedItemColor: Colors.grey,
-      ),
-      );
+        );
       },
     );
   }
@@ -446,7 +567,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -521,7 +642,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),

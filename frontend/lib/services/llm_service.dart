@@ -42,8 +42,10 @@ class LlmService {
     try {
       final payload = <String, dynamic>{
         'question': userMessage,
+        // ignore: use_null_aware_elements
         if (module != null) 'module': module,
         if (conversationId != null && conversationId.trim().isNotEmpty)
+          // ignore: use_null_aware_elements
           'conversation_id': conversationId.trim(),
         if (conversationHistory != null && conversationHistory.isNotEmpty)
           'conversation_history': conversationHistory,
@@ -158,8 +160,10 @@ Error: $e''';
     try {
       final payload = <String, dynamic>{
         'question': userMessage,
+        // ignore: use_null_aware_elements
         if (module != null) 'module': module,
         if (conversationId != null && conversationId.trim().isNotEmpty)
+          // ignore: use_null_aware_elements
           'conversation_id': conversationId.trim(),
         if (conversationHistory != null && conversationHistory.isNotEmpty)
           'conversation_history': conversationHistory,

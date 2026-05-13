@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/services/auth_service.dart';
-import 'package:front_end/OnboardingScreen.dart';
+import 'package:front_end/onboarding_screen.dart';
 import 'package:front_end/home_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
@@ -15,9 +15,7 @@ class AuthWrapper extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF00401A),
-              ),
+              child: CircularProgressIndicator(color: Color(0xFF00401A)),
             ),
           );
         }

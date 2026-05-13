@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/http_client_wrapper.dart';
 import 'package:front_end/services/documents_service.dart';
@@ -25,6 +26,24 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     _documentsService = DocumentsService(httpClient);
     _authService = AuthService();
     _documentsFuture = _fetchUserDocuments();
+
+    // Check guest access
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkGuestAccess();
+    });
+  }
+
+  void _checkGuestAccess() {
+    final isGuest = Supabase.instance.client.auth.currentUser == null;
+    if (isGuest && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign in to view and manage your documents'),
+          duration: Duration(seconds: 4),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
   }
 
   Future<UserDocumentsResponse> _fetchUserDocuments() async {
@@ -41,6 +60,18 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   void _openDocument(BuildContext context, UserDocument doc) async {
+    // Check if guest
+    final isGuest = Supabase.instance.client.auth.currentUser == null;
+    if (isGuest && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign in to download documents'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     if (doc.fileUrl.startsWith('http')) {
       // Open external link
       if (await canLaunchUrl(Uri.parse(doc.fileUrl))) {
@@ -50,6 +81,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         );
       } else {
         if (mounted) {
+          // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Could not open document')),
           );
@@ -69,6 +101,18 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   void _deleteDocument(BuildContext context, UserDocument doc) {
+    // Check if guest
+    final isGuest = Supabase.instance.client.auth.currentUser == null;
+    if (isGuest && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign in to manage documents'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -277,7 +321,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                             ),
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 ),

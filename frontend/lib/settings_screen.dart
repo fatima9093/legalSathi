@@ -34,7 +34,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title:  Text((AppLocalizations.of(context)!.settings),
+        title: Text(
+          (AppLocalizations.of(context)!.settings),
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -54,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -73,7 +74,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title: Text(AppLocalizations.of(context)!.language,
+                        title: Text(
+                          AppLocalizations.of(context)!.language,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -109,7 +111,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title: Text(AppLocalizations.of(context)!.voiceMode,
+                        title: Text(
+                          AppLocalizations.of(context)!.voiceMode,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -145,7 +148,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title: Text(AppLocalizations.of(context)!.notifications,
+                        title: Text(
+                          AppLocalizations.of(context)!.notifications,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -181,7 +185,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: Colors.black87,
                           size: 24,
                         ),
-                        title:  Text(AppLocalizations.of(context)!.darkMode,
+                        title: Text(
+                          AppLocalizations.of(context)!.darkMode,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -225,13 +230,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title:  Text(AppLocalizations.of(context)!.selectLanguage),
+        title: Text(AppLocalizations.of(context)!.selectLanguage),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // ← Added Roman Urdu option, fixed Urdu string mismatch
             ListTile(
-              title:  Text(AppLocalizations.of(context)!.english),
+              title: Text(AppLocalizations.of(context)!.english),
               trailing: _selectedLanguage == 'English'
                   ? const Icon(Icons.check, color: Color(0xFF00401A))
                   : null,
@@ -244,7 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               },
             ),
             ListTile(
-              title:  Text(AppLocalizations.of(context)!.romanUrdu),
+              title: Text(AppLocalizations.of(context)!.romanUrdu),
               trailing: _selectedLanguage == 'Roman Urdu'
                   ? const Icon(Icons.check, color: Color(0xFF00401A))
                   : null,

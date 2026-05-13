@@ -1,0 +1,40 @@
+Analyzing frontend...                                           
+
+  error - The method 'shareXFiles' isn't defined for the type 'SharePlus' - lib\chat_screen.dart:977:32 - undefined_method
+  error - The argument type 'String' can't be assigned to the parameter type 'ShareParams'.  - lib\chat_screen.dart:1092:21 - argument_type_not_assignable
+  error - The named parameter 'subject' isn't defined - lib\chat_screen.dart:1093:21 - undefined_named_parameter
+  error - The argument type 'String' can't be assigned to the parameter type 'ShareParams'.  - lib\chat_screen.dart:2348:29 - argument_type_not_assignable
+  error - The named parameter 'subject' isn't defined - lib\chat_screen.dart:2349:29 - undefined_named_parameter
+  error - The argument type 'String' can't be assigned to the parameter type 'ShareParams'.  - lib\cyber_law_module\analysis_result_screen.dart:107:36 - argument_type_not_assignable
+  error - The named parameter 'subject' isn't defined - lib\cyber_law_module\analysis_result_screen.dart:107:53 - undefined_named_parameter
+  error - Target of URI doesn't exist: 'package:front_end/cyber%20law%20module/safety_guidance_loading_screen.dart' - lib\cyber_law_module\blackmail_handling_screen.dart:4:8 - uri_does_not_exist
+  error - The method 'SafetyGuidanceLoadingScreen' isn't defined for the type '_BlackmailHandlingScreenState' - lib\cyber_law_module\blackmail_handling_screen.dart:127:37 - undefined_method
+  error - Target of URI doesn't exist: 'package:front_end/cyber%20law%20module/blackmail_handling_screen.dart' - lib\cyber_law_module\cybercrime_peca_screen.dart:3:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:front_end/cyber%20law%20module/onlineHarrasment_screen.dart' - lib\cyber_law_module\cybercrime_peca_screen.dart:4:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:front_end/cyber%20law%20module/fia_complaint_generator.dart' - lib\cyber_law_module\cybercrime_peca_screen.dart:5:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:front_end/cyber%20law%20module/report_fake_account_screen.dart' - lib\cyber_law_module\cybercrime_peca_screen.dart:6:8 - uri_does_not_exist
+  error - Target of URI doesn't exist: 'package:front_end/cyber%20law%20module/evidence_extractor_screen.dart' - lib\cyber_law_module\cybercrime_peca_screen.dart:7:8 - uri_does_not_exist
+  error - The name 'OnlineHarassmentPECA24Screen' isn't a class - lib\cyber_law_module\cybercrime_peca_screen.dart:109:49 - creation_with_non_type
+  error - The name 'BlackmailHandlingScreen' isn't a class - lib\cyber_law_module\cybercrime_peca_screen.dart:127:49 - creation_with_non_type
+  error - The name 'ReportFakeAccountScreen' isn't a class - lib\cyber_law_module\cybercrime_peca_screen.dart:145:49 - creation_with_non_type
+  error - The name 'EvidenceExtractorScreen' isn't a class - lib\cyber_law_module\cybercrime_peca_screen.dart:163:49 - creation_with_non_type
+  error - The name 'FIAComplaintGeneratorScreen' isn't a class - lib\cyber_law_module\cybercrime_peca_screen.dart:181:49 - creation_with_non_type
+  error - The name 'EvidenceExtractorScreen' isn't a class - lib\cyber_law_module\cybercrime_peca_screen.dart:199:49 - creation_with_non_type
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\documents_screen.dart:84:32 - use_build_context_synchronously
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\services\evidence_analysis_service.dart:68:7 - use_null_aware_elements
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\services\evidence_analysis_service.dart:69:7 - use_null_aware_elements
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\services\llm_service.dart:45:9 - use_null_aware_elements
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\services\llm_service.dart:161:9 - use_null_aware_elements
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\services\llm_service_enhanced.dart:140:9 - use_null_aware_elements
+   info - Use the null-aware marker '?' rather than a null check via an 'if' - lib\services\llm_service_enhanced.dart:141:9 - use_null_aware_elements
+  error - The argument type 'List<Uint8List>' can't be assigned to the parameter type 'JSArray<BlobPart>'.  - lib\utils\web_download.dart:8:27 - argument_type_not_assignable
+
+flutter : 28 issues found. (ran in 9.2s)
+At line:1 char:1
++ flutter analyze 2>&1 | Out-String | Set-Content analyze_now.txt; (Get ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (28 issues found. (ran in 9.2s):St 
+   ring) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

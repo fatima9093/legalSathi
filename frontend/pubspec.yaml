@@ -63,9 +63,10 @@ dependencies:
   # Markdown rendering for AI responses
 
   # Share & export chat
-  share_plus: ^12.0.2
+  share_plus: ^7.2.0
   flutter_gen: ^5.13.0+1
   flutter_markdown_plus: ^1.0.7
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1859,9 +1859,22 @@
   "legalCivilCase": "Consider civil defamation case",
 
   "defaultAnalysisSummary": "Guidance generated from provided evidence.",
-  "howToReport": "How to Report on {platform}"
+  "howToReport": "How to Report on {platform}",
 
-
+  "guestFeatureTitle": "Sign In Required",
+  "guestChatMessage": "Chat with our AI legal assistant is only available for signed-in users. Create an account to save your conversations and access personalized guidance.",
+  "guestComplaintMessage": "Filing complaints requires an account to safely store your information and track status. Sign in to get started.",
+  "guestDownloadMessage": "Downloading and saving documents requires an account. Create an account to save your generated documents and access them anytime.",
+  "guestGenerateMessage": "Generating documents requires an account to save your work. Sign in to generate and manage your legal documents.",
+  "guestSubmitMessage": "Submitting forms requires an account. Sign in to submit your information and track your requests.",
+  "guestSaveMessage": "Saving your work requires an account. Create an account to store your progress and access it later.",
+  "guestSimulatorMessage": "Scenario simulation with personalized feedback requires an account. Sign in to track your learning progress.",
+  "continueExploring": "Continue Exploring",
+  "signInToAccess": "Sign In to Access This Feature",
+  "guestCanExplore": "As a guest, you can explore all available information and resources. Sign in to unlock interactive features and save your work.",
+  "guestBannerTitle": "Exploring as Guest",
+  "guestBannerMessage": "You can view information, but services require sign in.",
+  "signInForFeatures": "Sign In for Full Features"
 
 }
 

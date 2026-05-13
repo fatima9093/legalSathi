@@ -137,7 +137,9 @@ class LlmService {
     try {
       final requestBody = {
         'question': userMessage,
+        // ignore: use_null_aware_elements
         if (module != null) 'module': module,
+        // ignore: use_null_aware_elements
         if (conversationHistory != null)
           'conversation_history': conversationHistory,
       };

@@ -380,7 +380,7 @@ class _MultiStepComplaintProcessState extends State<MultiStepComplaintProcess> {
   Future<void> _stepSubmit() async {
     if (!mounted) return;
 
-    final result = await _complaintService.executeWithUIFeedback(
+    await _complaintService.executeWithUIFeedback(
       context,
       () => _complaintService.submitComplaint(
         complaintId: widget.complaintId,

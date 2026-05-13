@@ -138,7 +138,7 @@ class _ComplaintStatusUpdateDialogState
                   label: Text(status.displayName),
                   avatar: Icon(_getStatusIcon(status), size: 16),
                   backgroundColor: Colors.grey[200],
-                  selectedColor: color.withOpacity(0.2),
+                  selectedColor: color.withValues(alpha: 0.2),
                   labelStyle: TextStyle(
                     color: isSelected ? color : Colors.black,
                     fontWeight: isSelected

@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import 'challan_ocr_mlkit_stub.dart'
-    if (dart.library.io) 'challan_ocr_mlkit_io.dart' as mlkit;
+    if (dart.library.io) 'challan_ocr_mlkit_io.dart'
+    as mlkit;
 
 /// Extracts plain text from challan images (ML Kit on mobile + backend fallback)
 /// or PDF (backend pypdf). Uses same host as [llm_service](lib/services/llm_service.dart).

@@ -6,9 +6,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:front_end/supabase_config.dart';
 import 'providers/language_provider.dart';
 import 'splash_screen.dart';
-import 'OnboardingScreen.dart';
+import 'onboarding_screen.dart';
 import 'home_screen.dart';
-import 'documents_screen.dart';
+import 'screens/dynamic_documents_screen.dart';
 import 'chat_screen.dart';
 import 'theme/app_theme.dart';
 
@@ -35,7 +35,6 @@ class MyApp extends StatelessWidget {
       title: 'Legal Sathi',
       theme: AppTheme.lightTheme,
       home: const SplashScreen(),
-      
 
       // ← Add these:
       locale: langProvider.locale,
@@ -45,11 +44,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('ur'),
-        Locale('ro'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('ur'), Locale('ro')],
       builder: (context, child) {
         return Directionality(
           textDirection: langProvider.locale.languageCode == 'ur'
@@ -63,7 +58,7 @@ class MyApp extends StatelessWidget {
         '/onboarding': (context) => const OnboardingScreen(),
         '/home_screen': (context) => const HomeScreen(),
         '/chat': (context) => const ChatScreen(),
-        '/documents': (context) => const DocumentsScreen(),
+        '/documents': (context) => const DynamicDocumentsScreen(),
         '/profile': (context) => const HomeScreen(),
       },
     );
