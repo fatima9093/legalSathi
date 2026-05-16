@@ -26,24 +26,38 @@ class ChallanProcessingScreen extends StatefulWidget {
 class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+
   double _progress = 0.0;
   String _statusLabel = 'Reading document…';
+
+  bool _initialized = false;
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(duration: const Duration(seconds: 8), vsync: this)
-          ..addListener(() {
-            if (mounted) {
-              setState(() {
-                _progress = _controller.value;
-              });
-            }
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 8),
+      vsync: this,
+    )..addListener(() {
+        if (mounted) {
+          setState(() {
+            _progress = _controller.value;
           });
+        }
+      });
 
     _controller.forward();
-    _runExtraction();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_initialized) {
+      _initialized = true;
+      _runExtraction();
+    }
   }
 
   @override
@@ -53,7 +67,8 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
   }
 
   Future<void> _runExtraction() async {
-     final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context)!;
+
     try {
       if (mounted) {
         setState(() {
@@ -76,17 +91,22 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => ChallanDetailsScreen(challanData: challanData),
+          builder: (context) =>
+              ChallanDetailsScreen(challanData: challanData),
         ),
       );
     } catch (e) {
       if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-           content: Text(loc.couldNotProcessChallan(e.toString())),
+          content: Text(
+            loc.couldNotProcessChallan(e.toString()),
+          ),
           backgroundColor: Colors.red,
         ),
       );
+
       Navigator.pop(context);
     }
   }
@@ -94,6 +114,7 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -103,9 +124,9 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title:  Text(
-           loc.processingChallan,
-          style: TextStyle(
+        title: Text(
+          loc.processingChallan,
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -130,23 +151,31 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                   backgroundColor: Colors.grey.shade200,
                 ),
               ),
+
               const SizedBox(height: 32),
-               Text(
+
+              Text(
                 loc.extractingChallanDetails,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
               ),
+
               const SizedBox(height: 12),
+
               Text(
                 loc.pleaseWaitAiReading,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey.shade600,),),
+                  color: Colors.grey.shade600,
+                ),
+              ),
+
               const SizedBox(height: 32),
+
               Container(
                 width: double.infinity,
                 height: 8,
@@ -165,7 +194,9 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                   ),
                 ),
               ),
+
               const SizedBox(height: 24),
+
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -175,8 +206,14 @@ class _ChallanProcessingScreenState extends State<ChallanProcessingScreen>
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.search, size: 16, color: Colors.grey.shade600),
+                    Icon(
+                      Icons.search,
+                      size: 16,
+                      color: Colors.grey.shade600,
+                    ),
+
                     const SizedBox(width: 8),
+
                     Flexible(
                       child: Text(
                         _statusLabel,
