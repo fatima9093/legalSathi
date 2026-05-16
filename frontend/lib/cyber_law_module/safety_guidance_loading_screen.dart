@@ -23,30 +23,46 @@ class SafetyGuidanceLoadingScreen extends StatefulWidget {
 
 class _SafetyGuidanceLoadingScreenState
     extends State<SafetyGuidanceLoadingScreen> {
-  late String _status;
+  String _status = '';
 
   @override
   void initState() {
     super.initState();
-    final loc = AppLocalizations.of(context)!;
-    _status = loc.preparingGuidance;
-    _runGuidancePipeline();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      setState(() {
+        _status = AppLocalizations.of(context)!.preparingGuidance;
+      });
+
+      _runGuidancePipeline();
+    });
   }
 
   Future<void> _runGuidancePipeline() async {
-    final loc = AppLocalizations.of(context)!;
     try {
       if (mounted) {
-        setState(() => _status = loc.readingEvidence);
+        setState(() {
+          _status = AppLocalizations.of(context)!.readingEvidence;
+        });
       }
+
       final guidance = await BlackmailGuidanceService.buildGuidance(
         situation: widget.situation,
         evidenceFiles: widget.evidenceFiles,
       );
+
       if (!mounted) return;
-      setState(() => _status = loc.generatingGuidance);
+
+      setState(() {
+        _status = AppLocalizations.of(context)!.generatingGuidance;
+      });
+
       await Future<void>.delayed(const Duration(milliseconds: 350));
+
       if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -59,6 +75,7 @@ class _SafetyGuidanceLoadingScreenState
       );
     } catch (_) {
       if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -74,6 +91,7 @@ class _SafetyGuidanceLoadingScreenState
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -85,7 +103,7 @@ class _SafetyGuidanceLoadingScreenState
         ),
         title: Text(
           loc.safetyGuidance,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -96,7 +114,6 @@ class _SafetyGuidanceLoadingScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Loading indicator
             SizedBox(
               width: 60,
               height: 60,
@@ -110,10 +127,12 @@ class _SafetyGuidanceLoadingScreenState
 
             const SizedBox(height: 24),
 
-            // Loading text
             Text(
               _status,
-              style: TextStyle(fontSize: 15, color: Colors.grey.shade700),
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey.shade700,
+              ),
             ),
           ],
         ),

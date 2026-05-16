@@ -4,8 +4,7 @@ class RecentActivityModel {
   final String userId;
   final String title;
   final String description;
-  final String
-  type; // 'draft_complaint', 'document_upload', 'complaint_filed', 'chat_query', etc.
+  final String type; // 'draft_complaint', 'document_upload', 'complaint_filed', 'chat_query', etc.
   final String? icon; // icon name or identifier
   final DateTime timestamp;
   final String? relatedId; // ID of the related document/complaint/etc.
