@@ -38,6 +38,8 @@ class LlmService {
     String? module,
     String? conversationId,
     List<Map<String, String>>? conversationHistory,
+    String? attachmentName,
+    String? attachmentBase64,
   }) async {
     try {
       final payload = <String, dynamic>{
@@ -49,6 +51,10 @@ class LlmService {
           'conversation_id': conversationId.trim(),
         if (conversationHistory != null && conversationHistory.isNotEmpty)
           'conversation_history': conversationHistory,
+        if (attachmentName != null && attachmentName.trim().isNotEmpty)
+          'attachment_name': attachmentName.trim(),
+        if (attachmentBase64 != null && attachmentBase64.isNotEmpty)
+          'attachment_data_base64': attachmentBase64,
       };
 
       final response = await http.post(
@@ -152,6 +158,8 @@ Error: $e''';
     String? conversationId,
     List<Map<String, String>>? conversationHistory,
     String responseLength = 'detailed',
+    String? attachmentName,
+    String? attachmentBase64,
     http.Client? client,
   }) async* {
     final ownClient = client == null;
@@ -168,6 +176,10 @@ Error: $e''';
         if (conversationHistory != null && conversationHistory.isNotEmpty)
           'conversation_history': conversationHistory,
         'response_length': responseLength,
+        if (attachmentName != null && attachmentName.trim().isNotEmpty)
+          'attachment_name': attachmentName.trim(),
+        if (attachmentBase64 != null && attachmentBase64.isNotEmpty)
+          'attachment_data_base64': attachmentBase64,
       };
 
       final request = http.Request('POST', Uri.parse(_streamUrl));

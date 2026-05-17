@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -9,6 +11,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/services/chat_persistence_service.dart' as chat_store;
+import 'package:front_end/services/recent_activity_service.dart';
 import 'package:front_end/services/llm_service.dart';
 import 'package:front_end/services/agent_service.dart';
 import 'package:front_end/models/scenario_model.dart';
@@ -33,7 +38,12 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<ChatMessage> _messages = [];
   final LlmService _llmService = LlmService();
   final AgentService _agentService = AgentService();
+  final AuthService _authService = AuthService();
+  final chat_store.ChatPersistenceService _chatPersistenceService =
+      chat_store.ChatPersistenceService();
+  final RecentActivityService _recentActivityService = RecentActivityService();
   final ScrollController _scrollController = ScrollController();
+  StreamSubscription<AppUser?>? _authSubscription;
   late String _conversationId;
   bool _isLoading = false;
   bool _showHistory = false; // Toggle for history sidebar
@@ -44,6 +54,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // Chat History — populated dynamically as conversations happen
   final List<ChatHistory> _chatHistories = [];
+  bool _isLoadingHistories = false;
+  String? _loadedUserId;
 
   // ── NEW feature state ──────────────────────────────────────────────────────
   String _responseLength = 'detailed'; // 'short' | 'detailed' | 'bullets'
@@ -52,6 +64,8 @@ class _ChatScreenState extends State<ChatScreen> {
   http.Client? _activeStreamClient; // cancel by closing this
   bool _stopRequested = false;
   final List<String> _uploadedFiles = []; // names of uploaded files in context
+  String? _pendingAttachmentName;
+  String? _pendingAttachmentBase64;
   // ──────────────────────────────────────────────────────────────────────────
 
   // Speech to Text
@@ -159,6 +173,21 @@ class _ChatScreenState extends State<ChatScreen> {
     _speech = stt.SpeechToText();
     _conversationId = _newConversationId();
 
+    _authSubscription = _authService.authStateChanges.listen((user) {
+      if (!mounted) return;
+      if (user == null) {
+        setState(() {
+          _loadedUserId = null;
+          _chatHistories.clear();
+        });
+        return;
+      }
+
+      if (_loadedUserId == user.id) return;
+      _loadedUserId = user.id;
+      _loadPersistedHistoriesForUser(user.id);
+    });
+
     // Add initial greeting message
     final contextMsg = _getModuleContextMessage();
     final greeting = contextMsg.isEmpty
@@ -174,6 +203,122 @@ class _ChatScreenState extends State<ChatScreen> {
         showActions: false,
       ),
     );
+  }
+
+  Future<void> _loadPersistedHistoriesForUser(String userId) async {
+    setState(() => _isLoadingHistories = true);
+    try {
+      final sessions = await _chatPersistenceService.loadConversationSessions(
+        userId: userId,
+        limit: 50,
+      );
+
+      if (!mounted) return;
+
+      final histories = sessions.map((session) {
+        final messages = <ChatMessage>[];
+        final rawMessages = (session['messages'] as List?) ?? const [];
+        for (final raw in rawMessages) {
+          if (raw is Map) {
+            messages.add(_chatMessageFromMap(Map<String, dynamic>.from(raw)));
+          }
+        }
+
+        final title = (session['title'] as String?)?.trim().isNotEmpty == true
+            ? session['title'] as String
+            : (session['summary'] as String?) ?? 'Chat Session';
+
+        return ChatHistory(
+          id: session['id'] as String,
+          title: title,
+          previewText:
+              (session['preview_text'] as String?) ??
+              (session['summary'] as String?) ??
+              '',
+          timestamp:
+              DateTime.tryParse(session['updated_at']?.toString() ?? '') ??
+              DateTime.now(),
+          messages: messages,
+        );
+      }).toList();
+
+      setState(() {
+        _chatHistories
+          ..clear()
+          ..addAll(histories);
+        _isLoadingHistories = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingHistories = false);
+      }
+    }
+  }
+
+  Map<String, dynamic> _serializeChatMessage(ChatMessage message) {
+    return {
+      'text': message.text,
+      'urduText': message.urduText,
+      'isUser': message.isUser,
+      'timestamp': message.timestamp,
+      'showActions': message.showActions,
+      'agentResponse': message.agentResponse?.toString(),
+      'isError': message.isError,
+      'rating': message.rating,
+      'errorText': message.errorText,
+      'isStreaming': message.isStreaming,
+      'attachedFileName': message.attachedFileName,
+    };
+  }
+
+  ChatMessage _chatMessageFromMap(Map<String, dynamic> data) {
+    return ChatMessage(
+      text: data['text']?.toString() ?? '',
+      urduText: data['urduText']?.toString(),
+      isUser: data['isUser'] == true,
+      timestamp: data['timestamp']?.toString() ?? _getCurrentTime(),
+      showActions: data['showActions'] == true,
+      isError: data['isError'] == true,
+      rating: (data['rating'] as int?) ?? 0,
+      errorText: data['errorText']?.toString(),
+      isStreaming: data['isStreaming'] == true,
+      attachedFileName: data['attachedFileName']?.toString(),
+    );
+  }
+
+  Future<void> _persistCurrentChatSnapshot({
+    required String title,
+    required String previewText,
+  }) async {
+    final userId = _authService.currentUser?.id;
+    if (userId == null) return;
+
+    try {
+      final snapshot = _messages.map(_serializeChatMessage).toList();
+      await _chatPersistenceService.saveConversationSession(
+        userId: userId,
+        conversationId: _conversationId,
+        previewText: previewText,
+        messages: snapshot,
+        module: _moduleKeyFromType(widget.selectedModule),
+        metadata: {'title': title, 'conversation_id': _conversationId},
+      );
+
+      final userMessages = snapshot.where(
+        (message) => message['isUser'] == true,
+      );
+      if (userMessages.length == 1) {
+        await _recentActivityService.logActivity(
+          title: title,
+          description: previewText,
+          type: 'chat_session',
+          icon: 'chat',
+          relatedId: _conversationId,
+        );
+      }
+    } catch (e) {
+      debugPrint('Failed to persist chat session: $e');
+    }
   }
 
   String _getCurrentTime() {
@@ -275,6 +420,9 @@ class _ChatScreenState extends State<ChatScreen> {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
 
+    String? attachmentName = _pendingAttachmentName;
+    String? attachmentBase64 = _pendingAttachmentBase64;
+
     // Check if guest trying to send message
     final isGuest = Supabase.instance.client.auth.currentUser == null;
     if (isGuest && mounted) {
@@ -296,6 +444,12 @@ class _ChatScreenState extends State<ChatScreen> {
     final insights = _analyzeQuery(message);
     final useAgentMode = insights.useAgentMode;
 
+    if (_editingMessageIndex != null) {
+      final editIdx = _editingMessageIndex!;
+      attachmentName ??= _messages[editIdx].attachedFileName;
+      attachmentBase64 ??= _messages[editIdx].attachedFileBase64;
+    }
+
     // If editing, replace the old user message and remove its AI response
     if (_editingMessageIndex != null) {
       final editIdx = _editingMessageIndex!;
@@ -306,6 +460,8 @@ class _ChatScreenState extends State<ChatScreen> {
           isUser: true,
           timestamp: _getCurrentTime(),
           showActions: false,
+          attachedFileName: attachmentName,
+          attachedFileBase64: attachmentBase64,
         );
         // Remove all messages below the edited user message
         if (editIdx + 1 < _messages.length) {
@@ -320,9 +476,8 @@ class _ChatScreenState extends State<ChatScreen> {
             isUser: true,
             timestamp: _getCurrentTime(),
             showActions: false,
-            attachedFileName: _uploadedFiles.isNotEmpty
-                ? _uploadedFiles.last
-                : null,
+            attachedFileName: attachmentName,
+            attachedFileBase64: attachmentBase64,
           ),
         );
       });
@@ -357,6 +512,8 @@ class _ChatScreenState extends State<ChatScreen> {
           module: moduleKey,
           conversationId: _conversationId,
           conversationHistory: conversationHistory,
+          attachmentName: attachmentName,
+          attachmentBase64: attachmentBase64,
           onStageChanged: (stage) {
             if (mounted) setState(() => _pipelineStage = stage);
           },
@@ -376,6 +533,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 agentResponse: agentResult,
               ),
             );
+            _uploadedFiles.clear();
+            _pendingAttachmentName = null;
+            _pendingAttachmentBase64 = null;
             _saveCurrentChatToHistory();
           });
           _scrollToBottom();
@@ -396,6 +556,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 errorText: e.toString(),
               ),
             );
+            _uploadedFiles.clear();
+            _pendingAttachmentName = null;
+            _pendingAttachmentBase64 = null;
             _saveCurrentChatToHistory();
           });
           _scrollToBottom();
@@ -430,6 +593,8 @@ class _ChatScreenState extends State<ChatScreen> {
         conversationId: _conversationId,
         conversationHistory: conversationHistory,
         responseLength: _responseLength,
+        attachmentName: attachmentName,
+        attachmentBase64: attachmentBase64,
         client: streamClient,
       );
 
@@ -491,6 +656,9 @@ class _ChatScreenState extends State<ChatScreen> {
           _streamingMessageIndex = null;
           _isLoading = false;
           _isAgentActive = false;
+          _uploadedFiles.clear();
+          _pendingAttachmentName = null;
+          _pendingAttachmentBase64 = null;
           _saveCurrentChatToHistory();
         });
         _scrollToBottom();
@@ -821,6 +989,8 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
     }
+
+    _persistCurrentChatSnapshot(title: title, previewText: firstUserText);
   }
 
   ChatMessage _cloneMessage(ChatMessage message) {
@@ -836,6 +1006,7 @@ class _ChatScreenState extends State<ChatScreen> {
       errorText: message.errorText,
       isStreaming: message.isStreaming,
       attachedFileName: message.attachedFileName,
+      attachedFileBase64: message.attachedFileBase64,
     );
   }
 
@@ -915,6 +1086,13 @@ class _ChatScreenState extends State<ChatScreen> {
   void _editMessage(int index) {
     if (!_messages[index].isUser) return;
     _editingMessageIndex = index;
+    if (_messages[index].attachedFileName != null) {
+      _pendingAttachmentName = _messages[index].attachedFileName;
+      _pendingAttachmentBase64 = _messages[index].attachedFileBase64;
+      _uploadedFiles
+        ..clear()
+        ..add(_messages[index].attachedFileName!);
+    }
     _messageController.text = _messages[index].text;
     _messageController.selection = TextSelection.fromPosition(
       TextPosition(offset: _messageController.text.length),
@@ -937,6 +1115,13 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_isLoading) return;
 
     final userText = _messages[userIndex].text;
+    if (_messages[userIndex].attachedFileName != null) {
+      _pendingAttachmentName = _messages[userIndex].attachedFileName;
+      _pendingAttachmentBase64 = _messages[userIndex].attachedFileBase64;
+      _uploadedFiles
+        ..clear()
+        ..add(_messages[userIndex].attachedFileName!);
+    }
     // Remove the current AI response
     setState(() {
       _messages.removeAt(aiMessageIndex);
@@ -996,18 +1181,26 @@ class _ChatScreenState extends State<ChatScreen> {
         allowMultiple: false,
         type: FileType.custom,
         allowedExtensions: ['pdf', 'txt', 'doc', 'docx', 'png', 'jpg', 'jpeg'],
+        withData: true,
       );
       if (result == null || result.files.isEmpty) return;
-      final fileName = result.files.single.name;
+      final file = result.files.single;
+      final fileName = file.name;
+      final bytes = file.bytes;
+      if (bytes == null || bytes.isEmpty) {
+        throw Exception('Could not read the selected file');
+      }
       setState(() {
-        _uploadedFiles.add(fileName);
+        _uploadedFiles
+          ..clear()
+          ..add(fileName);
+        _pendingAttachmentName = fileName;
+        _pendingAttachmentBase64 = base64Encode(bytes);
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              '📎 "$fileName" attached — mention it in your question',
-            ),
+            content: Text('📎 "$fileName" attached for the next message only'),
             backgroundColor: const Color(0xFF00401A),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -1210,7 +1403,21 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   String _newConversationId() {
-    return DateTime.now().millisecondsSinceEpoch.toString();
+    final random = math.Random.secure();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+    String toHex(List<int> values) =>
+        values.map((value) => value.toRadixString(16).padLeft(2, '0')).join();
+
+    return [
+      toHex(bytes.sublist(0, 4)),
+      toHex(bytes.sublist(4, 6)),
+      toHex(bytes.sublist(6, 8)),
+      toHex(bytes.sublist(8, 10)),
+      toHex(bytes.sublist(10, 16)),
+    ].join('-');
   }
 
   List<Map<String, String>> _buildConversationHistoryPayload({
@@ -1249,6 +1456,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
     _activeStreamClient?.close();
     _messageController.dispose();
     _scrollController.dispose();
@@ -2498,17 +2706,32 @@ class _ChatScreenState extends State<ChatScreen> {
         border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
       ),
       child: ListTile(
-        onTap: () {
+        onTap: () async {
           // Load this chat conversation
           // Save current conversation first, then load the selected one
           _saveCurrentChatToHistory();
+          List<dynamic> restoredMessages = List<dynamic>.from(chat.messages);
+          if (restoredMessages.isEmpty && _authService.currentUser != null) {
+            try {
+              final persisted = await _chatPersistenceService
+                  .loadConversationMessages(
+                    userId: _authService.currentUser!.id,
+                    conversationId: chat.id,
+                  );
+              restoredMessages = persisted
+                  .whereType<Map<String, dynamic>>()
+                  .map(_chatMessageFromMap)
+                  .toList();
+            } catch (_) {}
+          }
+
           setState(() {
             _conversationId = chat.id;
             _showHistory = false;
             _resetCaseInsights();
             _messages.clear();
             // Restore all messages from the history snapshot
-            for (final m in chat.messages) {
+            for (final m in restoredMessages) {
               if (m is ChatMessage) _messages.add(_cloneMessage(m));
             }
             // If somehow empty, add a greeting
@@ -2680,6 +2903,7 @@ class ChatMessage {
   final String? errorText; // original error details
   bool isStreaming; // currently receiving tokens
   String? attachedFileName; // name of file user uploaded with this message
+  String? attachedFileBase64; // base64-encoded bytes for one-turn attachment
 
   ChatMessage({
     required this.text,
@@ -2693,6 +2917,7 @@ class ChatMessage {
     this.errorText,
     this.isStreaming = false,
     this.attachedFileName,
+    this.attachedFileBase64,
   });
 }
 

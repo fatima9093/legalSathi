@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -64,6 +65,170 @@ class ChatPersistenceService {
 
   final SupabaseClient _supabase = Supabase.instance.client;
   static const String _tableName = 'chat_messages';
+  static const String _sessionTable = 'conversation_sessions';
+
+  Map<String, dynamic> _normalizeMetadata(dynamic metadata) {
+    if (metadata is Map<String, dynamic>) {
+      return Map<String, dynamic>.from(metadata);
+    }
+    if (metadata is String && metadata.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(metadata);
+        if (decoded is Map<String, dynamic>) {
+          return Map<String, dynamic>.from(decoded);
+        }
+      } catch (_) {}
+    }
+    return <String, dynamic>{};
+  }
+
+  List<Map<String, dynamic>> _normalizeMessages(dynamic rawMessages) {
+    if (rawMessages is! List) return [];
+    return rawMessages
+        .whereType<Map>()
+        .map((message) => Map<String, dynamic>.from(message))
+        .toList();
+  }
+
+  String _buildTitle(String previewText) {
+    final text = previewText.trim();
+    if (text.isEmpty) return 'New Chat';
+    return text.length > 42 ? '${text.substring(0, 39)}...' : text;
+  }
+
+  String _buildPreview(String messageText) {
+    final text = messageText.trim();
+    if (text.isEmpty) return 'New conversation';
+    return text.length > 96 ? '${text.substring(0, 93)}...' : text;
+  }
+
+  Map<String, dynamic> _sessionToActivityRow(Map<String, dynamic> row) {
+    final summary = (row['summary'] as String?)?.trim() ?? 'Chat session';
+    final metadata = _normalizeMetadata(row['metadata']);
+    final preview = (metadata['preview_text'] as String?)?.trim();
+    final module = (row['module'] as String?)?.trim();
+    return {
+      'id': row['id'],
+      'user_id': row['user_id'],
+      'title': 'Chat Session',
+      'description': preview != null && preview.isNotEmpty ? preview : summary,
+      'type': 'chat_session',
+      'icon': 'chat',
+      'timestamp': row['updated_at'] ?? row['created_at'],
+      'related_id': row['id'],
+      'module': module,
+    };
+  }
+
+  /// Save a full conversation session snapshot for a user.
+  Future<void> saveConversationSession({
+    required String userId,
+    required String conversationId,
+    required String previewText,
+    required List<Map<String, dynamic>> messages,
+    String? module,
+    Map<String, dynamic>? metadata,
+  }) async {
+    final snapshotMetadata = <String, dynamic>{
+      ...?metadata,
+      'preview_text': previewText,
+      'title': _buildTitle(previewText),
+      'messages': messages,
+      'message_count': messages.length,
+      'saved_at': DateTime.now().toIso8601String(),
+    };
+
+    await _supabase.from(_sessionTable).upsert({
+      'id': conversationId,
+      'user_id': userId,
+      'summary': _buildTitle(previewText),
+      'module': module,
+      'metadata': snapshotMetadata,
+      'updated_at': DateTime.now().toIso8601String(),
+      'expires_at': DateTime.now()
+          .add(const Duration(days: 7))
+          .toIso8601String(),
+    }, onConflict: 'id');
+  }
+
+  /// Load all chat sessions for a user, newest first.
+  Future<List<Map<String, dynamic>>> loadConversationSessions({
+    required String userId,
+    int limit = 50,
+  }) async {
+    try {
+      final response = await _supabase
+          .from(_sessionTable)
+          .select()
+          .eq('user_id', userId)
+          .order('updated_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((row) {
+        final map = Map<String, dynamic>.from(row as Map);
+        final metadata = _normalizeMetadata(map['metadata']);
+        final messages = _normalizeMessages(metadata['messages']);
+        map['metadata'] = metadata;
+        map['messages'] = messages;
+        map['title'] = (metadata['title'] as String?)?.trim().isNotEmpty == true
+            ? metadata['title']
+            : map['summary'] ?? 'Chat Session';
+        map['preview_text'] =
+            (metadata['preview_text'] as String?) ?? map['summary'] ?? '';
+        map['message_count'] = messages.length;
+        return map;
+      }).toList();
+    } catch (e) {
+      debugPrint('Error loading conversation sessions: $e');
+      rethrow;
+    }
+  }
+
+  /// Load one conversation session snapshot by id.
+  Future<List<Map<String, dynamic>>> loadConversationMessages({
+    required String userId,
+    required String conversationId,
+  }) async {
+    try {
+      final result = await _supabase
+          .from(_sessionTable)
+          .select()
+          .eq('user_id', userId)
+          .eq('id', conversationId)
+          .maybeSingle();
+
+      if (result == null) return [];
+      final map = Map<String, dynamic>.from(result as Map);
+      final metadata = _normalizeMetadata(map['metadata']);
+      return _normalizeMessages(metadata['messages']);
+    } catch (e) {
+      debugPrint('Error loading conversation messages: $e');
+      rethrow;
+    }
+  }
+
+  /// Delete a persisted conversation session.
+  Future<bool> deleteConversationSession({
+    required String userId,
+    required String conversationId,
+  }) async {
+    try {
+      await _supabase
+          .from(_sessionTable)
+          .delete()
+          .eq('user_id', userId)
+          .eq('id', conversationId);
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting conversation session: $e');
+      rethrow;
+    }
+  }
+
+  /// Build a Supabase activity row from a stored conversation session.
+  Map<String, dynamic> conversationSessionAsActivity(Map<String, dynamic> row) {
+    return _sessionToActivityRow(row);
+  }
 
   /// Save a message to database
   Future<ChatMessage?> saveMessage({

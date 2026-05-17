@@ -1,3 +1,4 @@
+import base64
 import os
 import re
 from pathlib import Path
@@ -155,6 +156,8 @@ class QuestionRequest(BaseModel):
     conversation_id: Optional[str] = None
     conversation_history: List[ConversationTurn] = Field(default_factory=list)
     response_length: Optional[str] = None  # "short" | "detailed" | "bullets"
+    attachment_name: Optional[str] = None
+    attachment_data_base64: Optional[str] = None
 
 class AnswerResponse(BaseModel):
     """Legacy RAG response — preserved for backward compatibility."""
@@ -378,6 +381,97 @@ async def extract_challan_text(file: UploadFile = File(...)):
             return {"text": ""}
     except Exception:
         return {"text": ""}
+
+
+def _extract_text_from_bytes(raw: bytes, file_name: str = "") -> str:
+    """Extract text from PDF, text, DOCX, or image bytes."""
+    import io
+    import zipfile
+    import xml.etree.ElementTree as ET
+
+    lower_name = (file_name or "").lower()
+
+    def _try_text_decode() -> str:
+        try:
+            text = raw.decode("utf-8").strip()
+            if len(text) >= 10:
+                return text
+        except Exception:
+            pass
+        try:
+            return raw.decode("latin-1", errors="ignore").strip()
+        except Exception:
+            return ""
+
+    if lower_name.endswith(".pdf") or (len(raw) >= 4 and raw[:4] == b"%PDF"):
+        try:
+            from pypdf import PdfReader
+
+            reader = PdfReader(io.BytesIO(raw))
+            parts: List[str] = []
+            for page in reader.pages:
+                parts.append(page.extract_text() or "")
+            return "\n".join(parts).strip()
+        except Exception:
+            return ""
+
+    if lower_name.endswith((".txt", ".md", ".csv", ".log", ".json")):
+        return _try_text_decode()
+
+    if lower_name.endswith(".docx") or (len(raw) >= 2 and raw[:2] == b"PK"):
+        try:
+            with zipfile.ZipFile(io.BytesIO(raw)) as zf:
+                with zf.open("word/document.xml") as xml_file:
+                    xml_bytes = xml_file.read()
+            root = ET.fromstring(xml_bytes)
+            namespaces = {"w": "http://schemas.openxmlformats.org/wordprocessingml/2006/main"}
+            parts = [node.text for node in root.findall('.//w:t', namespaces) if node.text]
+            text = " ".join(parts).strip()
+            if text:
+                return text
+        except Exception:
+            return ""
+
+    try:
+        from PIL import Image
+
+        img = Image.open(io.BytesIO(raw))
+        if img.mode not in ("RGB", "L"):
+            img = img.convert("RGB")
+        try:
+            import pytesseract
+
+            text = pytesseract.image_to_string(img) or ""
+            return text.strip()
+        except ImportError:
+            return ""
+    except Exception:
+        return _try_text_decode()
+
+
+def _build_attachment_context(attachment_name: Optional[str], attachment_data_base64: Optional[str]) -> str:
+    if not attachment_data_base64:
+        return ""
+
+    try:
+        raw = base64.b64decode(attachment_data_base64)
+    except Exception:
+        return ""
+
+    text = _extract_text_from_bytes(raw, attachment_name or "").strip()
+    if not text:
+        return ""
+
+    max_chars = 12000
+    if len(text) > max_chars:
+        text = text[:max_chars] + "\n...[truncated]"
+
+    title = attachment_name or "uploaded file"
+    return (
+        f"Uploaded file: {title}\n"
+        "Use this file as temporary evidence context for the current answer only.\n\n"
+        f"{text}"
+    )
 
 
 class EvidenceAnalyzeRequest(BaseModel):
@@ -732,10 +826,18 @@ async def ask_question(request: QuestionRequest):
         if not question:
             raise HTTPException(status_code=400, detail="Question cannot be empty")
 
+        attachment_context = _build_attachment_context(
+            request.attachment_name,
+            request.attachment_data_base64,
+        )
+        query_with_attachment = question
+        if attachment_context:
+            query_with_attachment = f"{question}\n\n{attachment_context}"
+
         try:
             print(f"\n🤖 [Agent Pipeline] Query: {question}")
             orch_result: OrchestratorResponse = await run_orchestrator(
-                query=question,
+                query=query_with_attachment,
                 module=request.module if request.module in MODULE_NAMES else None,
                 language=request.language,
                 conversation_id=request.conversation_id,
@@ -764,6 +866,14 @@ async def ask_question(request: QuestionRequest):
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty")
 
+    attachment_context = _build_attachment_context(
+        request.attachment_name,
+        request.attachment_data_base64,
+    )
+    query_with_attachment = question
+    if attachment_context:
+        query_with_attachment = f"{question}\n\n{attachment_context}"
+
     agent_module = request.module if request.module in MODULE_NAMES else None
     can_use_agents = _AGENTS_AVAILABLE and bool(GROQ_API_KEY_FOR_AGENTS)
     best_distance: Optional[float] = None
@@ -783,7 +893,7 @@ async def ask_question(request: QuestionRequest):
             print("⚠️ RAG backend not fully available, using agent pipeline fallback...")
             try:
                 orch_result: OrchestratorResponse = await run_orchestrator(
-                    query=question,
+                    query=query_with_attachment,
                     module=agent_module,
                     language=request.language,
                     conversation_id=request.conversation_id,
@@ -803,7 +913,7 @@ async def ask_question(request: QuestionRequest):
         
         # Build filter for module and language
         where_filter = None
-        if agent_module or request.language:
+        if agent_module or (request.language and request.language != "English"):
             where_filter = {}
             if agent_module:
                 where_filter["module"] = agent_module
@@ -813,7 +923,7 @@ async def ask_question(request: QuestionRequest):
                 where_filter["language"] = request.language
         
         results = collection.query(
-            query_texts=[question],
+            query_texts=[query_with_attachment],
             n_results=5,  # Get top 5 results
             where=where_filter,
             include=["documents", "metadatas", "distances"]
@@ -854,7 +964,7 @@ async def ask_question(request: QuestionRequest):
 
                 if _VERIFICATION_AVAILABLE:
                     verification_report = await run_verification_agent(
-                        query=question,
+                        query=query_with_attachment,
                         raw_chunks=raw_chunks_for_verification,
                         min_overall_score=0.40,
                     )
@@ -877,7 +987,7 @@ async def ask_question(request: QuestionRequest):
                         print("⚠️ Local RAG evidence needs confirmation, escalating to agent pipeline for fresher verification...")
                         try:
                             orch_result: OrchestratorResponse = await run_orchestrator(
-                                query=question,
+                                query=query_with_attachment,
                                 module=agent_module,
                                 language=request.language,
                                 conversation_id=request.conversation_id,
@@ -924,7 +1034,7 @@ Guidelines:
                         },
                         {
                             "role": "user",
-                            "content": question
+                            "content": query_with_attachment
                         }
                     ],
                     temperature=0.3,  # Lower temperature for more factual responses
@@ -957,7 +1067,7 @@ Guidelines:
                 print("⚠️ Weak Vector DB match, escalating to agent pipeline...")
                 try:
                     orch_result: OrchestratorResponse = await run_orchestrator(
-                        query=question,
+                        query=query_with_attachment,
                         module=agent_module,
                         language=request.language,
                         conversation_id=request.conversation_id,
@@ -979,7 +1089,7 @@ Guidelines:
         if can_use_agents and should_auto_activate:
             try:
                 orch_result: OrchestratorResponse = await run_orchestrator(
-                    query=question,
+                    query=query_with_attachment,
                     module=agent_module,
                     language=request.language,
                     conversation_id=request.conversation_id,
@@ -1011,7 +1121,7 @@ Guidelines:
                 },
                 {
                     "role": "user",
-                    "content": question
+                    "content": query_with_attachment
                 }
             ],
             temperature=0.7,
@@ -1065,10 +1175,18 @@ async def ask_question_agent(request: QuestionRequest):
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty")
 
+    attachment_context = _build_attachment_context(
+        request.attachment_name,
+        request.attachment_data_base64,
+    )
+    query_with_attachment = question
+    if attachment_context:
+        query_with_attachment = f"{question}\n\n{attachment_context}"
+
     try:
         print(f"\n🤖 [/api/ask/agent] Query: {question}")
         orch_result: OrchestratorResponse = await run_orchestrator(
-            query=question,
+            query=query_with_attachment,
             module=request.module if request.module in MODULE_NAMES else None,
             language=request.language,
             conversation_id=request.conversation_id,
@@ -1131,6 +1249,14 @@ async def ask_question_stream(request: QuestionRequest, raw_request: FastAPIRequ
                 yield "data: [DONE]\n\n"
                 return
 
+            attachment_context = _build_attachment_context(
+                request.attachment_name,
+                request.attachment_data_base64,
+            )
+            query_with_attachment = question
+            if attachment_context:
+                query_with_attachment = f"{question}\n\n{attachment_context}"
+
             # ---------- metadata helper ---------------------------------
             meta: Dict[str, Any] = {
                 "source": "groq_fallback",
@@ -1159,7 +1285,7 @@ async def ask_question_stream(request: QuestionRequest, raw_request: FastAPIRequ
             if collection and groq_client:
                 agent_module = request.module if request.module in MODULE_NAMES else None
                 where_filter = None
-                if agent_module or request.language:
+                if agent_module or (request.language and request.language != "English"):
                     where_filter = {}
                     if agent_module:
                         where_filter["module"] = agent_module
@@ -1167,7 +1293,7 @@ async def ask_question_stream(request: QuestionRequest, raw_request: FastAPIRequ
                         where_filter["language"] = request.language
                 
                 results = collection.query(
-                    query_texts=[question],
+                    query_texts=[query_with_attachment],
                     n_results=5,
                     where=where_filter,
                     include=["documents", "metadatas", "distances"],
@@ -1205,7 +1331,7 @@ Cite the relevant law/act if mentioned. Keep answers concise but informative."""
             yield f"data: {json.dumps({'meta': meta})}\n\n"
 
             # ---------- stream Groq tokens ------------------------------
-            chat_messages.append({"role": "user", "content": question})
+            chat_messages.append({"role": "user", "content": query_with_attachment})
             max_tok = {"short": 200, "bullets": 300, "detailed": 800}.get(
                 getattr(request, "response_length", None) or "detailed", 500
             )

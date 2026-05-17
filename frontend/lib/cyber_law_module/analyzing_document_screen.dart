@@ -26,22 +26,15 @@ class AnalyzingDocumentScreen extends StatefulWidget {
 }
 
 class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
-  late final List<String> _stepTitles;
   int _currentStep = 0;
   String? _error;
   bool _done = false;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final l10n = AppLocalizations.of(context)!;
-
-    _stepTitles = [
-      l10n.stepExtractText,
-      l10n.stepIdentifyDomain,
-      l10n.stepFindLaws,
-    ];
-  }
+  final List<String> _stepTitles = [
+    'Reading document...',
+    'Extracting text...',
+    'Classifying content...',
+  ];
 
   @override
   void initState() {
@@ -86,10 +79,14 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
     String ocr;
 
     try {
+      // Detect file type from fileName
+      final lowerName = name.toLowerCase();
+      final fileType = lowerName.endsWith('.pdf') ? 'pdf' : 'image';
+
       ocr = await ChallanTextExtractionService.extractRawText(
         bytes: bytes,
         fileName: name,
-        fileType: 'image',
+        fileType: fileType,
       );
     } catch (e) {
       setState(() {

@@ -200,6 +200,8 @@ class AgentService {
     String language = 'English',
     String? conversationId,
     List<Map<String, String>>? conversationHistory,
+    String? attachmentName,
+    String? attachmentBase64,
     void Function(AgentPipelineStage stage)? onStageChanged,
   }) async {
     onStageChanged?.call(AgentPipelineStage.retrieving);
@@ -215,6 +217,10 @@ class AgentService {
           'conversation_id': conversationId.trim(),
         if (conversationHistory != null && conversationHistory.isNotEmpty)
           'conversation_history': conversationHistory,
+        if (attachmentName != null && attachmentName.trim().isNotEmpty)
+          'attachment_name': attachmentName.trim(),
+        if (attachmentBase64 != null && attachmentBase64.isNotEmpty)
+          'attachment_data_base64': attachmentBase64,
       };
 
       // The backend runs all three agents sequentially.

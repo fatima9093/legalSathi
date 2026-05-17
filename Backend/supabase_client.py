@@ -5,7 +5,12 @@ Supabase client for managing user language preferences and database operations.
 Isolated module to avoid breaking existing RAG functionality.
 """
 
+import sys
 import os
+
+# Fix Windows charmap encoding errors for emoji/unicode in print statements
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 from typing import Optional, Dict, Any
 from dotenv import load_dotenv
 from pathlib import Path
