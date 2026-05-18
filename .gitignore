@@ -1,6 +1,7 @@
 # Python
 Backend/.venv/
 Backend/venv/
+Backend/chroma_db/
 .venv/
 venv/
 env/
