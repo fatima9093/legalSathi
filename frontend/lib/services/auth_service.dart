@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:front_end/config/google_auth_config.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Simple user representation (replaces Firebase User in UI).
@@ -11,6 +15,10 @@ class AppUser {
 }
 
 class AuthService {
+  static Timer? _sessionExpiryTimer;
+  static StreamSubscription<AuthState>? _sessionExpirySubscription;
+  static bool _sessionExpiryMonitoringStarted = false;
+
   SupabaseClient get _client => Supabase.instance.client;
 
   /// Prefer session?.user so we use the same object the client considers "current".
@@ -58,6 +66,46 @@ class AuthService {
       controller.onCancel = () async {
         await subscription.cancel();
       };
+    });
+  }
+
+  static void initializeSessionExpiryMonitoring() {
+    if (_sessionExpiryMonitoringStarted) return;
+    _sessionExpiryMonitoringStarted = true;
+
+    final client = Supabase.instance.client;
+    _scheduleSessionExpiry(client.auth.currentSession);
+
+    _sessionExpirySubscription = client.auth.onAuthStateChange.listen((event) {
+      _scheduleSessionExpiry(event.session);
+    });
+  }
+
+  static void _scheduleSessionExpiry(Session? session) {
+    _sessionExpiryTimer?.cancel();
+    _sessionExpiryTimer = null;
+
+    if (session == null) {
+      return;
+    }
+
+    final expiresAt = session.expiresAt;
+    final expiryTime = expiresAt != null
+        ? DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000)
+        : DateTime.now().add(const Duration(hours: 1));
+
+    final timeUntilExpiry = expiryTime.difference(DateTime.now());
+    if (timeUntilExpiry.isNegative || timeUntilExpiry == Duration.zero) {
+      unawaited(
+        Supabase.instance.client.auth.signOut(scope: SignOutScope.local),
+      );
+      return;
+    }
+
+    _sessionExpiryTimer = Timer(timeUntilExpiry, () {
+      unawaited(
+        Supabase.instance.client.auth.signOut(scope: SignOutScope.local),
+      );
     });
   }
 
@@ -203,7 +251,186 @@ class AuthService {
     }
   }
 
+  /// Sign in or sign up with Google (Supabase Auth).
+  Future<Map<String, dynamic>> signInWithGoogle() async {
+    try {
+      if (GoogleAuthConfig.useNativeGoogleSignIn) {
+        return await _signInWithGoogleNative();
+      }
+      return await _signInWithGoogleOAuth();
+    } on AuthException catch (e) {
+      return {
+        'success': false,
+        'message': e.message.isNotEmpty ? e.message : 'Google sign-in failed',
+      };
+    } catch (e, stackTrace) {
+      debugPrint('Google sign-in error: $e');
+      debugPrint('Stack: $stackTrace');
+      final msg = e.toString();
+      if (msg.contains('SocketException') || msg.contains('network')) {
+        return {
+          'success': false,
+          'message':
+              'No internet connection. Please check your network and try again',
+        };
+      }
+      return {
+        'success': false,
+        'message': 'Google sign-in failed. Please try again.',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> _signInWithGoogleNative() async {
+    final googleSignIn = GoogleSignIn(
+      clientId: !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS
+          ? GoogleAuthConfig.effectiveIosClientId
+          : null,
+      serverClientId: GoogleAuthConfig.effectiveWebClientId,
+    );
+
+    final googleUser = await googleSignIn.signIn();
+    if (googleUser == null) {
+      return {'success': false, 'message': 'Google sign-in was cancelled'};
+    }
+
+    final googleAuth = await googleUser.authentication;
+    final idToken = googleAuth.idToken;
+    final accessToken = googleAuth.accessToken;
+
+    if (idToken == null) {
+      return {
+        'success': false,
+        'message':
+            'Google did not return an ID token. Check Google Cloud / Supabase setup.',
+      };
+    }
+
+    final response = await _client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
+
+    return _completeGoogleSession(
+      response.user,
+      fallbackName: googleUser.displayName,
+    );
+  }
+
+  Future<Map<String, dynamic>> _signInWithGoogleOAuth() async {
+    if (!kIsWeb && GoogleAuthConfig.effectiveWebClientId.isEmpty) {
+      return {
+        'success': false,
+        'message':
+            'Google sign-in needs your Web Client ID.\n'
+            'Paste it in lib/config/google_auth_config.dart → fileWebClientId\n'
+            '(Google Cloud → Web application, same ID as in Supabase → Google).',
+      };
+    }
+
+    final launched = await _client.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: kIsWeb ? null : GoogleAuthConfig.redirectUrl,
+      // In-app webview completes PKCE and returns to the app (avoids stuck browser tab).
+      authScreenLaunchMode: kIsWeb
+          ? LaunchMode.platformDefault
+          : LaunchMode.inAppBrowserView,
+    );
+
+    if (!launched) {
+      return {'success': false, 'message': 'Could not open Google sign-in'};
+    }
+
+    if (kIsWeb) {
+      return {
+        'success': true,
+        'pending': true,
+        'message': 'Complete sign-in in the browser tab',
+      };
+    }
+
+    final appUser = await authStateChanges
+        .where((u) => u != null)
+        .first
+        .timeout(const Duration(minutes: 3), onTimeout: () => null);
+
+    if (appUser == null) {
+      return {
+        'success': false,
+        'message': 'Google sign-in was cancelled or timed out',
+      };
+    }
+
+    final user = _authUser;
+    if (user != null) {
+      await _upsertProfileFromGoogleUser(user);
+    }
+
+    return {
+      'success': true,
+      'message': 'Signed in with Google!',
+      'user': appUser,
+    };
+  }
+
+  Future<Map<String, dynamic>> _completeGoogleSession(
+    User? user, {
+    String? fallbackName,
+  }) async {
+    if (user == null) {
+      return {'success': false, 'message': 'Google sign-in failed'};
+    }
+
+    await _upsertProfileFromGoogleUser(user, fallbackName: fallbackName);
+
+    final displayName = _googleDisplayName(user, fallbackName: fallbackName);
+
+    return {
+      'success': true,
+      'message': 'Signed in with Google!',
+      'user': AppUser(id: user.id, email: user.email, displayName: displayName),
+    };
+  }
+
+  String _googleDisplayName(User user, {String? fallbackName}) {
+    final meta = user.userMetadata ?? {};
+    final fromMeta = meta['full_name'] as String? ?? meta['name'] as String?;
+    if (fromMeta != null && fromMeta.trim().isNotEmpty) return fromMeta.trim();
+    if (fallbackName != null && fallbackName.trim().isNotEmpty) {
+      return fallbackName.trim();
+    }
+    final email = user.email;
+    if (email != null && email.contains('@')) return email.split('@').first;
+    return 'User';
+  }
+
+  Future<void> _upsertProfileFromGoogleUser(
+    User user, {
+    String? fallbackName,
+  }) async {
+    await _upsertProfile(
+      uid: user.id,
+      fullName: _googleDisplayName(user, fallbackName: fallbackName),
+      email: user.email ?? '',
+    );
+  }
+
   Future<void> signOut() async {
+    _sessionExpiryTimer?.cancel();
+    _sessionExpiryTimer = null;
+
+    if (GoogleAuthConfig.useNativeGoogleSignIn) {
+      try {
+        final googleSignIn = GoogleSignIn(
+          clientId: !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS
+              ? GoogleAuthConfig.effectiveIosClientId
+              : null,
+          serverClientId: GoogleAuthConfig.effectiveWebClientId,
+        );
+        await googleSignIn.signOut();
+      } catch (_) {}
+    }
     await _client.auth.signOut(scope: SignOutScope.local);
   }
 

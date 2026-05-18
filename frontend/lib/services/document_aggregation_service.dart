@@ -16,10 +16,12 @@ class DocumentAggregationService {
   Future<ApiResult<AggregatedDocumentsResponse>> getAllDocuments() async {
     try {
       if (_currentUserId == null) {
-        return ApiResult<AggregatedDocumentsResponse>.failure(
-          AppError(
-            type: ErrorType.unauthorized,
-            message: 'User not authenticated',
+        return ApiResult<AggregatedDocumentsResponse>.success(
+          AggregatedDocumentsResponse(
+            allDocuments: const [],
+            categories: const [],
+            totalCount: 0,
+            lastFetched: DateTime.now(),
           ),
         );
       }

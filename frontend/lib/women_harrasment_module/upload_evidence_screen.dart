@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
+import 'package:file_picker/file_picker.dart';
 import 'complaint_preview_screen.dart';
 
 class UploadEvidenceScreen extends StatefulWidget {
@@ -39,6 +40,7 @@ class UploadEvidenceScreen extends StatefulWidget {
 class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
   final _formKey = GlobalKey<FormState>();
   final _witnessNamesController = TextEditingController();
+  List<PlatformFile> _pickedFiles = [];
 
   @override
   void dispose() {
@@ -58,7 +60,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          AppLocalizations.of(context)!.internalComplaint,
+          AppLocalizations.of(context)!.ombudspersonComplaint,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -123,6 +125,26 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
               ),
               const SizedBox(height: 32),
 
+              // Attach evidence files
+              _buildLabel(AppLocalizations.of(context)!.uploadEvidence),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _pickFiles,
+                    icon: const Icon(Icons.attach_file, size: 18),
+                    label: Text(AppLocalizations.of(context)!.uploadEvidence),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00401A),
+                    ),
+                  ),
+                  for (final f in _pickedFiles) Chip(label: Text(f.name)),
+                ],
+              ),
+              const SizedBox(height: 24),
+
               // Continue to Preview Button
               SizedBox(
                 width: double.infinity,
@@ -146,6 +168,9 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
                           accusedName: widget.accusedName,
                           accusedDesignation: widget.accusedDesignation,
                           witnessNames: _witnessNamesController.text,
+                          evidenceFiles: _pickedFiles
+                              .map((p) => p.name)
+                              .toList(),
                         ),
                       ),
                     );
@@ -211,5 +236,24 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         color: Colors.black,
       ),
     );
+  }
+
+  Future<void> _pickFiles() async {
+    try {
+      final res = await FilePicker.pickFiles(
+        allowMultiple: true,
+        withData: true,
+      );
+      if (res != null && res.files.isNotEmpty) {
+        setState(() {
+          _pickedFiles = res.files;
+        });
+      }
+    } catch (e) {
+      // Best-effort: don't crash on file picker errors
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to pick files: $e')));
+    }
   }
 }

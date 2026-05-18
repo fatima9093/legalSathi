@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
 import 'package:front_end/home_screen.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/widgets/google_sign_in_button.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -19,6 +21,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+
+  bool get _isBusy => _isLoading || _isGoogleLoading;
+
+  Future<void> _handleGoogleSignIn() async {
+    await handleGoogleSignIn(
+      context,
+      authService: _authService,
+      setLoading: (loading) => setState(() => _isGoogleLoading = loading),
+      isMounted: () => mounted,
+    );
+  }
 
   @override
   void dispose() {
@@ -188,7 +202,33 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+
+                    GoogleSignInButton(
+                      onPressed: _handleGoogleSignIn,
+                      isLoading: _isGoogleLoading,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'or sign up with email',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
 
                     // Full Name label
                     const Text(
@@ -423,7 +463,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                     // Create Account Button
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _handleSignUp,
+                      onPressed: _isBusy ? null : _handleSignUp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00401A),
                         padding: const EdgeInsets.symmetric(vertical: 16),

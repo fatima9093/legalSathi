@@ -7522,7 +7522,7 @@ abstract class AppLocalizations {
   /// No description provided for @backendTip.
   ///
   /// In en, this message translates to:
-  /// **'Tip: Keep backend running for OCR processing (localhost:8000)'**
+  /// **'Tip: Keep the laptop backend running on the same Wi-Fi (port 8000)'**
   String get backendTip;
 
   /// No description provided for @simulatorTitle.

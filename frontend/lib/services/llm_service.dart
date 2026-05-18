@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:front_end/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 // ─── Stream event types ───────────────────────────────────────────────────────
@@ -17,15 +18,9 @@ class StreamEvent {
 // ─── LlmService ──────────────────────────────────────────────────────────────
 
 class LlmService {
-  // 🔥 NEW: Backend RAG API endpoint
-  // Change this to your backend URL
-  // - For local development: http://localhost:8000/api/ask
-  // - For production: https://your-backend-url.com/api/ask
-  static const String _backendUrl = 'http://localhost:8000/api/ask';
-  static const String _streamUrl = 'http://localhost:8000/api/ask/stream';
-
-  // For checking backend health
-  static const String _healthUrl = 'http://localhost:8000';
+  static String get _backendUrl => ApiConfig.askUrl;
+  static String get _streamUrl => ApiConfig.askStreamUrl;
+  static String get _healthUrl => ApiConfig.baseUrl;
 
   /// Send message to RAG backend and get response
   ///
@@ -121,13 +116,13 @@ class LlmService {
       // Connection error - backend not running
       if (e.toString().contains('Failed host lookup') ||
           e.toString().contains('Connection refused')) {
-        return '''❌ Cannot connect to Legal Sathi backend.
+        return '''❌ Cannot connect to Legal Sathi backend at ${ApiConfig.displayAddress}.
 
-Please start the backend server:
+Please start the backend server on your laptop:
 
-1. Open terminal in backend folder
-2. Run: python main.py
-3. Wait for "🚀 Starting Legal Sathi RAG API..."
+1. Same Wi-Fi as this phone
+2. Open terminal in backend folder → python main.py
+3. Set laptop IP in lib/config/api_config.dart (laptopHost)
 4. Then try again
 
 Error: $e''';

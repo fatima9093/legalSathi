@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:front_end/config/api_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,7 +11,7 @@ import 'challan_ocr_mlkit_stub.dart'
 /// Extracts plain text from challan images (ML Kit on mobile + backend fallback)
 /// or PDF (backend pypdf). Uses same host as [llm_service](lib/services/llm_service.dart).
 class ChallanTextExtractionService {
-  static const String _baseUrl = 'http://localhost:8000';
+  static String get _baseUrl => ApiConfig.baseUrl;
 
   static Future<String> extractRawText({
     required Uint8List bytes,

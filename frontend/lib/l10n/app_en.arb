@@ -1601,7 +1601,7 @@
   "errorPickingFile": "Error picking file:",
   "photoTooLarge": "Photo exceeds 10MB limit",
 
-  "backendTip": "Tip: Keep backend running for OCR processing (localhost:8000)",
+  "backendTip": "Tip: Keep the laptop backend running on the same Wi-Fi (port 8000)",
   "simulatorTitle": "Scenario Simulator",
   "bribeFlowTitle": "Bribe Refusal Flow",
   "actionLabel": "Action",

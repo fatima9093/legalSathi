@@ -3758,7 +3758,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get photoTooLarge => 'Photo exceeds 10MB limit';
 
   @override
-  String get backendTip => 'Tip: Keep backend running for OCR processing (localhost:8000)';
+  String get backendTip => 'Tip: Keep the laptop backend running on the same Wi-Fi (port 8000)';
 
   @override
   String get simulatorTitle => 'Scenario Simulator';

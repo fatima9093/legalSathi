@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
 import 'package:front_end/create_account/create_account_screen.dart';
 import 'package:front_end/home_screen.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/widgets/google_sign_in_button.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -17,6 +19,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final AuthService _authService = AuthService();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+
+  bool get _isBusy => _isLoading || _isGoogleLoading;
 
   @override
   void dispose() {
@@ -121,6 +126,15 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       }
     }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    await handleGoogleSignIn(
+      context,
+      authService: _authService,
+      setLoading: (loading) => setState(() => _isGoogleLoading = loading),
+      isMounted: () => mounted,
+    );
   }
 
   // Handle Continue as Guest
@@ -358,9 +372,35 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     const SizedBox(height: 24),
 
+                    GoogleSignInButton(
+                      onPressed: _handleGoogleSignIn,
+                      isLoading: _isGoogleLoading,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'or',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
                     // Sign In Button
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _handleSignIn,
+                      onPressed: _isBusy ? null : _handleSignIn,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00401A),
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -391,7 +431,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     // Continue as Guest Button
                     OutlinedButton(
-                      onPressed: _isLoading ? null : _handleContinueAsGuest,
+                      onPressed: _isBusy ? null : _handleContinueAsGuest,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: BorderSide(color: Colors.grey.shade300),
