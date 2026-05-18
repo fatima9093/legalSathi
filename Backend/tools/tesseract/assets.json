@@ -1,0 +1,38 @@
+[
+  {
+    "url": "https://api.github.com/repos/UB-Mannheim/tesseract/releases/assets/174449750",
+    "id": 174449750,
+    "node_id": "RA_kwDOAtZlXM4KZeRW",
+    "name": "tesseract-ocr-w64-setup-5.4.0.20240606.exe",
+    "label": null,
+    "uploader": {
+      "login": "stweil",
+      "id": 6734573,
+      "node_id": "MDQ6VXNlcjY3MzQ1NzM=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6734573?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/stweil",
+      "html_url": "https://github.com/stweil",
+      "followers_url": "https://api.github.com/users/stweil/followers",
+      "following_url": "https://api.github.com/users/stweil/following{/other_user}",
+      "gists_url": "https://api.github.com/users/stweil/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/stweil/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/stweil/subscriptions",
+      "organizations_url": "https://api.github.com/users/stweil/orgs",
+      "repos_url": "https://api.github.com/users/stweil/repos",
+      "events_url": "https://api.github.com/users/stweil/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/stweil/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "content_type": "application/octet-stream",
+    "state": "uploaded",
+    "size": 50175248,
+    "digest": null,
+    "download_count": 881714,
+    "created_at": "2024-06-18T08:57:38Z",
+    "updated_at": "2024-06-18T08:57:40Z",
+    "browser_download_url": "https://github.com/UB-Mannheim/tesseract/releases/download/v5.4.0.20240606/tesseract-ocr-w64-setup-5.4.0.20240606.exe"
+  }
+]

@@ -4,6 +4,14 @@ import 'package:front_end/models/draft_complaint_model.dart';
 class DraftComplaintService {
   SupabaseClient get _client => Supabase.instance.client;
 
+  bool _isMissingTableError(Object e) {
+    final err = e.toString();
+    return err.contains('Could not find the table') ||
+        err.contains('schema cache') ||
+        err.contains('42P01') ||
+        (err.contains('draft_complaints') && (err.contains('not find') || err.contains('does not exist')));
+  }
+
   String? get currentUserId =>
       _client.auth.currentSession?.user.id ?? _client.auth.currentUser?.id;
 
@@ -51,6 +59,13 @@ class DraftComplaintService {
         'id': id,
       };
     } catch (e) {
+      if (_isMissingTableError(e)) {
+        return {
+          'success': true,
+          'cloudSaved': false,
+          'message': 'Draft generated, but database table is missing.',
+        };
+      }
       return {
         'success': false,
         'message': 'Error saving draft: ${e.toString()}',

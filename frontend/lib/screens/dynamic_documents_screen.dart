@@ -29,36 +29,33 @@ class _DynamicDocumentsScreenState extends State<DynamicDocumentsScreen>
     DocumentSourceModule.trafficLaws,
   ];
 
-@override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  final httpClient = HttpClientWrapper();
+    final httpClient = HttpClientWrapper();
 
-  _documentService = DocumentAggregationService(httpClient);
+    _documentService = DocumentAggregationService(httpClient);
 
-  _tabController = TabController(
-    length: _modules.length + 1,
-    vsync: this,
-  );
+    _tabController = TabController(length: _modules.length + 1, vsync: this);
 
-  _documentsFuture = _documentService.getAllDocuments().then((result) {
-    return result.when(
-      success: (data) {
-        _cachedResponse = data;
-        return data;
-      },
-      error: (message) {
-        throw Exception(message);
-      },
-    );
-  });
+    _documentsFuture = _documentService.getAllDocuments().then((result) {
+      return result.when(
+        success: (data) {
+          _cachedResponse = data;
+          return data;
+        },
+        error: (message) {
+          throw Exception(message);
+        },
+      );
+    });
 
-  // FIXED PART
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _checkGuestAccess();
-  });
-}
+    // FIXED PART
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkGuestAccess();
+    });
+  }
 
   @override
   void dispose() {
@@ -280,10 +277,15 @@ void initState() {
                 ),
               ],
               const SizedBox(height: 24),
-              Row(
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   if (doc.isDownloadable)
-                    Expanded(
+                    SizedBox(
+                      width: doc.isDeleteable
+                          ? (MediaQuery.of(context).size.width - 80) / 2
+                          : double.infinity,
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.download),
                         label: const Text('Download'),
@@ -297,9 +299,12 @@ void initState() {
                       ),
                     ),
                   if (doc.isDownloadable && doc.isDeleteable)
-                    const SizedBox(width: 12),
+                    const SizedBox.shrink(),
                   if (doc.isDeleteable)
-                    Expanded(
+                    SizedBox(
+                      width: doc.isDownloadable
+                          ? (MediaQuery.of(context).size.width - 80) / 2
+                          : double.infinity,
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.delete),
                         label: const Text('Delete'),
@@ -373,7 +378,9 @@ void initState() {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 Text(
                   doc.getModuleName(),
@@ -382,11 +389,14 @@ void initState() {
                     color: Color(doc.getColorValue()),
                     fontWeight: FontWeight.w500,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 8),
                 Text(
                   doc.getRelativeTime(),
                   style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

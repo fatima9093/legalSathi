@@ -104,7 +104,7 @@ Payment Date: February 2026
       ..writeln(l10n.extractedTextLabel)
       ..writeln(_extractedText);
 
-    await Share.share(text.toString(), subject: l10n.shareSubject);
+    await Share.share(text.toString());
   }
 
   @override

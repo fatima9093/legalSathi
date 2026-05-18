@@ -57,6 +57,8 @@ class ChatPersistenceService {
   static final ChatPersistenceService _instance =
       ChatPersistenceService._internal();
 
+  static final Set<String> _loggedQueryErrors = <String>{};
+
   factory ChatPersistenceService() {
     return _instance;
   }
@@ -66,6 +68,12 @@ class ChatPersistenceService {
   final SupabaseClient _supabase = Supabase.instance.client;
   static const String _tableName = 'chat_messages';
   static const String _sessionTable = 'conversation_sessions';
+
+  void _logQueryErrorOnce(String key, Object error) {
+    if (_loggedQueryErrors.add(key)) {
+      debugPrint('Supabase query error [$key]: $error');
+    }
+  }
 
   Map<String, dynamic> _normalizeMetadata(dynamic metadata) {
     if (metadata is Map<String, dynamic>) {
@@ -94,12 +102,6 @@ class ChatPersistenceService {
     final text = previewText.trim();
     if (text.isEmpty) return 'New Chat';
     return text.length > 42 ? '${text.substring(0, 39)}...' : text;
-  }
-
-  String _buildPreview(String messageText) {
-    final text = messageText.trim();
-    if (text.isEmpty) return 'New conversation';
-    return text.length > 96 ? '${text.substring(0, 93)}...' : text;
   }
 
   Map<String, dynamic> _sessionToActivityRow(Map<String, dynamic> row) {
@@ -138,17 +140,21 @@ class ChatPersistenceService {
       'saved_at': DateTime.now().toIso8601String(),
     };
 
-    await _supabase.from(_sessionTable).upsert({
-      'id': conversationId,
-      'user_id': userId,
-      'summary': _buildTitle(previewText),
-      'module': module,
-      'metadata': snapshotMetadata,
-      'updated_at': DateTime.now().toIso8601String(),
-      'expires_at': DateTime.now()
-          .add(const Duration(days: 7))
-          .toIso8601String(),
-    }, onConflict: 'id');
+    try {
+      await _supabase.from(_sessionTable).upsert({
+        'id': conversationId,
+        'user_id': userId,
+        'summary': _buildTitle(previewText),
+        'module': module,
+        'metadata': snapshotMetadata,
+        'updated_at': DateTime.now().toIso8601String(),
+        'expires_at': DateTime.now()
+            .add(const Duration(days: 7))
+            .toIso8601String(),
+      }, onConflict: 'id');
+    } catch (e) {
+      debugPrint('Error saving conversation session (ignored): $e');
+    }
   }
 
   /// Load all chat sessions for a user, newest first.
@@ -180,7 +186,7 @@ class ChatPersistenceService {
       }).toList();
     } catch (e) {
       debugPrint('Error loading conversation sessions: $e');
-      rethrow;
+      return <Map<String, dynamic>>[];
     }
   }
 
@@ -203,7 +209,7 @@ class ChatPersistenceService {
       return _normalizeMessages(metadata['messages']);
     } catch (e) {
       debugPrint('Error loading conversation messages: $e');
-      rethrow;
+      return <Map<String, dynamic>>[];
     }
   }
 
@@ -221,7 +227,7 @@ class ChatPersistenceService {
       return true;
     } catch (e) {
       debugPrint('Error deleting conversation session: $e');
-      rethrow;
+      return false;
     }
   }
 
@@ -254,7 +260,7 @@ class ChatPersistenceService {
       return null;
     } catch (e) {
       debugPrint('Error saving message: $e');
-      rethrow;
+      return null;
     }
   }
 
@@ -279,8 +285,8 @@ class ChatPersistenceService {
 
       return messages;
     } catch (e) {
-      debugPrint('Error loading chat history: $e');
-      rethrow;
+      _logQueryErrorOnce('loadChatHistory', e);
+      return <ChatMessage>[];
     }
   }
 
@@ -294,8 +300,8 @@ class ChatPersistenceService {
       final offset = (page - 1) * pageSize;
       return loadChatHistory(userId: userId, limit: pageSize, offset: offset);
     } catch (e) {
-      debugPrint('Error loading paginated chat history: $e');
-      rethrow;
+      _logQueryErrorOnce('loadChatHistoryPaginated', e);
+      return <ChatMessage>[];
     }
   }
 
@@ -319,8 +325,8 @@ class ChatPersistenceService {
 
       return messages;
     } catch (e) {
-      debugPrint('Error loading messages since timestamp: $e');
-      rethrow;
+      _logQueryErrorOnce('loadMessagesSinceTimestamp', e);
+      return <ChatMessage>[];
     }
   }
 
@@ -333,8 +339,8 @@ class ChatPersistenceService {
           .eq('id', messageId);
       return true;
     } catch (e) {
-      debugPrint('Error deleting message: $e');
-      rethrow;
+      _logQueryErrorOnce('deleteMessage', e);
+      return false;
     }
   }
 
@@ -358,8 +364,8 @@ class ChatPersistenceService {
       }
       return null;
     } catch (e) {
-      debugPrint('Error updating message: $e');
-      rethrow;
+      _logQueryErrorOnce('updateMessage', e);
+      return null;
     }
   }
 
@@ -372,8 +378,8 @@ class ChatPersistenceService {
           .eq('user_id', userId);
       return true;
     } catch (e) {
-      debugPrint('Error clearing chat history: $e');
-      rethrow;
+      _logQueryErrorOnce('clearChatHistory', e);
+      return false;
     }
   }
 
@@ -389,7 +395,7 @@ class ChatPersistenceService {
 
       return response.count;
     } catch (e) {
-      debugPrint('Error getting message count: $e');
+      _logQueryErrorOnce('getMessageCount', e);
       return 0;
     }
   }
@@ -417,7 +423,7 @@ class ChatPersistenceService {
 
       return response.isNotEmpty;
     } catch (e) {
-      debugPrint('Error checking if message exists: $e');
+      _logQueryErrorOnce('messageExists', e);
       return false;
     }
   }
@@ -501,7 +507,7 @@ class ChatPersistenceService {
         'total_messages': userMessages.count + aiMessages.count,
       };
     } catch (e) {
-      debugPrint('Error getting conversation stats: $e');
+      _logQueryErrorOnce('getConversationStats', e);
       return {};
     }
   }
@@ -526,8 +532,8 @@ class ChatPersistenceService {
 
       return messages;
     } catch (e) {
-      debugPrint('Error searching messages: $e');
-      rethrow;
+      _logQueryErrorOnce('searchMessages', e);
+      return <ChatMessage>[];
     }
   }
 
@@ -537,8 +543,8 @@ class ChatPersistenceService {
       final messages = await loadChatHistory(userId: userId, limit: 10000);
       return messages.map((m) => m.toJson()).toList();
     } catch (e) {
-      debugPrint('Error exporting chat history: $e');
-      rethrow;
+      _logQueryErrorOnce('exportChatHistory', e);
+      return <Map<String, dynamic>>[];
     }
   }
 }

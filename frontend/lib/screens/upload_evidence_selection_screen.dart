@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/cyber_law_module/analyzing_document_screen.dart';
+import 'package:front_end/services/challan_text_extraction_service.dart';
 
 class UploadEvidenceSelectionScreen extends StatefulWidget {
   const UploadEvidenceSelectionScreen({super.key});
@@ -321,7 +322,31 @@ class _UploadEvidenceSelectionScreenState
     return true;
   }
 
-  void _navigateToAnalysis(Uint8List bytes, String fileName) {
+  Future<void> _navigateToAnalysis(Uint8List bytes, String fileName) async {
+    if (!mounted) return;
+
+    // Pre-extract OCR text in background
+    String? ocrText;
+    final lower = fileName.toLowerCase();
+    final isImage =
+        lower.endsWith('.png') ||
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg');
+    final isPdf = lower.endsWith('.pdf');
+
+    if ((isImage || isPdf)) {
+      try {
+        ocrText = await ChallanTextExtractionService.extractRawText(
+          bytes: bytes,
+          fileName: fileName,
+          fileType: isPdf ? 'pdf' : 'image',
+        );
+        if (ocrText.isEmpty) ocrText = null;
+      } catch (e) {
+        debugPrint('OCR failed in _navigateToAnalysis: $e');
+      }
+    }
+
     if (!mounted) return;
     Navigator.push(
       context,

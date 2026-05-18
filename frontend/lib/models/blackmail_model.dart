@@ -6,6 +6,7 @@ class EvidenceFile {
   final String localPath;
   final int fileSize;
   final Uint8List? fileBytes; // For web/memory storage
+  final String? ocrText; // Extracted text from images/PDFs
 
   EvidenceFile({
     required this.fileName,
@@ -13,6 +14,7 @@ class EvidenceFile {
     required this.localPath,
     required this.fileSize,
     this.fileBytes,
+    this.ocrText,
   });
 
   Map<String, dynamic> toMap() {
@@ -21,6 +23,7 @@ class EvidenceFile {
       'fileType': fileType,
       'localPath': localPath,
       'fileSize': fileSize,
+      'ocrText': ocrText,
     };
   }
 
@@ -30,6 +33,7 @@ class EvidenceFile {
       fileType: map['fileType'] ?? '',
       localPath: map['localPath'] ?? '',
       fileSize: map['fileSize'] ?? 0,
+      ocrText: map['ocrText'],
     );
   }
 }
@@ -103,4 +107,3 @@ class BlackmailModel {
     );
   }
 }
-

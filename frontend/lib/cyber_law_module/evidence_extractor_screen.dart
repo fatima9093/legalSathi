@@ -413,7 +413,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
     }
   }
 
-  void _processPickedFiles(FilePickerResult result, String fileType) {
+  void _processPickedFiles(FilePickerResult result, String fileType) async {
     if (result.files.isEmpty) {
       _showErrorSnackBar(AppLocalizations.of(context)!.noFilesSelectedTryAgain);
       return;
@@ -422,13 +422,11 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
     List<EvidenceFile> validFiles = [];
 
     for (var file in result.files) {
-      // Check if file has valid data
       if (file.name.isEmpty) {
         _showErrorSnackBar(AppLocalizations.of(context)!.invalidFileDetected);
         continue;
       }
 
-      // Check file size (max 10MB)
       final fileSize = file.size;
       if (fileSize > (_maxFileSizeInMB * 1024 * 1024)) {
         _showErrorSnackBar(
@@ -437,8 +435,28 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
         continue;
       }
 
-      // On web, accessing `path` throws. Use name as logical path.
       final filePath = kIsWeb ? file.name : (file.path ?? file.name);
+
+      // Extract OCR for images and PDFs
+      String? ocrText;
+      final lower = file.name.toLowerCase();
+      final isImage =
+          lower.endsWith('.png') ||
+          lower.endsWith('.jpg') ||
+          lower.endsWith('.jpeg');
+      final isPdf = lower.endsWith('.pdf');
+      if ((isImage || isPdf) && file.bytes != null) {
+        try {
+          ocrText = await ChallanTextExtractionService.extractRawText(
+            bytes: file.bytes!,
+            fileName: file.name,
+            fileType: isPdf ? 'pdf' : 'image',
+          );
+          if (ocrText.isEmpty) ocrText = null;
+        } catch (e) {
+          debugPrint('OCR failed for ${file.name}: $e');
+        }
+      }
 
       validFiles.add(
         EvidenceFile(
@@ -447,6 +465,7 @@ class _EvidenceExtractorScreenState extends State<EvidenceExtractorScreen> {
           fileType: fileType,
           fileSize: fileSize,
           fileBytes: file.bytes,
+          ocrText: ocrText,
         ),
       );
     }
@@ -521,6 +540,7 @@ class EvidenceFile {
   final String fileType; // 'image' or 'text'
   final int fileSize;
   final Uint8List? fileBytes;
+  String? ocrText; // Extracted text from images/PDFs
 
   EvidenceFile({
     required this.fileName,
@@ -528,6 +548,7 @@ class EvidenceFile {
     required this.fileType,
     required this.fileSize,
     this.fileBytes,
+    this.ocrText,
   });
 }
 

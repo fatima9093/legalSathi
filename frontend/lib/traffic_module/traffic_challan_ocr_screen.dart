@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+import 'package:front_end/services/challan_text_extraction_service.dart';
 import 'challan_processing_screen.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 
@@ -196,11 +196,25 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
     return true;
   }
 
-  void _navigateToProcessing(
+  Future<void> _navigateToProcessing(
     Uint8List bytes,
     String fileName,
     String fileType,
-  ) {
+  ) async {
+    // Pre-extract OCR for challan
+    String? extractedText;
+    try {
+      extractedText = await ChallanTextExtractionService.extractRawText(
+        bytes: bytes,
+        fileName: fileName,
+        fileType: fileType,
+      );
+      if (extractedText.isEmpty) extractedText = null;
+    } catch (e) {
+      debugPrint('OCR extraction failed: $e');
+    }
+
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -330,7 +344,43 @@ class _TrafficChallanOCRScreenState extends State<TrafficChallanOCRScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
-          children: [const SizedBox(width: 16), Text(title), Text(subtitle)],
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE6EFEA),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: const Color(0xFF00401A), size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../screen_with_nav.dart';
 import '../services/challan_text_extraction_service.dart';
@@ -42,7 +43,9 @@ class _AnalyzingDocumentScreenState extends State<AnalyzingDocumentScreen> {
     if (widget.isDemo) {
       _runDemo();
     } else {
-      _runPipeline();
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _runPipeline();
+      });
     }
   }
 

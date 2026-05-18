@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:front_end/traffic_module/road_traffic_law_screen.dart';
 import 'package:front_end/women_harrasment_module/women_harrasment_law_screen.dart';
 import 'package:front_end/cyber_law_module/cybercrime_peca_screen.dart';
-import 'package:front_end/labour_rights_module/labour_rights_screen.dart';
 import 'package:front_end/services/auth_service.dart';
 import 'package:front_end/services/recent_activity_service.dart';
 import 'package:front_end/models/recent_activity_model.dart';
 import 'package:front_end/notifications_screen.dart';
 import 'package:front_end/profile_screen.dart';
+import 'package:front_end/create_account/signin_screen.dart';
 import 'package:front_end/chat_screen.dart';
-import 'package:front_end/screens/dynamic_documents_screen.dart';
 import 'package:front_end/scenario_simulator_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
 import 'package:front_end/screens/upload_evidence_selection_screen.dart';
 import 'package:front_end/cyber_law_module/draft_document_type_screen.dart';
 import 'package:front_end/l10n/app_localizations.dart';
+import 'package:front_end/utils/smooth_page_route.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,9 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
     final isSmallScreen = screenWidth < 500;
-    final isMobile = screenWidth < 600;
     final loc = AppLocalizations.of(context)!;
 
     // Responsive font sizes
@@ -70,9 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationsScreen(),
-                    ),
+                    SmoothFadePageRoute(page: const NotificationsScreen()),
                   );
                 },
               ),
@@ -85,9 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfileScreen(),
-                    ),
+                    SmoothFadePageRoute(page: const ProfileScreen()),
                   );
                 },
               ),
@@ -214,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: isSmallScreen ? 6 : 8),
                           Text(
-                           loc.guestDescription,
+                            loc.guestDescription,
                             style: TextStyle(
                               fontSize: isSmallScreen ? 12 : 13,
                               color: Colors.white.withValues(alpha: 0.9),
@@ -224,9 +218,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(height: isSmallScreen ? 8 : 12),
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
+                              Navigator.push(
                                 context,
-                                '/onboarding',
+                                MaterialPageRoute(
+                                  builder: (context) => const SignInScreen(),
+                                ),
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -241,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             child: Text(
-                             loc.signUpNow,
+                              loc.signUpNow,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: isSmallScreen ? 12 : 14,
@@ -261,9 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const ChatScreen(),
-                        ),
+                        SmoothPageRoute(page: const RoadTrafficLawScreen()),
                       );
                     },
                     child: Container(
@@ -341,9 +335,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const WomenHarassmentLawsScreen(),
+                            SmoothPageRoute(
+                              page: const WomenHarassmentLawsScreen(),
                             ),
                           );
                         },
@@ -379,9 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (context) => const LabourRightsScreen(),
-                            ),
+                            SmoothPageRoute(page: const CyberCrimePECAScreen()),
                           );
                         },
                       ),
@@ -429,7 +420,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ChatScreen(),
+                              builder: (context) =>
+                                  const CyberCrimePECAScreen(),
                             ),
                           );
                         },
@@ -622,28 +614,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Navigate to Chat screen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ChatScreen()),
+                  SmoothPageRoute(page: const ChatScreen()),
                 );
               } else if (index == 2) {
                 // Navigate to Documents screen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const DynamicDocumentsScreen(),
-                  ),
+                  SmoothPageRoute(page: const UploadEvidenceSelectionScreen()),
                 );
               } else if (index == 3) {
                 // Navigate to Profile screen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const ProfileScreen(),
-                  ),
+                  SmoothFadePageRoute(page: const ProfileScreen()),
                 );
               }
             },
             items: [
-              BottomNavigationBarItem(icon: const Icon(Icons.home), label: loc.home),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.home),
+                label: loc.home,
+              ),
               BottomNavigationBarItem(
                 icon: const Icon(Icons.chat_bubble_outline),
                 label: loc.chat,

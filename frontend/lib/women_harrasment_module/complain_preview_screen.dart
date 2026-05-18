@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 import '../screen_with_nav.dart';
 import 'submission_instructions_screen.dart';
@@ -30,7 +31,9 @@ class _ComplaintPreviewScreenState extends State<ComplaintPreviewScreen> {
   @override
   void initState() {
     super.initState();
-    _loadComplaint();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _loadComplaint();
+    });
   }
 
   Future<void> _loadComplaint() async {

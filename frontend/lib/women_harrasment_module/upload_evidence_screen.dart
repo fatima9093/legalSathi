@@ -250,7 +250,7 @@ class _UploadEvidenceScreenState extends State<UploadEvidenceScreen> {
         });
       }
     } catch (e) {
-      // Best-effort: don't crash on file picker errors
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Failed to pick files: $e')));

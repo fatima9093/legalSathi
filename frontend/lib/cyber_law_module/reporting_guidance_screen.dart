@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 import 'fia_complaint_generator.dart';
@@ -37,7 +38,9 @@ class _ReportingGuidanceScreenState extends State<ReportingGuidanceScreen> {
   @override
   void initState() {
     super.initState();
-    _analyzeInput();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _analyzeInput();
+    });
   }
 
   Future<void> _analyzeInput() async {

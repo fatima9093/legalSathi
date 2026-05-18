@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:front_end/supabase_config.dart';
+import 'package:front_end/utils/smooth_transitions_observer.dart';
 import 'providers/language_provider.dart';
 import 'splash_screen.dart';
 import 'onboarding_screen.dart';
@@ -48,8 +49,9 @@ class MyApp extends StatelessWidget {
       title: 'Legal Sathi',
       theme: AppTheme.lightTheme,
       home: const SplashScreen(),
+      navigatorObservers: [SmoothTransitionsObserver()],
 
-      // ← Add these:
+      // Localization
       locale: langProvider.locale,
       localizationsDelegates: const [
         AppLocalizations.delegate,

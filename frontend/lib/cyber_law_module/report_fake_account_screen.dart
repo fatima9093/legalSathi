@@ -50,7 +50,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-               content: Text(loc.noFilesSelected),
+              content: Text(loc.noFilesSelected),
               duration: const Duration(seconds: 2),
             ),
           );
@@ -66,7 +66,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-             '${_uploadedFiles.length} ${loc.filesUploadedSuccess}',
+              '${_uploadedFiles.length} ${loc.filesUploadedSuccess}',
             ),
             duration: const Duration(seconds: 2),
           ),
@@ -96,7 +96,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
     final url = _profileUrlController.text.trim();
     final username = _usernameController.text.trim();
     if (url.isNotEmpty && !Validators.isValidUrl(url)) {
-       Validators.showError(context, loc.invalidUrl);
+      Validators.showError(context, loc.invalidUrl);
       return;
     }
     if (url.isEmpty && username.isEmpty) {
@@ -146,7 +146,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-     final loc = AppLocalizations.of(context)!;
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
@@ -157,7 +157,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-         title: Text(
+        title: Text(
           loc.reportFakeAccount,
           style: TextStyle(
             color: Colors.black,
@@ -239,7 +239,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                     const SizedBox(height: 16),
 
                     // Profile URL
-                      Text(loc.profileUrl,
+                    Text(
+                      loc.profileUrl,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -282,7 +283,8 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                     const SizedBox(height: 16),
 
                     // Username
-                    Text(loc.username,
+                    Text(
+                      loc.username,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -294,7 +296,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                       controller: _usernameController,
                       onChanged: (_) => setState(() {}),
                       decoration: InputDecoration(
-                       hintText: loc.usernameHint,
+                        hintText: loc.usernameHint,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 13,
@@ -344,12 +346,12 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
                           children: [
-                              _buildPlatformButton(loc.facebook),
-                              _buildPlatformButton(loc.instagram),
-                              _buildPlatformButton(loc.twitter),
-                              _buildPlatformButton(loc.tiktok),
-                              _buildPlatformButton(loc.linkedin),
-                              _buildPlatformButton(loc.other),
+                            _buildPlatformButton(loc.facebook),
+                            _buildPlatformButton(loc.instagram),
+                            _buildPlatformButton(loc.twitter),
+                            _buildPlatformButton(loc.tiktok),
+                            _buildPlatformButton(loc.linkedin),
+                            _buildPlatformButton(loc.other),
                           ],
                         ),
                       ],
@@ -373,7 +375,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(
+                    Text(
                       loc.uploadScreenshotsRecommended,
                       style: TextStyle(
                         fontSize: 15,
@@ -435,7 +437,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                      loc.uploadScreenshot,
+                                    loc.uploadScreenshot,
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -558,7 +560,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                             color: Colors.white,
                           ),
                         )
-                      :  Text(
+                      : Text(
                           loc.checkReportingSteps,
                           style: TextStyle(
                             fontSize: 15,
@@ -580,7 +582,7 @@ class _ReportFakeAccountScreenState extends State<ReportFakeAccountScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                 loc.pecaInfoMessage,
+                loc.pecaInfoMessage,
                 style: TextStyle(fontSize: 13, color: Colors.blue.shade700),
                 textAlign: TextAlign.center,
               ),

@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/recent_activity_model.dart';
 
 /// Service to fetch recent activities for the home screen
 class RecentActivityService {
   final SupabaseClient _client = Supabase.instance.client;
+  static final Set<String> _loggedQueryErrors = <String>{};
 
   Map<String, dynamic> _asMap(dynamic value) {
     if (value is Map<String, dynamic>) {
@@ -13,6 +15,12 @@ class RecentActivityService {
       return Map<String, dynamic>.from(value);
     }
     return <String, dynamic>{};
+  }
+
+  void _logQueryErrorOnce(String key, Object error) {
+    if (_loggedQueryErrors.add(key)) {
+      debugPrint('Supabase query error [$key]: $error');
+    }
   }
 
   RecentActivityModel _fromConversationSession(Map<String, dynamic> row) {
@@ -84,8 +92,7 @@ class RecentActivityService {
           activities.add(_fromConversationSession(_asMap(session)));
         }
       } catch (e) {
-        // ignore: avoid_print
-        print('Error fetching conversation sessions: $e');
+        _logQueryErrorOnce('recentActivities.conversationSessions', e);
       }
 
       // Fetch recent draft complaints
@@ -101,8 +108,7 @@ class RecentActivityService {
           activities.add(RecentActivityModel.fromDraftComplaint(complaint));
         }
       } catch (e) {
-        // ignore: avoid_print
-        print('Error fetching draft complaints: $e');
+        _logQueryErrorOnce('recentActivities.draftComplaints', e);
       }
 
       // Fetch from activity_logs table if it exists
@@ -118,17 +124,14 @@ class RecentActivityService {
           activities.add(_fromActivityLog(_asMap(log)));
         }
       } catch (e) {
-        // activity_logs table might not exist yet, that's ok
-        // ignore: avoid_print
-        print('Activity logs table not found: $e');
+        _logQueryErrorOnce('recentActivities.activityLogs', e);
       }
 
       // Sort all activities by timestamp and take top limit
       activities.sort((a, b) => b.timestamp.compareTo(a.timestamp));
       return activities.take(limit).toList();
     } catch (e) {
-      // ignore: avoid_print
-      print('Error fetching recent activities: $e');
+      _logQueryErrorOnce('recentActivities.root', e);
       return [];
     }
   }
@@ -147,8 +150,7 @@ class RecentActivityService {
       }
       return null;
     } catch (e) {
-      // ignore: avoid_print
-      print('Error fetching activity: $e');
+      _logQueryErrorOnce('recentActivities.activityById', e);
       return null;
     }
   }
@@ -182,8 +184,7 @@ class RecentActivityService {
 
       return _fromActivityLog(_asMap(result));
     } catch (e) {
-      // ignore: avoid_print
-      print('Error logging activity: $e');
+      _logQueryErrorOnce('recentActivities.logActivity', e);
       return null;
     }
   }
@@ -211,8 +212,7 @@ class RecentActivityService {
                 .toList();
           });
     } catch (e) {
-      // ignore: avoid_print
-      print('Error watching activities: $e');
+      _logQueryErrorOnce('recentActivities.watch', e);
       return Stream.value([]);
     }
   }

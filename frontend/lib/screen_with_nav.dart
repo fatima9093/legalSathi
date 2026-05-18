@@ -10,8 +10,29 @@ import 'cyber_law_module/online_harrasment_screen.dart';
 
 // Bottom Navigation Bar Builder
 BottomNavigationBar buildBottomNavBar(BuildContext context, int selectedIndex) {
+  // Determine if we should visually highlight a selected tab.
+  // Only highlight when the current route corresponds to one of the main tabs.
+  final routeName = ModalRoute.of(context)?.settings.name;
+  final mainRouteToIndex = {
+    '/home': 0,
+    '/home_screen': 0,
+    '/chat': 1,
+    '/documents': 2,
+    '/profile': 3,
+  };
+
+  // Only highlight when we're at a top-level route (not a pushed module).
+  final bool isTopLevel = !Navigator.of(context).canPop();
+  final bool shouldHighlight =
+      isTopLevel &&
+      routeName != null &&
+      mainRouteToIndex.containsKey(routeName);
+  final int currentIndex = shouldHighlight
+      ? (mainRouteToIndex[routeName] as int)
+      : 0;
+
   return BottomNavigationBar(
-    currentIndex: selectedIndex,
+    currentIndex: currentIndex,
     onTap: (index) {
       switch (index) {
         case 0:
@@ -44,7 +65,9 @@ BottomNavigationBar buildBottomNavBar(BuildContext context, int selectedIndex) {
       ),
     ],
     type: BottomNavigationBarType.fixed,
-    selectedItemColor: const Color(0xFF00401A),
+    // If we're on a module/category screen (no main route name), don't visually highlight
+    // any tab — make selected color same as unselected to avoid misleading active state.
+    selectedItemColor: shouldHighlight ? const Color(0xFF00401A) : Colors.grey,
     unselectedItemColor: Colors.grey,
   );
 }
@@ -109,7 +132,7 @@ class _ScreensWithNavState extends State<ScreensWithNav> {
             // Navigate to different main sections
             switch (index) {
               case 0:
-                Navigator.pushReplacementNamed(context, '/home');
+                Navigator.pushReplacementNamed(context, '/home_screen');
                 break;
               case 1:
                 Navigator.pushReplacementNamed(context, '/chat');

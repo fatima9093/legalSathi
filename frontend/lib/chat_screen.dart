@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -16,6 +15,7 @@ import 'package:front_end/services/chat_persistence_service.dart' as chat_store;
 import 'package:front_end/services/recent_activity_service.dart';
 import 'package:front_end/services/llm_service.dart';
 import 'package:front_end/services/agent_service.dart';
+import 'package:front_end/services/challan_text_extraction_service.dart';
 import 'package:front_end/models/scenario_model.dart';
 import 'package:front_end/models/chat_history_model.dart';
 import 'package:front_end/widgets/agent_status_widget.dart';
@@ -23,6 +23,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:front_end/create_account/signin_screen.dart';
+import 'package:front_end/utils/smooth_page_route.dart';
 
 class ChatScreen extends StatefulWidget {
   final ModuleType? selectedModule;
@@ -54,7 +55,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // Chat History — populated dynamically as conversations happen
   final List<ChatHistory> _chatHistories = [];
-  bool _isLoadingHistories = false;
   String? _loadedUserId;
 
   // ── NEW feature state ──────────────────────────────────────────────────────
@@ -66,6 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<String> _uploadedFiles = []; // names of uploaded files in context
   String? _pendingAttachmentName;
   String? _pendingAttachmentBase64;
+  String? _pendingAttachmentOCRText; // OCR-extracted text from image/PDF
   // ──────────────────────────────────────────────────────────────────────────
 
   // Speech to Text
@@ -206,7 +207,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _loadPersistedHistoriesForUser(String userId) async {
-    setState(() => _isLoadingHistories = true);
     try {
       final sessions = await _chatPersistenceService.loadConversationSessions(
         userId: userId,
@@ -246,12 +246,9 @@ class _ChatScreenState extends State<ChatScreen> {
         _chatHistories
           ..clear()
           ..addAll(histories);
-        _isLoadingHistories = false;
       });
     } catch (e) {
-      if (mounted) {
-        setState(() => _isLoadingHistories = false);
-      }
+      // Silently handle error
     }
   }
 
@@ -399,7 +396,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SignInScreen()),
+                  SmoothPageRoute(page: const SignInScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -422,6 +419,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     String? attachmentName = _pendingAttachmentName;
     String? attachmentBase64 = _pendingAttachmentBase64;
+    String? attachmentOCRText = _pendingAttachmentOCRText;
 
     // Check if guest trying to send message
     final isGuest = Supabase.instance.client.auth.currentUser == null;
@@ -441,6 +439,13 @@ class _ChatScreenState extends State<ChatScreen> {
       await Future.delayed(const Duration(milliseconds: 100));
     }
 
+    // ── Build final message with OCR text appended ───────────────────────────
+    var finalMessage = message;
+    if (attachmentOCRText != null && attachmentOCRText.isNotEmpty) {
+      finalMessage =
+          '$message\n\n[OCR from $attachmentName]:\n$attachmentOCRText';
+    }
+
     final insights = _analyzeQuery(message);
     final useAgentMode = insights.useAgentMode;
 
@@ -448,6 +453,7 @@ class _ChatScreenState extends State<ChatScreen> {
       final editIdx = _editingMessageIndex!;
       attachmentName ??= _messages[editIdx].attachedFileName;
       attachmentBase64 ??= _messages[editIdx].attachedFileBase64;
+      attachmentOCRText ??= _messages[editIdx].attachedFileOCRText;
     }
 
     // If editing, replace the old user message and remove its AI response
@@ -462,6 +468,7 @@ class _ChatScreenState extends State<ChatScreen> {
           showActions: false,
           attachedFileName: attachmentName,
           attachedFileBase64: attachmentBase64,
+          attachedFileOCRText: attachmentOCRText,
         );
         // Remove all messages below the edited user message
         if (editIdx + 1 < _messages.length) {
@@ -478,6 +485,7 @@ class _ChatScreenState extends State<ChatScreen> {
             showActions: false,
             attachedFileName: attachmentName,
             attachedFileBase64: attachmentBase64,
+            attachedFileOCRText: attachmentOCRText,
           ),
         );
       });
@@ -508,7 +516,7 @@ class _ChatScreenState extends State<ChatScreen> {
       try {
         final moduleKey = _moduleKeyFromType(widget.selectedModule);
         final agentResult = await _agentService.ask(
-          message,
+          finalMessage,
           module: moduleKey,
           conversationId: _conversationId,
           conversationHistory: conversationHistory,
@@ -536,6 +544,7 @@ class _ChatScreenState extends State<ChatScreen> {
             _uploadedFiles.clear();
             _pendingAttachmentName = null;
             _pendingAttachmentBase64 = null;
+            _pendingAttachmentOCRText = null;
             _saveCurrentChatToHistory();
           });
           _scrollToBottom();
@@ -559,6 +568,7 @@ class _ChatScreenState extends State<ChatScreen> {
             _uploadedFiles.clear();
             _pendingAttachmentName = null;
             _pendingAttachmentBase64 = null;
+            _pendingAttachmentOCRText = null;
             _saveCurrentChatToHistory();
           });
           _scrollToBottom();
@@ -588,7 +598,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final module = _moduleKeyFromType(widget.selectedModule);
       final stream = _llmService.sendMessageStream(
-        message,
+        finalMessage,
         module: module,
         conversationId: _conversationId,
         conversationHistory: conversationHistory,
@@ -1159,9 +1169,8 @@ class _ChatScreenState extends State<ChatScreen> {
         '${dir.path}/legalsathi_chat_${DateTime.now().millisecondsSinceEpoch}.txt',
       );
       await file.writeAsString(buf.toString());
-      await Share.shareXFiles([
-        XFile(file.path),
-      ], subject: 'Legal Sathi Chat Export');
+      final xFile = XFile(file.path);
+      await Share.shareXFiles([xFile], subject: 'Legal Sathi Chat Export');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1190,17 +1199,50 @@ class _ChatScreenState extends State<ChatScreen> {
       if (bytes == null || bytes.isEmpty) {
         throw Exception('Could not read the selected file');
       }
+
+      // ── OCR extraction for images and PDFs ──────────────────────────────────
+      String? ocrText;
+      final lowerFileName = fileName.toLowerCase();
+      final isPdf = fileName.contains('.pdf');
+      final isImage =
+          lowerFileName.endsWith('.png') ||
+          lowerFileName.endsWith('.jpg') ||
+          lowerFileName.endsWith('.jpeg');
+
+      if (isPdf || isImage) {
+        try {
+          final fileType = isPdf ? 'pdf' : 'image';
+          ocrText = await ChallanTextExtractionService.extractRawText(
+            bytes: bytes,
+            fileName: fileName,
+            fileType: fileType,
+          );
+          if (ocrText.isEmpty) {
+            ocrText = null;
+          }
+        } catch (e) {
+          debugPrint('OCR extraction failed: $e');
+        }
+      }
+
       setState(() {
         _uploadedFiles
           ..clear()
           ..add(fileName);
         _pendingAttachmentName = fileName;
         _pendingAttachmentBase64 = base64Encode(bytes);
+        _pendingAttachmentOCRText = ocrText;
       });
+
       if (mounted) {
+        final ocrStatus = ocrText != null && ocrText.isNotEmpty
+            ? ' (OCR extracted ✓)'
+            : '';
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('📎 "$fileName" attached for the next message only'),
+            content: Text(
+              '📎 "$fileName" attached for the next message only$ocrStatus',
+            ),
             backgroundColor: const Color(0xFF00401A),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -1281,7 +1323,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 title: Text(AppLocalizations.of(context)!.share),
                 onTap: () {
                   Navigator.pop(ctx);
-                  Share.share(msg.text, subject: 'Legal Sathi Answer');
+                  Share.share(msg.text);
                 },
               ),
               ListTile(
@@ -1860,7 +1902,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     // Response length selector
                     Padding(
                       padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 6,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
                             'Response:',
@@ -1869,61 +1914,54 @@ class _ChatScreenState extends State<ChatScreen> {
                               color: Colors.grey.shade600,
                             ),
                           ),
-                          const SizedBox(width: 8),
                           ...[
                             ('Short', 'short'),
                             ('Detailed', 'detailed'),
                             ('Bullets', 'bullets'),
                           ].map((e) {
                             final isSelected = _responseLength == e.$2;
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 6),
-                              child: GestureDetector(
-                                onTap: () =>
-                                    setState(() => _responseLength = e.$2),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
+                            return GestureDetector(
+                              onTap: () =>
+                                  setState(() => _responseLength = e.$2),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? const Color(0xFF00401A)
+                                      : Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  e.$1,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
                                     color: isSelected
-                                        ? const Color(0xFF00401A)
-                                        : Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    e.$1,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.black54,
-                                    ),
+                                        ? Colors.white
+                                        : Colors.black54,
                                   ),
                                 ),
                               ),
                             );
                           }),
-                          const Spacer(),
-                          // Template button
                           IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.text_snippet_outlined,
                               size: 18,
-                              color: const Color(0xFF00401A),
+                              color: Color(0xFF00401A),
                             ),
                             tooltip: 'Templates',
                             onPressed: _showPromptTemplates,
                           ),
-                          // File upload button
                           IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.attach_file_outlined,
                               size: 18,
-                              color: const Color(0xFF00401A),
+                              color: Color(0xFF00401A),
                             ),
                             tooltip: 'Attach file',
                             onPressed: _uploadFile,
@@ -2502,32 +2540,28 @@ class _ChatScreenState extends State<ChatScreen> {
                   // ── Message action bar ───────────────────────────────────
                   if (!message.isStreaming) ...[
                     const SizedBox(height: 6),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        // Copy
                         _MsgActionBtn(
                           icon: Icons.copy_outlined,
                           tooltip: AppLocalizations.of(context)!.copyAction,
                           onTap: () => _copyMessage(message),
                         ),
-                        if (message.isUser) ...[
-                          const SizedBox(width: 4),
+                        if (message.isUser)
                           _MsgActionBtn(
                             icon: Icons.edit_outlined,
                             tooltip: 'Edit',
                             onTap: () => _editMessage(idx),
                           ),
-                        ],
                         if (isAssistantMessage && !message.isUser) ...[
-                          const SizedBox(width: 4),
                           _MsgActionBtn(
                             icon: Icons.refresh_outlined,
                             tooltip: AppLocalizations.of(context)!.regenerate,
                             onTap: () => _regenerateMessage(idx),
                           ),
-                          const SizedBox(width: 4),
-                          // 👍
                           _MsgActionBtn(
                             icon: Icons.thumb_up_outlined,
                             tooltip: 'Helpful',
@@ -2536,8 +2570,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                 : null,
                             onTap: () => _rateMessage(idx, 1),
                           ),
-                          const SizedBox(width: 4),
-                          // 👎
                           _MsgActionBtn(
                             icon: Icons.thumb_down_outlined,
                             tooltip: 'Not helpful',
@@ -2545,25 +2577,18 @@ class _ChatScreenState extends State<ChatScreen> {
                             onTap: () => _rateMessage(idx, -1),
                           ),
                         ],
-                        const SizedBox(width: 4),
                         _MsgActionBtn(
                           icon: Icons.share_outlined,
                           tooltip: AppLocalizations.of(context)!.share,
-                          onTap: () => Share.share(
-                            message.text,
-                            subject: 'Legal Sathi Answer',
-                          ),
+                          onTap: () => Share.share(message.text),
                         ),
-                        const SizedBox(width: 4),
                         _MsgActionBtn(
                           icon: Icons.delete_outline,
                           tooltip: AppLocalizations.of(context)!.delete,
                           color: Colors.red.shade300,
                           onTap: () => _deleteMessage(idx),
                         ),
-                        // Timestamp
-                        if (message.timestamp != null) ...[
-                          const SizedBox(width: 8),
+                        if (message.timestamp != null)
                           Text(
                             message.timestamp!,
                             style: TextStyle(
@@ -2571,7 +2596,6 @@ class _ChatScreenState extends State<ChatScreen> {
                               color: Colors.grey.shade500,
                             ),
                           ),
-                        ],
                       ],
                     ),
                   ] else ...[
@@ -2904,6 +2928,7 @@ class ChatMessage {
   bool isStreaming; // currently receiving tokens
   String? attachedFileName; // name of file user uploaded with this message
   String? attachedFileBase64; // base64-encoded bytes for one-turn attachment
+  String? attachedFileOCRText; // OCR-extracted text from attached image/PDF
 
   ChatMessage({
     required this.text,
@@ -2918,6 +2943,7 @@ class ChatMessage {
     this.isStreaming = false,
     this.attachedFileName,
     this.attachedFileBase64,
+    this.attachedFileOCRText,
   });
 }
 

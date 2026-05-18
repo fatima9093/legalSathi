@@ -8,21 +8,21 @@ class MinimumWageData {
   MinimumWageData._();
 
   static List<String> provinces(BuildContext context) => [
-        AppLocalizations.of(context)!.mwProvincePunjab,
-        AppLocalizations.of(context)!.mwProvinceSindh,
-        AppLocalizations.of(context)!.mwProvinceKPK,
-        AppLocalizations.of(context)!.mwProvinceBalochistan,
-        AppLocalizations.of(context)!.mwProvinceIslamabad,
-        AppLocalizations.of(context)!.mwProvinceGB,
-        AppLocalizations.of(context)!.mwProvinceAJK,
-      ];
+    AppLocalizations.of(context)!.mwProvincePunjab,
+    AppLocalizations.of(context)!.mwProvinceSindh,
+    AppLocalizations.of(context)!.mwProvinceKPK,
+    AppLocalizations.of(context)!.mwProvinceBalochistan,
+    AppLocalizations.of(context)!.mwProvinceIslamabad,
+    AppLocalizations.of(context)!.mwProvinceGB,
+    AppLocalizations.of(context)!.mwProvinceAJK,
+  ];
 
   static List<String> workerTypes(BuildContext context) => [
-        AppLocalizations.of(context)!.mwWorkerUnskilled,
-        AppLocalizations.of(context)!.mwWorkerSemiskilled,
-        AppLocalizations.of(context)!.mwWorkerSkilled,
-        AppLocalizations.of(context)!.mwWorkerHighlySkilled,
-      ];
+    AppLocalizations.of(context)!.mwWorkerUnskilled,
+    AppLocalizations.of(context)!.mwWorkerSemiskilled,
+    AppLocalizations.of(context)!.mwWorkerSkilled,
+    AppLocalizations.of(context)!.mwWorkerHighlySkilled,
+  ];
 
   static const Map<String, Map<String, double>> _monthlyMinimumByProvince = {
     'Punjab': {
@@ -82,6 +82,37 @@ class MinimumWageData {
       return _fallbackByWorkerType[workerType] ?? 35000;
     }
     return row[workerType] ?? _fallbackByWorkerType[workerType] ?? 35000;
+  }
+
+  /// Convenience when UI passes localized labels: map the displayed labels
+  /// back to canonical keys used in `_monthlyMinimumByProvince`.
+  static double minimumMonthlyFromLabels(
+    BuildContext context,
+    String provinceLabel,
+    String workerTypeLabel,
+  ) {
+    final localizedProvinces = provinces(context);
+    final canonicalProvinces = _monthlyMinimumByProvince.keys.toList();
+    String canonicalProvince = provinceLabel;
+    final pIndex = localizedProvinces.indexOf(provinceLabel);
+    if (pIndex >= 0 && pIndex < canonicalProvinces.length) {
+      canonicalProvince = canonicalProvinces[pIndex];
+    }
+
+    final localizedWorkerTypes = workerTypes(context);
+    final canonicalWorkerTypes = [
+      'Unskilled',
+      'Semi-skilled',
+      'Skilled',
+      'Highly skilled',
+    ];
+    String canonicalWorkerType = workerTypeLabel;
+    final wIndex = localizedWorkerTypes.indexOf(workerTypeLabel);
+    if (wIndex >= 0 && wIndex < canonicalWorkerTypes.length) {
+      canonicalWorkerType = canonicalWorkerTypes[wIndex];
+    }
+
+    return minimumMonthly(canonicalProvince, canonicalWorkerType);
   }
 
   static double? tryParseSalary(String raw) {

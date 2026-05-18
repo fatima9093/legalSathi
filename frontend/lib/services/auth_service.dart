@@ -16,7 +16,6 @@ class AppUser {
 
 class AuthService {
   static Timer? _sessionExpiryTimer;
-  static StreamSubscription<AuthState>? _sessionExpirySubscription;
   static bool _sessionExpiryMonitoringStarted = false;
 
   SupabaseClient get _client => Supabase.instance.client;
@@ -76,7 +75,7 @@ class AuthService {
     final client = Supabase.instance.client;
     _scheduleSessionExpiry(client.auth.currentSession);
 
-    _sessionExpirySubscription = client.auth.onAuthStateChange.listen((event) {
+    client.auth.onAuthStateChange.listen((event) {
       _scheduleSessionExpiry(event.session);
     });
   }

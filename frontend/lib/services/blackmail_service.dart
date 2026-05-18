@@ -5,11 +5,21 @@ import 'package:front_end/services/auth_service.dart';
 class BlackmailService {
   SupabaseClient get _client => Supabase.instance.client;
 
+  bool _isMissingTableError(Object e) {
+    final err = e.toString();
+    return err.contains('Could not find the table') ||
+        err.contains('schema cache') ||
+        err.contains('42P01') ||
+        (err.contains('blackmail_cases') &&
+            (err.contains('not find') || err.contains('does not exist')));
+  }
+
   AppUser? get currentUser {
     final user = _client.auth.currentSession?.user ?? _client.auth.currentUser;
     if (user == null) return null;
     final meta = user.userMetadata;
-    final name = meta?['full_name'] as String? ?? meta?['full_name']?.toString();
+    final name =
+        meta?['full_name'] as String? ?? meta?['full_name']?.toString();
     return AppUser(
       id: user.id,
       email: user.email,
@@ -23,14 +33,15 @@ class BlackmailService {
     return 'blackmail_$random';
   }
 
-  Future<Map<String, dynamic>> saveBlackmailCase(BlackmailModel blackmail) async {
+  Future<Map<String, dynamic>> saveBlackmailCase(
+    BlackmailModel blackmail,
+  ) async {
+    String blackmailId = blackmail.blackmailId ?? _generateId();
     try {
       final user = currentUser;
       if (user == null) {
         return {'success': false, 'message': 'User not logged in'};
       }
-
-      String blackmailId = blackmail.blackmailId ?? _generateId();
       DateTime now = DateTime.now();
 
       BlackmailModel blackmailToSave = blackmail.copyWith(
@@ -42,14 +53,25 @@ class BlackmailService {
       );
 
       final row = _blackmailToRow(blackmailToSave);
-      await _client.from('blackmail_cases').upsert(row, onConflict: 'blackmail_id');
+      await _client
+          .from('blackmail_cases')
+          .upsert(row, onConflict: 'blackmail_id');
 
       return {
         'success': true,
+        'cloudSaved': true,
         'message': 'Blackmail case saved successfully!',
         'blackmailId': blackmailId,
       };
     } catch (e) {
+      if (_isMissingTableError(e)) {
+        return {
+          'success': true,
+          'cloudSaved': false,
+          'message': 'Blackmail case generated, but database table is missing.',
+          'blackmailId': blackmailId,
+        };
+      }
       return {'success': false, 'message': 'Error saving blackmail case: $e'};
     }
   }
@@ -89,7 +111,10 @@ class BlackmailService {
           .toList();
       return {'success': true, 'cases': cases};
     } catch (e) {
-      return {'success': false, 'message': 'Error fetching blackmail cases: $e'};
+      return {
+        'success': false,
+        'message': 'Error fetching blackmail cases: $e',
+      };
     }
   }
 
@@ -114,10 +139,16 @@ class BlackmailService {
       userEmail: row['user_email'] as String?,
       situation: row['situation'] as String?,
       evidenceFiles: (row['evidence_files'] as List<dynamic>?)
-          ?.map((e) => EvidenceFile.fromMap(Map<String, dynamic>.from(e as Map)))
+          ?.map(
+            (e) => EvidenceFile.fromMap(Map<String, dynamic>.from(e as Map)),
+          )
           .toList(),
-      createdAt: createdAt != null ? DateTime.tryParse(createdAt.toString()) : null,
-      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt.toString()) : null,
+      createdAt: createdAt != null
+          ? DateTime.tryParse(createdAt.toString())
+          : null,
+      updatedAt: updatedAt != null
+          ? DateTime.tryParse(updatedAt.toString())
+          : null,
     );
   }
 }

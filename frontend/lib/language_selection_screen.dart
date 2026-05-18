@@ -42,7 +42,16 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen> {
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   children: [
-                    const SizedBox(height: 40),
+                    // Back button - navigate to previous screen
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.black),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
 
                     // Globe icon
                     Container(

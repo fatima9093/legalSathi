@@ -135,6 +135,40 @@ except Exception as e:
     print(f"❌ Error initializing Groq: {e}")
     print("   → Try: pip install 'httpx>=0.24,<0.28'")
 
+# OCR capability detection (Pillow + optional pytesseract)
+try:
+    import PIL  # type: ignore
+    _PIL_AVAILABLE = True
+except Exception:
+    _PIL_AVAILABLE = False
+
+try:
+    import pytesseract  # type: ignore
+    _PYTESSERACT_AVAILABLE = True
+except Exception:
+    _PYTESSERACT_AVAILABLE = False
+
+# If an explicit Tesseract binary path is provided, configure pytesseract to use it.
+if _PYTESSERACT_AVAILABLE:
+    try:
+        import os as _os
+        import pytesseract as _pyt
+        # Priority: explicit env var TESSERACT_CMD, then project-local tools/tesseract.exe
+        _tcmd = _os.getenv("TESSERACT_CMD")
+        if not _tcmd:
+            _local = BASE_DIR / "tools" / "tesseract" / "tesseract.exe"
+            if _local.exists():
+                _tcmd = str(_local)
+        if _tcmd:
+            try:
+                _pyt.pytesseract.tesseract_cmd = _tcmd
+                print(f"✅ pytesseract configured to use: {_tcmd}")
+            except Exception as _e:
+                print(f"⚠️ Could not set pytesseract.tesseract_cmd: {_e}")
+    except Exception:
+        # best-effort only; continue without raising
+        pass
+
 # Check OpenAI API key (required for the multi-agent pipeline)
 GROQ_API_KEY_FOR_AGENTS = os.getenv("GROQ_API_KEY")
 if _AGENTS_AVAILABLE and not GROQ_API_KEY_FOR_AGENTS:
@@ -339,6 +373,16 @@ async def root():
     }
 
 
+@app.get("/api/ocr/capabilities")
+async def ocr_capabilities():
+    """Report whether server-side OCR dependencies are available."""
+    return {
+        "pillow_available": bool(globals().get("_PIL_AVAILABLE", False)),
+        "pytesseract_available": bool(globals().get("_PYTESSERACT_AVAILABLE", False)),
+        "server_ocr_enabled": bool(globals().get("_PIL_AVAILABLE", False)) and bool(globals().get("_PYTESSERACT_AVAILABLE", False)),
+    }
+
+
 @app.post("/api/challan/extract-text")
 async def extract_challan_text(file: UploadFile = File(...)):
     """
@@ -374,8 +418,13 @@ async def extract_challan_text(file: UploadFile = File(...)):
         try:
             import pytesseract
 
-            text = pytesseract.image_to_string(img) or ""
-            return {"text": text.strip()}
+            try:
+                text = pytesseract.image_to_string(img) or ""
+                return {"text": text.strip()}
+            except Exception as e:
+                # pytesseract present but tesseract binary missing or runtime failure
+                print(f"⚠️ pytesseract runtime error: {e}")
+                return {"text": ""}
         except ImportError:
             # Pillow without Tesseract — no OCR on server
             return {"text": ""}

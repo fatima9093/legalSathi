@@ -19,6 +19,29 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
     'No License': false,
   };
 
+  int _totalFine = 0;
+
+  void _calculateFine() {
+    setState(() {
+      _totalFine = 0;
+      if (_selectedViolations['Over Speeding'] == true) _totalFine += 1500;
+      if (_selectedViolations['Red Light'] == true) _totalFine += 1000;
+      if (_selectedViolations['No Helmet'] == true) _totalFine += 500;
+      if (_selectedViolations['No Seat Belt'] == true) _totalFine += 500;
+      if (_selectedViolations['Mobile Use'] == true) _totalFine += 1000;
+      if (_selectedViolations['No License'] == true) _totalFine += 5000;
+    });
+  }
+
+  void _clearSelection() {
+    setState(() {
+      for (final key in _selectedViolations.keys) {
+        _selectedViolations[key] = false;
+      }
+      _totalFine = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -82,9 +105,47 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
                       Text(
                         loc.selectViolations,
                         style: const TextStyle(
-                            fontSize: 13, color: Colors.black54),
+                          fontSize: 13,
+                          color: Colors.black54,
+                        ),
                       ),
                     ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.account_balance_wallet_outlined,
+                  color: Color(0xFF00401A),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    loc.fineAmount,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Text(
+                  'Rs. $_totalFine',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF00401A),
                   ),
                 ),
               ],
@@ -114,6 +175,34 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
               ),
             ),
           ),
+
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _clearSelection,
+                      child: const Text('Clear'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _calculateFine,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00401A),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Calculate'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: buildBottomNavBar(context, 2),
@@ -135,9 +224,7 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF00401A)
-                : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFF00401A) : Colors.grey.shade300,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -147,18 +234,17 @@ class _FineCalculatorScreen extends State<FineCalculatorScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(violation,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      )),
+                  Text(
+                    violation,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     'Rs. $amount',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey.shade700,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                   ),
                 ],
               ),

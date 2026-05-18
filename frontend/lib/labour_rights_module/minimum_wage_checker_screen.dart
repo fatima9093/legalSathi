@@ -85,10 +85,12 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                     hint: Text(
                       AppLocalizations.of(context)!.selectProvinceHint,
                     ),
-                    items: MinimumWageData.workerTypes(context)
+                    items: MinimumWageData.provinces(context)
                         .map(
-                          (type) =>
-                              DropdownMenuItem(value: type, child: Text(type)),
+                          (province) => DropdownMenuItem(
+                            value: province,
+                            child: Text(province),
+                          ),
                         )
                         .toList(),
                     onChanged: (value) {
@@ -146,12 +148,10 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
                     hint: Text(
                       AppLocalizations.of(context)!.selectWorkerTypeHint,
                     ),
-                    items: MinimumWageData.provinces(context)
+                    items: MinimumWageData.workerTypes(context)
                         .map(
-                          (province) => DropdownMenuItem(
-                            value: province,
-                            child: Text(province),
-                          ),
+                          (type) =>
+                              DropdownMenuItem(value: type, child: Text(type)),
                         )
                         .toList(),
                     onChanged: (value) {
@@ -308,7 +308,8 @@ class _MinimumWageCheckerScreenState extends State<MinimumWageCheckerScreen> {
       return;
     }
 
-    final minimumWage = MinimumWageData.minimumMonthly(
+    final minimumWage = MinimumWageData.minimumMonthlyFromLabels(
+      context,
       selectedProvince!,
       selectedWorkerType!,
     );

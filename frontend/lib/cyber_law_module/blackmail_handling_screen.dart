@@ -4,6 +4,7 @@ import '../screen_with_nav.dart';
 import 'package:front_end/cyber_law_module/safety_guidance_loading_screen.dart';
 import 'package:front_end/models/blackmail_model.dart';
 import 'package:front_end/services/blackmail_service.dart';
+import 'package:front_end/services/challan_text_extraction_service.dart';
 import '../utils/validators.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 
@@ -18,6 +19,7 @@ class BlackmailHandlingScreen extends StatefulWidget {
 class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
   final _descriptionController = TextEditingController();
   List<EvidenceFile>? _evidenceFiles;
+  Map<String, String?> _fileOCRTexts = {};
   bool _isLoading = false;
   String? _blackmailId;
 
@@ -38,26 +40,49 @@ class _BlackmailHandlingScreenState extends State<BlackmailHandlingScreen> {
       FilePickerResult? result = await FilePicker.pickFiles(
         allowMultiple: true,
         type: FileType.any,
-        withData: true, // Important for web
+        withData: true,
       );
 
       if (result != null) {
-        setState(() {
-          _evidenceFiles ??= [];
-          for (var file in result.files) {
-            _evidenceFiles!.add(
-              EvidenceFile(
+        _evidenceFiles ??= [];
+
+        for (var file in result.files) {
+          // Extract OCR for images and PDFs
+          String? ocrText;
+          final lower = file.name.toLowerCase();
+          final isImage =
+              lower.endsWith('.png') ||
+              lower.endsWith('.jpg') ||
+              lower.endsWith('.jpeg');
+          final isPdf = lower.endsWith('.pdf');
+          if ((isImage || isPdf) && file.bytes != null) {
+            try {
+              ocrText = await ChallanTextExtractionService.extractRawText(
+                bytes: file.bytes!,
                 fileName: file.name,
-                fileType: fileType,
-                localPath: file.name, // Use name for web
-                fileSize: file.size,
-                fileBytes: file.bytes,
-              ),
-            );
+                fileType: isPdf ? 'pdf' : 'image',
+              );
+              if (ocrText.isEmpty) ocrText = null;
+            } catch (e) {
+              debugPrint('OCR failed for ${file.name}: $e');
+            }
           }
-        });
+
+          _fileOCRTexts[file.name] = ocrText;
+          _evidenceFiles!.add(
+            EvidenceFile(
+              fileName: file.name,
+              fileType: fileType,
+              localPath: file.name,
+              fileSize: file.size,
+              fileBytes: file.bytes,
+              ocrText: ocrText,
+            ),
+          );
+        }
 
         if (mounted) {
+          setState(() {});
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(

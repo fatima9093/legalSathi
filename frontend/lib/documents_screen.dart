@@ -16,27 +16,32 @@ class DocumentsScreen extends StatefulWidget {
 class _DocumentsScreenState extends State<DocumentsScreen> {
   late DocumentsService _documentsService;
   late AuthService _authService;
- Future<UserDocumentsResponse>? _documentsFuture;
+  Future<UserDocumentsResponse>? _documentsFuture;
   String? _selectedTypeFilter; // null = show all, or specific document type
 
-@override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  final httpClient = HttpClientWrapper();
-  _documentsService = DocumentsService(httpClient);
-  _authService = AuthService();
+    final httpClient = HttpClientWrapper();
+    _documentsService = DocumentsService(httpClient);
+    _authService = AuthService();
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (!mounted) return;
+    final currentUser = _authService.currentUser;
+    _documentsFuture = currentUser == null
+        ? Future.value(
+            UserDocumentsResponse(
+              userId: '',
+              documents: const [],
+              totalCount: 0,
+            ),
+          )
+        : _fetchUserDocuments();
 
-    setState(() {
-      _documentsFuture = _fetchUserDocuments();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkGuestAccess();
     });
-
-    _checkGuestAccess();
-  });
-}
+  }
 
   void _checkGuestAccess() {
     final isGuest = Supabase.instance.client.auth.currentUser == null;
@@ -199,11 +204,9 @@ void initState() {
       body: FutureBuilder<UserDocumentsResponse>(
         future: _documentsFuture,
         builder: (context, snapshot) {
-                    if (_documentsFuture == null) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+          if (_documentsFuture == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }

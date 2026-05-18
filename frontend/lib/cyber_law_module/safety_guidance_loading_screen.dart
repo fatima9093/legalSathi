@@ -24,18 +24,19 @@ class SafetyGuidanceLoadingScreen extends StatefulWidget {
 class _SafetyGuidanceLoadingScreenState
     extends State<SafetyGuidanceLoadingScreen> {
   String _status = '';
+  bool _hasStarted = false;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_hasStarted) return;
+    _hasStarted = true;
+
+    _status = AppLocalizations.of(context)!.preparingGuidance;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-
-      setState(() {
-        _status = AppLocalizations.of(context)!.preparingGuidance;
-      });
-
       _runGuidancePipeline();
     });
   }
@@ -129,10 +130,7 @@ class _SafetyGuidanceLoadingScreenState
 
             Text(
               _status,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey.shade700,
-              ),
+              style: TextStyle(fontSize: 15, color: Colors.grey.shade700),
             ),
           ],
         ),

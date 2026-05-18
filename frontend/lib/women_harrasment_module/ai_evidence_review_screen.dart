@@ -17,6 +17,7 @@ class AIEvidenceReviewScreen extends StatefulWidget {
 
 class _AIEvidenceReviewScreenState extends State<AIEvidenceReviewScreen> {
   List<PlatformFile> uploadedFiles = [];
+  Map<String, String?> _fileOCRTexts = {};
   bool _isAnalyzing = false;
 
   @override
@@ -402,11 +403,33 @@ class _AIEvidenceReviewScreenState extends State<AIEvidenceReviewScreen> {
       );
 
       if (result != null && mounted) {
+        final ocrTexts = <String, String?>{};
         for (var file in result.files) {
-          // Check file size (max 10MB)
           if (file.size <= 10 * 1024 * 1024) {
+            // Extract OCR for images and PDFs
+            final lower = file.name.toLowerCase();
+            final isImage =
+                lower.endsWith('.png') ||
+                lower.endsWith('.jpg') ||
+                lower.endsWith('.jpeg');
+            final isPdf = lower.endsWith('.pdf');
+            if ((isImage || isPdf) && file.bytes != null) {
+              try {
+                final extracted =
+                    await ChallanTextExtractionService.extractRawText(
+                      bytes: file.bytes!,
+                      fileName: file.name,
+                      fileType: isPdf ? 'pdf' : 'image',
+                    );
+                ocrTexts[file.name] = (extracted.isNotEmpty) ? extracted : null;
+              } catch (e) {
+                debugPrint('OCR failed for ${file.name}: $e');
+                ocrTexts[file.name] = null;
+              }
+            }
             setState(() {
               uploadedFiles.add(file);
+              _fileOCRTexts[file.name] = ocrTexts[file.name];
             });
           } else {
             if (mounted) {

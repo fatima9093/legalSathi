@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' show XFile;
 import 'package:front_end/l10n/app_localizations.dart';
-
+import 'package:front_end/services/challan_text_extraction_service.dart';
 import '../screen_with_nav.dart';
 import 'analyzing_document_screen.dart';
 
@@ -64,6 +64,19 @@ class _ScreenshotEvidenceReaderScreenState
       }
 
       final name = file.name.isNotEmpty ? file.name : loc.defaultFileName;
+
+      // Pre-extract OCR for screenshot
+      String? ocrText;
+      try {
+        ocrText = await ChallanTextExtractionService.extractRawText(
+          bytes: bytes,
+          fileName: name,
+          fileType: 'image',
+        );
+        if (ocrText.isEmpty) ocrText = null;
+      } catch (e) {
+        debugPrint('OCR failed: $e');
+      }
 
       if (!mounted) return;
       await Navigator.push<void>(

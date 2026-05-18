@@ -5,6 +5,8 @@ import 'package:front_end/women_harrasment_module/incident_details_screen.dart';
 import 'package:front_end/models/complaint_model.dart';
 import 'package:front_end/services/complaint_service.dart';
 import '../utils/validators.dart';
+import 'package:flutter/services.dart';
+import 'package:front_end/utils/cnic_input_formatter.dart';
 
 class OmbudspersonComplaintFormScreen extends StatefulWidget {
   final String? complaintId;
@@ -294,6 +296,7 @@ class _OmbudspersonComplaintFormScreenState
                       controller: _cnicController,
                       hint: '00000-0000000-0',
                       keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly, CnicInputFormatter()],
                     ),
 
                     const SizedBox(height: 20),
@@ -480,10 +483,12 @@ class _OmbudspersonComplaintFormScreenState
     required TextEditingController controller,
     required String hint,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),

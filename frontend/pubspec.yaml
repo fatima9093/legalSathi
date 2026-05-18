@@ -68,6 +68,7 @@ dependencies:
   share_plus: ^12.0.2
   flutter_gen: ^5.13.0+1
   flutter_markdown_plus: ^1.0.7
+  flutter_svg: ^2.0.17
   web: ^1.0.0
 
 dev_dependencies:
