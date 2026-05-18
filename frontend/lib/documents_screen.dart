@@ -16,22 +16,27 @@ class DocumentsScreen extends StatefulWidget {
 class _DocumentsScreenState extends State<DocumentsScreen> {
   late DocumentsService _documentsService;
   late AuthService _authService;
-  late Future<UserDocumentsResponse> _documentsFuture;
+ Future<UserDocumentsResponse>? _documentsFuture;
   String? _selectedTypeFilter; // null = show all, or specific document type
 
-  @override
-  void initState() {
-    super.initState();
-    final httpClient = HttpClientWrapper();
-    _documentsService = DocumentsService(httpClient);
-    _authService = AuthService();
-    _documentsFuture = _fetchUserDocuments();
+@override
+void initState() {
+  super.initState();
 
-    // Check guest access
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkGuestAccess();
+  final httpClient = HttpClientWrapper();
+  _documentsService = DocumentsService(httpClient);
+  _authService = AuthService();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (!mounted) return;
+
+    setState(() {
+      _documentsFuture = _fetchUserDocuments();
     });
-  }
+
+    _checkGuestAccess();
+  });
+}
 
   void _checkGuestAccess() {
     final isGuest = Supabase.instance.client.auth.currentUser == null;
@@ -194,6 +199,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       body: FutureBuilder<UserDocumentsResponse>(
         future: _documentsFuture,
         builder: (context, snapshot) {
+                    if (_documentsFuture == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }

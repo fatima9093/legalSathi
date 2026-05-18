@@ -30,6 +30,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenWidth < 500;
+    final isMobile = screenWidth < 600;
+    final loc = AppLocalizations.of(context)!;
+
+    // Responsive font sizes
+    final titleFontSize = isSmallScreen ? 24.0 : 28.0;
+    final welcomeFontSize = isSmallScreen ? 12.0 : 14.0;
+    final categoryTitleSize = isSmallScreen ? 11.0 : 13.0;
+    final categorySubtitleSize = isSmallScreen ? 9.0 : 10.0;
+    final quickActionLabelSize = isSmallScreen ? 9.0 : 10.0;
+
+    // Responsive spacing
+    final horizontalPadding = isSmallScreen ? 12.0 : 16.0;
+    final verticalSpacing = isSmallScreen ? 12.0 : 16.0;
+    final cardPadding = isSmallScreen ? 10.0 : 12.0;
+
     return StreamBuilder<AppUser?>(
       stream: _authService.authStateChanges,
       initialData: _authService.currentUser,
@@ -44,7 +62,11 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: SizedBox.shrink(),
             actions: [
               IconButton(
-                icon: const Icon(Icons.notifications_none, color: Colors.black),
+                icon: Icon(
+                  Icons.notifications_none,
+                  color: Colors.black,
+                  size: isSmallScreen ? 22 : 24,
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -55,7 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.person_outline, color: Colors.black),
+                icon: Icon(
+                  Icons.person_outline,
+                  color: Colors.black,
+                  size: isSmallScreen ? 22 : 24,
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -73,17 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: horizontalPadding,
+                    vertical: isSmallScreen ? 6 : 8,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Legal Sathi',
+                      Text(
+                        loc.appName,
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -91,9 +117,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 4),
                       Text(
                         user != null
-                            ? 'Welcome, ${user.displayName ?? user.email?.split('@').first ?? 'User'}'
-                            : AppLocalizations.of(context)!.welcome,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                            ? '${loc.welcome}, ${user.displayName ?? user.email?.split('@').first ?? loc.user}'
+                            : loc.welcome,
+                        style: TextStyle(
+                          fontSize: welcomeFontSize,
+                          color: Colors.grey[600],
+                          height: 1.3,
+                        ),
                       ),
                       if (user != null)
                         TextButton(
@@ -140,10 +170,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             }
                           },
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 0,
+                              vertical: 4,
+                            ),
+                          ),
                           child: Text(
                             AppLocalizations.of(context)!.logout,
-                            style: const TextStyle(
-                              fontSize: 12,
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 11 : 12,
                               color: Colors.red,
                             ),
                           ),
@@ -151,39 +187,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: verticalSpacing),
 
                 // Guest Message
                 if (user == null)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                    ),
                     child: Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFF00401A),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Welcome as Guest',
-                            style: const TextStyle(
-                              fontSize: 16,
+                            loc.welcomeAsGuest,
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 14 : 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: isSmallScreen ? 6 : 8),
                           Text(
-                            'Sign up to unlock full features, save documents, and track your cases.',
+                           loc.guestDescription,
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: isSmallScreen ? 12 : 13,
                               color: Colors.white.withValues(alpha: 0.9),
                               height: 1.5,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: isSmallScreen ? 8 : 12),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.pushReplacementNamed(
@@ -194,16 +232,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: const Color(0xFF00401A),
-                              minimumSize: const Size(double.infinity, 40),
+                              minimumSize: Size(
+                                double.infinity,
+                                isSmallScreen ? 36 : 40,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: const Text(
-                              'Sign Up Now',
+                            child: Text(
+                             loc.signUpNow,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: isSmallScreen ? 12 : 14,
                               ),
                             ),
                           ),
@@ -211,11 +252,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                const SizedBox(height: 16),
+                SizedBox(height: verticalSpacing),
 
                 // Search Bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -243,51 +284,60 @@ class _HomeScreenState extends State<HomeScreen> {
                           hintText: AppLocalizations.of(
                             context,
                           )!.askALegalQuestion,
-                          hintStyle: TextStyle(color: Colors.grey[400]),
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: isSmallScreen ? 12 : 14,
+                          ),
                           prefixIcon: Icon(
                             Icons.search,
                             color: Colors.grey[400],
+                            size: isSmallScreen ? 20 : 24,
                           ),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12,
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: isSmallScreen ? 10 : 12,
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: verticalSpacing),
 
                 // Legal Categories
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: Text(
                     AppLocalizations.of(context)!.legalCategoies,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 16 : 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: isSmallScreen ? 10 : 12),
 
                 // Category Cards Grid
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: GridView.count(
-                    crossAxisCount: 2,
+                    crossAxisCount: isSmallScreen ? 1 : 2,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
+                    mainAxisSpacing: isSmallScreen ? 12 : 16,
+                    crossAxisSpacing: isSmallScreen ? 12 : 16,
+                    childAspectRatio: isSmallScreen ? 2.2 : 1.8,
                     children: [
                       _buildCategoryButton(
                         title: 'Women\nHarrassment',
                         subtitle: 'Protection laws and\ncomplaint',
                         urduText: 'خواتین کی جنسی و زبانی زیادتی',
                         icon: Icons.shield,
+                        isSmall: isSmallScreen,
+                        categoryTitleSize: categoryTitleSize,
+                        categorySubtitleSize: categorySubtitleSize,
+                        cardPadding: cardPadding,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -303,6 +353,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: 'Traffic violations\nand fines',
                         urduText: 'ٹریفک قوانین',
                         icon: Icons.directions_car,
+                        isSmall: isSmallScreen,
+                        categoryTitleSize: categoryTitleSize,
+                        categorySubtitleSize: categorySubtitleSize,
+                        cardPadding: cardPadding,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -318,6 +372,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: 'Employment rights\nand wages',
                         urduText: 'مزدوری حقوق',
                         icon: Icons.business_center,
+                        isSmall: isSmallScreen,
+                        categoryTitleSize: categoryTitleSize,
+                        categorySubtitleSize: categorySubtitleSize,
+                        cardPadding: cardPadding,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -332,6 +390,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: 'Online harassment\nand digital crimes',
                         urduText: 'سائبر جرائم',
                         icon: Icons.security,
+                        isSmall: isSmallScreen,
+                        categoryTitleSize: categoryTitleSize,
+                        categorySubtitleSize: categorySubtitleSize,
+                        cardPadding: cardPadding,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -345,21 +407,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: verticalSpacing),
 
                 // Quick Actions
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: GridView.count(
-                    crossAxisCount: 4,
+                    crossAxisCount: isSmallScreen ? 2 : 4,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
+                    mainAxisSpacing: isSmallScreen ? 10 : 12,
+                    crossAxisSpacing: isSmallScreen ? 10 : 12,
+                    childAspectRatio: 1.0,
                     children: [
                       _buildQuickAction(
                         AppLocalizations.of(context)!.askAi,
                         Icons.chat_bubble_outline,
+                        isSmall: isSmallScreen,
+                        fontSize: quickActionLabelSize,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -372,6 +437,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildQuickAction(
                         AppLocalizations.of(context)!.uploadEvidence,
                         Icons.camera_alt_outlined,
+                        isSmall: isSmallScreen,
+                        fontSize: quickActionLabelSize,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -385,6 +452,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildQuickAction(
                         AppLocalizations.of(context)!.draftDocument,
                         Icons.local_offer_outlined,
+                        isSmall: isSmallScreen,
+                        fontSize: quickActionLabelSize,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -402,6 +471,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       _buildQuickAction(
                         AppLocalizations.of(context)!.simulate,
                         Icons.play_circle_outline,
+                        isSmall: isSmallScreen,
+                        fontSize: quickActionLabelSize,
                         onTap: () {
                           Navigator.push(
                             context,
@@ -417,24 +488,24 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: verticalSpacing),
 
                 // Recent Activity
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: Text(
                     AppLocalizations.of(context)!.recentActivity,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 16 : 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: isSmallScreen ? 10 : 12),
 
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: FutureBuilder(
                     future: _activityService.getRecentActivities(limit: 3),
                     builder: (context, snapshot) {
@@ -478,31 +549,31 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
                                 Icons.history,
-                                size: 40,
+                                size: isSmallScreen ? 32 : 40,
                                 color: Colors.grey[400],
                               ),
-                              const SizedBox(height: 12),
+                              SizedBox(height: isSmallScreen ? 8 : 12),
                               Text(
-                                'No Recent Activity',
+                                loc.noRecentActivity,
                                 style: TextStyle(
                                   color: Colors.grey[600],
-                                  fontSize: 14,
+                                  fontSize: isSmallScreen ? 12 : 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Your activities will appear here',
+                                loc.activitiesWillAppear,
                                 style: TextStyle(
                                   color: Colors.grey[400],
-                                  fontSize: 12,
+                                  fontSize: isSmallScreen ? 11 : 12,
                                 ),
                               ),
                             ],
@@ -516,16 +587,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           final activity = activities[index];
                           return Padding(
                             padding: EdgeInsets.only(
-                              bottom: index < activities.length - 1 ? 12 : 0,
+                              bottom: index < activities.length - 1
+                                  ? (isSmallScreen ? 10 : 12)
+                                  : 0,
                             ),
-                            child: _buildActivityCard(activity),
+                            child: _buildActivityCard(activity, isSmallScreen),
                           );
                         }),
                       );
                     },
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: verticalSpacing),
               ],
             ),
           ),
@@ -569,19 +642,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
             },
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            items: [
+              BottomNavigationBarItem(icon: const Icon(Icons.home), label: loc.home),
               BottomNavigationBarItem(
-                icon: Icon(Icons.chat_bubble_outline),
-                label: 'Chat',
+                icon: const Icon(Icons.chat_bubble_outline),
+                label: loc.chat,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.folder_outlined),
-                label: 'Documents',
+                icon: const Icon(Icons.folder_outlined),
+                label: loc.documents,
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline),
-                label: 'Profile',
+                icon: const Icon(Icons.person_outline),
+                label: loc.profile,
               ),
             ],
             type: BottomNavigationBarType.fixed,
@@ -599,6 +672,10 @@ class _HomeScreenState extends State<HomeScreen> {
     required String urduText,
     required IconData icon,
     required VoidCallback onTap,
+    required bool isSmall,
+    required double categoryTitleSize,
+    required double categorySubtitleSize,
+    required double cardPadding,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -614,67 +691,118 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: const Color(0xFF00401A),
-                borderRadius: BorderRadius.circular(12),
+        padding: EdgeInsets.all(cardPadding),
+        child: isSmall
+            ? Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF00401A),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          title.replaceAll('\n', ' '),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: categoryTitleSize,
+                            color: Colors.black,
+                            height: 1.2,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          urduText,
+                          style: TextStyle(
+                            fontSize: categorySubtitleSize - 1,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF00401A),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(icon, color: Colors.white, size: 24),
+                  ),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: categoryTitleSize,
+                        color: Colors.black,
+                        height: 1.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Flexible(
+                    child: Text(
+                      urduText,
+                      style: TextStyle(
+                        fontSize: categorySubtitleSize,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Flexible(
+                    child: Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: categorySubtitleSize,
+                        color: Colors.grey[600],
+                        height: 1.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-              child: Icon(icon, color: Colors.white, size: 24),
-            ),
-            const SizedBox(height: 8),
-            Flexible(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: Colors.black,
-                  height: 1.2,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Flexible(
-              child: Text(
-                urduText,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Flexible(
-              child: Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[600],
-                  height: 1.2,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  Widget _buildQuickAction(String label, IconData icon, {VoidCallback? onTap}) {
+  Widget _buildQuickAction(
+    String label,
+    IconData icon, {
+    VoidCallback? onTap,
+    required bool isSmall,
+    required double fontSize,
+  }) {
     return GestureDetector(
       onTap: onTap ?? () {},
       child: Container(
@@ -692,15 +820,21 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: const Color(0xFF00401A), size: 28),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
+            Icon(icon, color: const Color(0xFF00401A), size: isSmall ? 24 : 28),
+            SizedBox(height: isSmall ? 6 : 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                  height: 1.2,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -710,7 +844,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Build a single recent activity card
-  Widget _buildActivityCard(RecentActivityModel activity) {
+  Widget _buildActivityCard(RecentActivityModel activity, bool isSmallScreen) {
     // Determine the icon based on activity type
     IconData iconData;
     Color iconBgColor = const Color(0xFF00401A).withValues(alpha: 0.1);
@@ -755,37 +889,44 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: isSmallScreen ? 36 : 40,
+            height: isSmallScreen ? 36 : 40,
             decoration: BoxDecoration(
               color: iconBgColor,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(iconData, color: iconColor, size: 20),
+            child: Icon(
+              iconData,
+              color: iconColor,
+              size: isSmallScreen ? 18 : 20,
+            ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: isSmallScreen ? 10 : 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   activity.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: isSmallScreen ? 12 : 14,
                     color: Colors.black,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: isSmallScreen ? 2 : 4),
                 Text(
                   _formatTimestamp(activity.timestamp),
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: isSmallScreen ? 11 : 12,
+                  ),
                 ),
               ],
             ),
@@ -801,7 +942,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final difference = now.difference(timestamp);
 
     if (difference.inMinutes < 1) {
-      return 'Just now';
+      return AppLocalizations.of(context)!.justNow;
     } else if (difference.inMinutes < 60) {
       return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {

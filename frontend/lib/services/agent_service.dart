@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:front_end/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 // ---------------------------------------------------------------------------
@@ -177,8 +178,8 @@ class AgentResponse {
 /// The [onStageChanged] callback is invoked when the pipeline progresses
 /// through its stages so the UI can reflect real-time status.
 class AgentService {
-  static const String _baseUrl = 'http://localhost:8000';
-  static const String _agentAskUrl = '$_baseUrl/api/ask/agent';
+  static String get _baseUrl => ApiConfig.baseUrl;
+  static String get _agentAskUrl => '${ApiConfig.apiBaseUrl}/ask/agent';
 
   /// Valid module keys accepted by the backend.
   static const Map<String, String> moduleLabels = {

@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
+import 'package:front_end/services/supabase_deep_link_handler.dart';
+import 'package:front_end/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -14,7 +17,17 @@ import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnonKey);
+  await Supabase.initialize(
+    url: supabaseUrl,
+    anonKey: supabaseAnonKey,
+    authOptions: const FlutterAuthClientOptions(
+      authFlowType: AuthFlowType.pkce,
+    ),
+  );
+  AuthService.initializeSessionExpiryMonitoring();
+  if (!kIsWeb) {
+    await SupabaseDeepLinkHandler.init();
+  }
   runApp(
     ChangeNotifierProvider(
       create: (_) => LanguageProvider()..loadSavedLanguage(),

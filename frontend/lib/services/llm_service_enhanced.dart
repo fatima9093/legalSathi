@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:front_end/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 /// Source information from legal documents
@@ -115,13 +116,9 @@ class LegalResponse {
 }
 
 class LlmService {
-  // Backend RAG API endpoint
-  // Change this to your backend URL
-  // - For local development: http://localhost:8000
-  // - For deployed backend: https://your-backend-url.com
-  static const String _baseUrl = 'http://localhost:8000';
-  static const String _askUrl = '$_baseUrl/api/ask';
-  static const String _healthUrl = _baseUrl;
+  static String get _baseUrl => ApiConfig.baseUrl;
+  static String get _askUrl => ApiConfig.askUrl;
+  static String get _healthUrl => ApiConfig.baseUrl;
 
   /// Send message to enhanced RAG backend and get detailed response
   ///

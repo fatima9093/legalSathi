@@ -16,6 +16,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
   final String accusedName;
   final String accusedDesignation;
   final String witnessNames;
+  final List<String>? evidenceFiles;
 
   const ComplaintPreviewScreen({
     super.key,
@@ -32,6 +33,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
     required this.accusedName,
     required this.accusedDesignation,
     required this.witnessNames,
+    this.evidenceFiles,
   });
 
   @override
@@ -47,7 +49,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          loc.internalComplaint,
+          loc.ombudspersonComplaint,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -91,7 +93,7 @@ class ComplaintPreviewScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          loc.internalComplaint,
+                          loc.ombudspersonComplaint,
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
@@ -223,6 +225,28 @@ class ComplaintPreviewScreen extends StatelessWidget {
                             color: Colors.black87,
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        if (evidenceFiles != null && evidenceFiles!.isNotEmpty)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 12),
+                              Text(
+                                loc.uploadEvidence,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF00401A),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              for (final name in evidenceFiles!)
+                                Text(
+                                  '- $name',
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                            ],
+                          ),
                       ],
                     ),
                   ),

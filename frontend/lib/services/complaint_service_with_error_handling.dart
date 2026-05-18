@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/config/api_config.dart';
 import 'package:front_end/models/error_models.dart';
 import 'package:front_end/services/api_service.dart';
 import 'package:front_end/services/error_handler_service.dart';
@@ -23,7 +24,7 @@ class ComplaintServiceWithErrorHandling {
 
   final ApiService _apiService = ApiService();
 
-  static const String _baseUrl = 'http://localhost:8000/api';
+  static String get _baseUrl => ApiConfig.apiBaseUrl;
 
   /// Submit complaint with error handling and retry
   Future<ApiResult<Map<String, dynamic>>> submitComplaint({

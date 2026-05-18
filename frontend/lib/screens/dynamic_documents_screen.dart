@@ -29,26 +29,36 @@ class _DynamicDocumentsScreenState extends State<DynamicDocumentsScreen>
     DocumentSourceModule.trafficLaws,
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    final httpClient = HttpClientWrapper();
-    _documentService = DocumentAggregationService(httpClient);
-    _tabController = TabController(length: _modules.length + 1, vsync: this);
-    _documentsFuture = _documentService.getAllDocuments().then((result) {
-      return result.when(
-        success: (data) {
-          _cachedResponse = data;
-          return data;
-        },
-        error: (message) {
-          throw Exception(message);
-        },
-      );
-    });
+@override
+void initState() {
+  super.initState();
 
+  final httpClient = HttpClientWrapper();
+
+  _documentService = DocumentAggregationService(httpClient);
+
+  _tabController = TabController(
+    length: _modules.length + 1,
+    vsync: this,
+  );
+
+  _documentsFuture = _documentService.getAllDocuments().then((result) {
+    return result.when(
+      success: (data) {
+        _cachedResponse = data;
+        return data;
+      },
+      error: (message) {
+        throw Exception(message);
+      },
+    );
+  });
+
+  // FIXED PART
+  WidgetsBinding.instance.addPostFrameCallback((_) {
     _checkGuestAccess();
-  }
+  });
+}
 
   @override
   void dispose() {

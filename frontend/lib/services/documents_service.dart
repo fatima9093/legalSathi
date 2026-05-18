@@ -1,3 +1,4 @@
+import 'package:front_end/config/api_config.dart';
 import 'package:front_end/services/http_client_wrapper.dart';
 import 'package:front_end/models/error_models.dart';
 
@@ -145,7 +146,7 @@ class AllDocuments {
 
 class DocumentsService {
   final HttpClientWrapper _httpClient;
-  final String _baseUrl = 'http://localhost:8000';
+  String get _baseUrl => ApiConfig.baseUrl;
 
   DocumentsService(this._httpClient);
 

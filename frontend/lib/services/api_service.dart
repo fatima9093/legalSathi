@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/config/api_config.dart';
 import 'package:front_end/models/error_models.dart';
 import 'package:front_end/services/error_handler_service.dart';
 import 'package:front_end/services/http_client_wrapper.dart';
@@ -16,8 +17,7 @@ class ApiService {
 
   final ErrorHandlerService _errorHandler = ErrorHandlerService();
 
-  // Base URL - update this to your backend
-  static const String baseUrl = 'http://localhost:8000/api';
+  static String get baseUrl => ApiConfig.apiBaseUrl;
 
   /// Execute API call and show appropriate UI feedback
   Future<T?> executeWithUI<T>(

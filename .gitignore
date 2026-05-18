@@ -1,6 +1,7 @@
 # Python
 Backend/.venv/
 Backend/venv/
+Backend/chroma_db/
 .venv/
 venv/
 env/
@@ -31,8 +32,10 @@ Backend/.env
 frontend/.env
 
 venv/
+.venv/
 env/
-.env
 Backend/venvsrrsrsr/
 __pycache__/
 *.pyc
+
+venv/

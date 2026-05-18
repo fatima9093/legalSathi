@@ -49,6 +49,22 @@
 	<string>Legal Sathi needs camera access to photograph your traffic challan for text recognition.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Legal Sathi needs photo library access to import challan images or PDFs.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.legalsathi.app</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>tel</string>

@@ -922,6 +922,13 @@ async def ask_question(request: QuestionRequest):
             if request.language and request.language != "English":
                 where_filter["language"] = request.language
         
+        # DEBUG: log computed filters and request for runtime diagnosis
+        try:
+            print("DBG /api/ask: module=", agent_module, ", language=", request.language, ", where_filter=", where_filter, ", request=", request.model_dump())
+        except Exception:
+            # Best-effort logging — don't fail the request because of logging
+            print("DBG /api/ask: (failed to serialize request)", "module=", agent_module, "language=", request.language, "where_filter=", where_filter)
+
         results = collection.query(
             query_texts=[query_with_attachment],
             n_results=5,  # Get top 5 results
@@ -1272,6 +1279,9 @@ async def ask_question_stream(request: QuestionRequest, raw_request: FastAPIRequ
                 "last_updated": None,
             }
 
+            # Send an early SSE byte so the connection stays open while retrieval runs.
+            yield ": keepalive\n\n"
+
             system_prompt = (
                 "You are Legal Sathi, a helpful AI assistant for Pakistani law. "
                 "Answer ONLY the user's exact question concisely. "
@@ -1292,6 +1302,12 @@ async def ask_question_stream(request: QuestionRequest, raw_request: FastAPIRequ
                     if request.language and request.language != "English":
                         where_filter["language"] = request.language
                 
+                # DEBUG: log computed filters and request for runtime diagnosis (streaming)
+                try:
+                    print("DBG /api/ask/stream: module=", agent_module, ", language=", request.language, ", where_filter=", where_filter, ", request=", request.model_dump())
+                except Exception:
+                    print("DBG /api/ask/stream: (failed to serialize request)", "module=", agent_module, "language=", request.language, "where_filter=", where_filter)
+
                 results = collection.query(
                     query_texts=[query_with_attachment],
                     n_results=5,

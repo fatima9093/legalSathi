@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:front_end/config/api_config.dart';
 import 'package:http/http.dart' as http;
 
 /// Backend analysis of OCR text from screenshots (domain, tags, indicative laws).
@@ -50,13 +51,13 @@ class EvidenceAnalysisResult {
         'Could not reach analysis server. Verify laws with an official source or lawyer.',
       ],
       summary:
-          'Connect the Legal Sathi backend (localhost:8000) for AI classification. Text preview: $short',
+          'Connect the Legal Sathi backend (${ApiConfig.displayAddress}) for AI classification. Text preview: $short',
     );
   }
 }
 
 class EvidenceAnalysisService {
-  static const String _url = 'http://localhost:8000/api/evidence/analyze-text';
+  static String get _url => '${ApiConfig.apiBaseUrl}/evidence/analyze-text';
 
   static Future<EvidenceAnalysisResult> analyze(
     String extractedText, {

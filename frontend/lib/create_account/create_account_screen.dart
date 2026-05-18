@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
 import 'package:front_end/home_screen.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/widgets/google_sign_in_button.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -19,6 +22,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+
+  bool get _isBusy => _isLoading || _isGoogleLoading;
+
+  Future<void> _handleGoogleSignIn() async {
+    await handleGoogleSignIn(
+      context,
+      authService: _authService,
+      setLoading: (loading) => setState(() => _isGoogleLoading = loading),
+      isMounted: () => mounted,
+    );
+  }
 
   @override
   void dispose() {
@@ -32,47 +47,47 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   // Validation
   String? _validateFullName(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Please enter your full name';
+      return AppLocalizations.of(context)!.pleaseEnterFullName;
     }
     if (value.trim().length < 3) {
-      return 'Name must be at least 3 characters';
+      return AppLocalizations.of(context)!.nameMinCharacters;
     }
     return null;
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Please enter your email';
+      return AppLocalizations.of(context)!.pleaseEnterEmail;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value.trim())) {
-      return 'Please enter a valid email';
+      return AppLocalizations.of(context)!.invalidEmail;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter a password';
+       return AppLocalizations.of(context)!.pleaseEnterPassword;
     }
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+return AppLocalizations.of(context)!.passwordMinCharacters;
     }
     if (!RegExp(r'[A-Z]').hasMatch(value) ||
         !RegExp(r'[a-z]').hasMatch(value) ||
         !RegExp(r'[0-9]').hasMatch(value) ||
         !RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
-      return 'Use uppercase, lowercase, number, and symbol';
+     return AppLocalizations.of(context)!.passwordComplexity;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
+     return AppLocalizations.of(context)!.pleaseConfirmPassword;
     }
     if (value != _passwordController.text) {
-      return 'Passwords do not match';
+      return AppLocalizations.of(context)!.passwordsDoNotMatch;
     }
     return null;
   }
@@ -129,6 +144,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -138,8 +154,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Create Account',
+        title:  Text(
+          loc.createAccount,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -167,8 +183,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     const SizedBox(height: 20),
 
                     // Title
-                    const Text(
-                      'Join Legal Sathi',
+                     Text(
+                       loc.joinLegalSathi,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -179,8 +195,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     const SizedBox(height: 12),
 
                     // Subtitle
-                    const Text(
-                      'Create an account to save your documents\nand chat history',
+                     Text(
+                      loc.createAccountSubtitle,
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.black54,
@@ -188,11 +204,37 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+
+                    GoogleSignInButton(
+                      onPressed: _handleGoogleSignIn,
+                      isLoading: _isGoogleLoading,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'or sign up with email',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
 
                     // Full Name label
-                    const Text(
-                      'Full Name',
+                     Text(
+                      loc.fullName,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -239,8 +281,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     const SizedBox(height: 20),
 
                     // Email label
-                    const Text(
-                      'Email',
+                     Text(
+                      loc.email,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -256,7 +298,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       keyboardType: TextInputType.emailAddress,
                       validator: _validateEmail,
                       decoration: InputDecoration(
-                        hintText: 'Enter your email',
+                        hintText: loc.enterEmail,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 14,
@@ -288,8 +330,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     const SizedBox(height: 20),
 
                     // Password label
-                    const Text(
-                      'Password',
+                     Text(
+                      loc.password,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -305,7 +347,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       obscureText: !_isPasswordVisible,
                       validator: _validatePassword,
                       decoration: InputDecoration(
-                        hintText: 'Create a password',
+                        hintText: loc.createPassword,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 14,
@@ -349,7 +391,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                     const SizedBox(height: 10),
                     Text(
-                      'Password must be 6+ characters and include uppercase, lowercase, number, and symbol.',
+                      loc.passwordRequirements,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
@@ -359,8 +401,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     const SizedBox(height: 20),
 
                     // Confirm Password label
-                    const Text(
-                      'Confirm Password',
+                     Text(
+                      loc.confirmPassword,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -376,7 +418,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       obscureText: !_isConfirmPasswordVisible,
                       validator: _validateConfirmPassword,
                       decoration: InputDecoration(
-                        hintText: 'Confirm your password',
+                        hintText: loc.confirmYourPassword,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 14,
@@ -423,7 +465,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
                     // Create Account Button
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _handleSignUp,
+                      onPressed: _isBusy ? null : _handleSignUp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00401A),
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -440,8 +482,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text(
-                              'Create Account',
+                          :  Text(
+                              loc.createAccount,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -462,11 +504,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           height: 1.5,
                         ),
                         children: [
-                          const TextSpan(
-                            text: 'By signing up, you agree to our ',
+                           TextSpan(
+                            text: loc.bySigningUp,
                           ),
                           TextSpan(
-                            text: 'Terms of Service',
+                            text:loc.termsOfService,
                             style: const TextStyle(
                               color: Color(0xFF00401A),
                               fontWeight: FontWeight.w600,
@@ -474,7 +516,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           ),
                           const TextSpan(text: ' and '),
                           TextSpan(
-                            text: 'Privacy Policy',
+                            text: loc.privacyPolicy,
                             style: const TextStyle(
                               color: Color(0xFF00401A),
                               fontWeight: FontWeight.w600,

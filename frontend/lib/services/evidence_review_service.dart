@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:front_end/config/api_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -28,7 +29,7 @@ class EvidenceReviewResult {
 }
 
 class EvidenceReviewService {
-  static const String _baseUrl = 'http://localhost:8000';
+  static String get _baseUrl => ApiConfig.baseUrl;
 
   /// Upload files to backend for AI evidence review.
   /// Supports images, PDF, audio, video. Returns strength, summary, suggestions.

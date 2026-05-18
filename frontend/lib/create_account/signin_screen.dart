@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
 import 'package:front_end/create_account/create_account_screen.dart';
 import 'package:front_end/home_screen.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/widgets/google_sign_in_button.dart';
+import 'package:front_end/l10n/app_localizations.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -17,6 +20,9 @@ class _SignInScreenState extends State<SignInScreen> {
   final AuthService _authService = AuthService();
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
+
+  bool get _isBusy => _isLoading || _isGoogleLoading;
 
   @override
   void dispose() {
@@ -26,29 +32,10 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   // Validation
-  String? _validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Please enter your email';
-    }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value.trim())) {
-      return 'Please enter a valid email';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your password';
-    }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters';
-    }
-    return null;
-  }
 
   // Handle Sign In
   Future<void> _handleSignIn() async {
+    final loc = AppLocalizations.of(context)!;
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
         _isLoading = true;
@@ -105,7 +92,7 @@ class _SignInScreenState extends State<SignInScreen> {
             duration: const Duration(seconds: 4),
             action: isUserNotFound
                 ? SnackBarAction(
-                    label: 'Sign Up',
+                    label: loc.signUp,
                     textColor: Colors.white,
                     onPressed: () {
                       Navigator.push(
@@ -123,6 +110,15 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
+  Future<void> _handleGoogleSignIn() async {
+    await handleGoogleSignIn(
+      context,
+      authService: _authService,
+      setLoading: (loading) => setState(() => _isGoogleLoading = loading),
+      isMounted: () => mounted,
+    );
+  }
+
   // Handle Continue as Guest
   void _handleContinueAsGuest() {
     Navigator.pushReplacement(
@@ -133,12 +129,13 @@ class _SignInScreenState extends State<SignInScreen> {
 
   // Handle Forgot Password
   Future<void> _handleForgotPassword() async {
+    final loc = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
 
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter your email first'),
+         SnackBar(
+          content: Text(loc.enterEmailFirst),
           backgroundColor: Colors.orange,
         ),
       );
@@ -159,6 +156,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -199,8 +197,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 32),
 
                     // Welcome Back title
-                    const Text(
-                      'Welcome Back',
+                     Text(
+                      loc.welcomeBack,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 26,
@@ -212,8 +210,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 8),
 
                     // Subtitle
-                    const Text(
-                      'Sign in to access your legal assistant',
+                     Text(
+                      loc.signInSubtitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
@@ -221,8 +219,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 40),
 
                     // Email label
-                    const Text(
-                      'Email',
+                     Text(
+                      loc.emailLabel,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -236,9 +234,21 @@ class _SignInScreenState extends State<SignInScreen> {
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      validator: _validateEmail,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return loc.emailRequired;
+                        }
+
+                        final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+
+                        if (!emailRegex.hasMatch(value.trim())) {
+                          return loc.emailInvalid;
+                        }
+
+                        return null;
+                      },
                       decoration: InputDecoration(
-                        hintText: 'Enter your email',
+                        hintText: loc.emailHint,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 14,
@@ -270,8 +280,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     const SizedBox(height: 20),
 
                     // Password label
-                    const Text(
-                      'Password',
+                     Text(
+                      loc.passwordLabel,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -285,9 +295,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     TextFormField(
                       controller: _passwordController,
                       obscureText: !_isPasswordVisible,
-                      validator: _validatePassword,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return loc.passwordRequired;
+                        }
+
+                        if (value.length < 8) {
+                          return loc.passwordRequired;
+                        }
+
+                        return null;
+                      },
                       decoration: InputDecoration(
-                        hintText: 'Enter your password',
+                        hintText: loc.passwordHint,
                         hintStyle: TextStyle(
                           color: Colors.grey.shade400,
                           fontSize: 14,
@@ -331,7 +351,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     const SizedBox(height: 10),
                     Text(
-                      'Use 8+ characters with uppercase, lowercase, number, and symbol.',
+                      loc.passwordRule,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
@@ -345,8 +365,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       alignment: Alignment.centerRight,
                       child: TextButton(
                         onPressed: _handleForgotPassword,
-                        child: const Text(
-                          'Forgot Password?',
+                        child:  Text(
+                          loc.forgotPassword,
                           style: TextStyle(
                             color: Colors.black87,
                             fontSize: 14,
@@ -358,9 +378,35 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     const SizedBox(height: 24),
 
+                    GoogleSignInButton(
+                      onPressed: _handleGoogleSignIn,
+                      isLoading: _isGoogleLoading,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            loc.orText,
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
                     // Sign In Button
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _handleSignIn,
+                      onPressed: _isBusy ? null : _handleSignIn,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00401A),
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -377,8 +423,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text(
-                              'Sign In',
+                          :  Text(
+                              loc.signIn,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -391,7 +437,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                     // Continue as Guest Button
                     OutlinedButton(
-                      onPressed: _isLoading ? null : _handleContinueAsGuest,
+                      onPressed: _isBusy ? null : _handleContinueAsGuest,
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: BorderSide(color: Colors.grey.shade300),
@@ -399,8 +445,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        'Continue as Guest',
+                      child:  Text(
+                        loc.continueAsGuest,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -415,8 +461,8 @@ class _SignInScreenState extends State<SignInScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          "Don't have an account?  ",
+                         Text(
+                          loc.noAccount,
                           style: TextStyle(color: Colors.grey, fontSize: 14),
                         ),
                         GestureDetector(
@@ -429,8 +475,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                             );
                           },
-                          child: const Text(
-                            'Sign Up',
+                          child:  Text(
+                           loc.signUp,
                             style: TextStyle(
                               color: Color(0xFF00401A),
                               fontSize: 14,
