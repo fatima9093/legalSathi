@@ -683,7 +683,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get fullName => 'پورا نام';
 
   @override
-  String get email => 'ای میل ایڈریس';
+  String get email => 'ای میل';
 
   @override
   String get password => 'پاس ورڈ';
@@ -707,7 +707,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get createAccount => 'اکاؤنٹ بنائیں';
 
   @override
-  String get signIn => 'سائن ان کریں';
+  String get signIn => 'سائن ان';
 
   @override
   String get forgotPassword => 'پاس ورڈ بھول گئے؟';
@@ -770,13 +770,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get joinLegalSathi => 'لیگل ساتھی میں شامل ہوں';
 
   @override
-  String get createAccountSubtitle => 'اپنی دستاویزات اور چیٹ ہسٹری کو محفوظ کرنے کے لیے ایک اکاؤنٹ بنائیں';
+  String get createAccountSubtitle => 'اپنے دستاویزات اور چیٹ ہسٹری محفوظ کرنے کے لیے اکاؤنٹ بنائیں';
 
   @override
   String get welcomeBack => 'خوش آمدید';
 
   @override
-  String get signInSubtitle => 'اپنے قانونی معاون تک رسائی کے لیے سائن ان کریں';
+  String get signInSubtitle => 'اپنے لیگل اسسٹنٹ تک رسائی کے لیے سائن ان کریں';
 
   @override
   String get enterFullName => 'اپنا پورا نام درج کریں';
@@ -785,19 +785,43 @@ class AppLocalizationsUr extends AppLocalizations {
   String get createPassword => 'پاس ورڈ بنائیں';
 
   @override
-  String get confirmYourPassword => 'اپنا پاس ورڈ درج کریں';
+  String get confirmYourPassword => 'اپنا پاس ورڈ دوبارہ درج کریں';
+
+  @override
+  String get continueWithGoogle => 'گوگل کے ساتھ جاری رکھیں';
 
   @override
   String get enterPassword => 'اپنا پاس ورڈ درج کریں';
 
   @override
-  String get continueAsGuest => 'مہمان کے طور پر جاری رکھیں';
+  String get continueAsGuest => 'بغیر اکاؤنٹ جاری رکھیں';
 
   @override
-  String get termsOfService => 'خدمات کی شرائط';
+  String get termsOfService => 'سروس کی شرائط';
 
   @override
-  String get privacyPolicy => 'رازداری کی پالیسی';
+  String get appName => 'لیگل ساتھی';
+
+  @override
+  String get user => 'صارف';
+
+  @override
+  String get welcomeAsGuest => 'بطور مہمان خوش آمدید';
+
+  @override
+  String get guestDescription => 'مکمل فیچرز، دستاویزات محفوظ کرنے اور کیسز ٹریک کرنے کیلئے سائن اپ کریں۔';
+
+  @override
+  String get signUpNow => 'ابھی سائن اپ کریں';
+
+  @override
+  String get activitiesWillAppear => 'آپ کی سرگرمیاں یہاں ظاہر ہوں گی';
+
+  @override
+  String get justNow => 'ابھی';
+
+  @override
+  String get privacyPolicy => 'پرائیویسی پالیسی';
 
   @override
   String get bySigningUpYouAgree => 'سائن اپ کرنے سے آپ ہماری رضامندی دیتے ہیں';
@@ -809,16 +833,16 @@ class AppLocalizationsUr extends AppLocalizations {
   String get passwordAtLeast6Chars => 'پاس ورڈ کم از کم 6 حروف ہونے چاہیں';
 
   @override
-  String get pleaseEnterFullName => 'براہ کرم اپنا مکمل نام درج کریں';
+  String get pleaseEnterFullName => 'براہ کرم اپنا پورا نام درج کریں';
 
   @override
   String get pleaseEnterEmail => 'براہ کرم اپنی ای میل درج کریں';
 
   @override
-  String get pleaseEnterPassword => 'براہ کرم اپنا پاس ورڈ درج کریں';
+  String get pleaseEnterPassword => 'براہ کرم پاس ورڈ درج کریں';
 
   @override
-  String get pleaseConfirmPassword => 'براہ کرم اپنے پاس ورڈ کی تصدیق کریں';
+  String get pleaseConfirmPassword => 'براہ کرم پاس ورڈ کی تصدیق کریں';
 
   @override
   String get pleaseEnterEmailFirst => 'پہلے اپنی ای میل درج کریں';
@@ -2415,7 +2439,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get invalidPhone => 'درست فون نمبر درج کریں';
 
   @override
-  String get invalidEmail => 'درست ای میل درج کریں';
+  String get invalidEmail => 'براہ کرم درست ای میل درج کریں';
 
   @override
   String get complaintSaved => 'آپ کی شکایت محفوظ ہو گئی ہے';
@@ -3262,7 +3286,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get selectWorkplaceLocation => 'اپنی ملازمت کی جگہ کا انتخاب کریں';
 
   @override
-  String get emailHint => 'your.email@example.com';
+  String get emailHint => 'اپنا ای میل درج کریں';
 
   @override
   String get orgHint => 'ادارے کا نام';
@@ -4292,4 +4316,106 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get defaultAnalysisSummary => 'فراہم کردہ شواہد سے رہنمائی تیار کی گئی ہے۔';
+
+  @override
+  String get guestFeatureTitle => 'Sign In Required';
+
+  @override
+  String get guestChatMessage => 'Chat with our AI legal assistant is only available for signed-in users. Create an account to save your conversations and access personalized guidance.';
+
+  @override
+  String get guestComplaintMessage => 'Filing complaints requires an account to safely store your information and track status. Sign in to get started.';
+
+  @override
+  String get guestDownloadMessage => 'Downloading and saving documents requires an account. Create an account to save your generated documents and access them anytime.';
+
+  @override
+  String get guestGenerateMessage => 'Generating documents requires an account to save your work. Sign in to generate and manage your legal documents.';
+
+  @override
+  String get guestSubmitMessage => 'Submitting forms requires an account. Sign in to submit your information and track your requests.';
+
+  @override
+  String get guestSaveMessage => 'Saving your work requires an account. Create an account to store your progress and access it later.';
+
+  @override
+  String get guestSimulatorMessage => 'Scenario simulation with personalized feedback requires an account. Sign in to track your learning progress.';
+
+  @override
+  String get continueExploring => 'Continue Exploring';
+
+  @override
+  String get signInToAccess => 'Sign In to Access This Feature';
+
+  @override
+  String get guestCanExplore => 'As a guest, you can explore all available information and resources. Sign in to unlock interactive features and save your work.';
+
+  @override
+  String get guestBannerTitle => 'Exploring as Guest';
+
+  @override
+  String get guestBannerMessage => 'You can view information, but services require sign in.';
+
+  @override
+  String get signInForFeatures => 'Sign In for Full Features';
+
+  @override
+  String get emailLabel => 'ای میل';
+
+  @override
+  String get passwordLabel => 'پاس ورڈ';
+
+  @override
+  String get passwordHint => 'اپنا پاس ورڈ درج کریں';
+
+  @override
+  String get passwordRule => 'کم از کم 8 حروف، بڑے/چھوٹے حروف، نمبر اور علامت استعمال کریں';
+
+  @override
+  String get noAccount => 'اکاؤنٹ نہیں ہے؟ ';
+
+  @override
+  String get signUp => 'رجسٹر کریں';
+
+  @override
+  String get enterEmail => 'اپنی ای میل درج کریں';
+
+  @override
+  String get orText => 'یا';
+
+  @override
+  String get passwordRequirements => 'پاس ورڈ کم از کم 6 حروف پر مشتمل ہو اور اس میں بڑے، چھوٹے حروف، نمبر اور سمبل شامل ہوں۔';
+
+  @override
+  String get bySigningUp => 'سائن اپ کرکے آپ ہماری ';
+
+  @override
+  String get andText => ' اور ';
+
+  @override
+  String get nameMinCharacters => 'نام کم از کم 3 حروف پر مشتمل ہونا چاہیے';
+
+  @override
+  String get passwordMinCharacters => 'پاس ورڈ کم از کم 6 حروف پر مشتمل ہونا چاہیے';
+
+  @override
+  String get passwordComplexity => 'بڑے، چھوٹے حروف، نمبر اور سمبل استعمال کریں';
+
+  @override
+  String get passwordsDoNotMatch => 'پاس ورڈ ایک جیسے نہیں ہیں';
+
+  @override
+  String get emailRequired => 'Please enter your email';
+
+  @override
+  String get emailInvalid => 'Please enter a valid email';
+
+  @override
+  String get passwordRequired => 'Please enter your password';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 8 characters';
+
+  @override
+  String get enterEmailFirst => 'Please enter your email first';
 }

@@ -262,7 +262,7 @@ abstract class AppLocalizations {
   /// No description provided for @noRecentActivity.
   ///
   /// In en, this message translates to:
-  /// **'No recent activity'**
+  /// **'No Recent Activity'**
   String get noRecentActivity;
 
   /// No description provided for @askAi.
@@ -1438,13 +1438,13 @@ abstract class AppLocalizations {
   /// No description provided for @fullName.
   ///
   /// In en, this message translates to:
-  /// **'Full name'**
+  /// **'Full Name'**
   String get fullName;
 
   /// No description provided for @email.
   ///
   /// In en, this message translates to:
-  /// **'Email Address'**
+  /// **'Email'**
   String get email;
 
   /// No description provided for @password.
@@ -1651,6 +1651,12 @@ abstract class AppLocalizations {
   /// **'Confirm your password'**
   String get confirmYourPassword;
 
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get continueWithGoogle;
+
   /// No description provided for @enterPassword.
   ///
   /// In en, this message translates to:
@@ -1668,6 +1674,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Terms of Service'**
   String get termsOfService;
+
+  /// No description provided for @appName.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Sathi'**
+  String get appName;
+
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// No description provided for @welcomeAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome as Guest'**
+  String get welcomeAsGuest;
+
+  /// No description provided for @guestDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up to unlock full features, save documents, and track your cases.'**
+  String get guestDescription;
+
+  /// No description provided for @signUpNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up Now'**
+  String get signUpNow;
+
+  /// No description provided for @activitiesWillAppear.
+  ///
+  /// In en, this message translates to:
+  /// **'Your activities will appear here'**
+  String get activitiesWillAppear;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
 
   /// No description provided for @privacyPolicy.
   ///
@@ -4864,7 +4912,7 @@ abstract class AppLocalizations {
   /// No description provided for @invalidEmail.
   ///
   /// In en, this message translates to:
-  /// **'Enter valid email'**
+  /// **'Please enter a valid email'**
   String get invalidEmail;
 
   /// No description provided for @complaintSaved.
@@ -6550,7 +6598,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailHint.
   ///
   /// In en, this message translates to:
-  /// **'your.email@example.com'**
+  /// **'Enter your email'**
   String get emailHint;
 
   /// No description provided for @orgHint.
@@ -8586,6 +8634,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Guidance generated from provided evidence.'**
   String get defaultAnalysisSummary;
+
+  /// No description provided for @guestFeatureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In Required'**
+  String get guestFeatureTitle;
+
+  /// No description provided for @guestChatMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with our AI legal assistant is only available for signed-in users. Create an account to save your conversations and access personalized guidance.'**
+  String get guestChatMessage;
+
+  /// No description provided for @guestComplaintMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Filing complaints requires an account to safely store your information and track status. Sign in to get started.'**
+  String get guestComplaintMessage;
+
+  /// No description provided for @guestDownloadMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading and saving documents requires an account. Create an account to save your generated documents and access them anytime.'**
+  String get guestDownloadMessage;
+
+  /// No description provided for @guestGenerateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating documents requires an account to save your work. Sign in to generate and manage your legal documents.'**
+  String get guestGenerateMessage;
+
+  /// No description provided for @guestSubmitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitting forms requires an account. Sign in to submit your information and track your requests.'**
+  String get guestSubmitMessage;
+
+  /// No description provided for @guestSaveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving your work requires an account. Create an account to store your progress and access it later.'**
+  String get guestSaveMessage;
+
+  /// No description provided for @guestSimulatorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Scenario simulation with personalized feedback requires an account. Sign in to track your learning progress.'**
+  String get guestSimulatorMessage;
+
+  /// No description provided for @continueExploring.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Exploring'**
+  String get continueExploring;
+
+  /// No description provided for @signInToAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In to Access This Feature'**
+  String get signInToAccess;
+
+  /// No description provided for @guestCanExplore.
+  ///
+  /// In en, this message translates to:
+  /// **'As a guest, you can explore all available information and resources. Sign in to unlock interactive features and save your work.'**
+  String get guestCanExplore;
+
+  /// No description provided for @guestBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exploring as Guest'**
+  String get guestBannerTitle;
+
+  /// No description provided for @guestBannerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can view information, but services require sign in.'**
+  String get guestBannerMessage;
+
+  /// No description provided for @signInForFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In for Full Features'**
+  String get signInForFeatures;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get emailLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// No description provided for @passwordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get passwordHint;
+
+  /// No description provided for @passwordRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 8+ characters with uppercase, lowercase, number, and symbol.'**
+  String get passwordRule;
+
+  /// No description provided for @noAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? '**
+  String get noAccount;
+
+  /// No description provided for @signUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUp;
+
+  /// No description provided for @enterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get enterEmail;
+
+  /// No description provided for @orText.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orText;
+
+  /// No description provided for @passwordRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be 6+ characters and include uppercase, lowercase, number, and symbol.'**
+  String get passwordRequirements;
+
+  /// No description provided for @bySigningUp.
+  ///
+  /// In en, this message translates to:
+  /// **'By signing up, you agree to our '**
+  String get bySigningUp;
+
+  /// No description provided for @andText.
+  ///
+  /// In en, this message translates to:
+  /// **' and '**
+  String get andText;
+
+  /// No description provided for @nameMinCharacters.
+  ///
+  /// In en, this message translates to:
+  /// **'Name must be at least 3 characters'**
+  String get nameMinCharacters;
+
+  /// No description provided for @passwordMinCharacters.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordMinCharacters;
+
+  /// No description provided for @passwordComplexity.
+  ///
+  /// In en, this message translates to:
+  /// **'Use uppercase, lowercase, number, and symbol'**
+  String get passwordComplexity;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get emailRequired;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get emailInvalid;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get passwordRequired;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @enterEmailFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email first'**
+  String get enterEmailFirst;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

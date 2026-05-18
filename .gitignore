@@ -31,8 +31,10 @@ Backend/.env
 frontend/.env
 
 venv/
+.venv/
 env/
-.env
 Backend/venvsrrsrsr/
 __pycache__/
 *.pyc
+
+venv/

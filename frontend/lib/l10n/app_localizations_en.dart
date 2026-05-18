@@ -90,7 +90,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recentActivity => 'Recent Activity';
 
   @override
-  String get noRecentActivity => 'No recent activity';
+  String get noRecentActivity => 'No Recent Activity';
 
   @override
   String get askAi => 'Ask AI';
@@ -680,10 +680,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uploadEvidenceDocuments => 'Upload Evidence Documents';
 
   @override
-  String get fullName => 'Full name';
+  String get fullName => 'Full Name';
 
   @override
-  String get email => 'Email Address';
+  String get email => 'Email';
 
   @override
   String get password => 'Password';
@@ -788,6 +788,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get confirmYourPassword => 'Confirm your password';
 
   @override
+  String get continueWithGoogle => 'Continue with Google';
+
+  @override
   String get enterPassword => 'Enter your password';
 
   @override
@@ -795,6 +798,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get termsOfService => 'Terms of Service';
+
+  @override
+  String get appName => 'Legal Sathi';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get welcomeAsGuest => 'Welcome as Guest';
+
+  @override
+  String get guestDescription => 'Sign up to unlock full features, save documents, and track your cases.';
+
+  @override
+  String get signUpNow => 'Sign Up Now';
+
+  @override
+  String get activitiesWillAppear => 'Your activities will appear here';
+
+  @override
+  String get justNow => 'Just now';
 
   @override
   String get privacyPolicy => 'Privacy Policy';
@@ -2415,7 +2439,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidPhone => 'Enter a valid phone number (at least 10 digits)';
 
   @override
-  String get invalidEmail => 'Enter valid email';
+  String get invalidEmail => 'Please enter a valid email';
 
   @override
   String get complaintSaved => 'Complaint saved to your account.';
@@ -3262,7 +3286,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectWorkplaceLocation => 'Select where your workplace is located';
 
   @override
-  String get emailHint => 'your.email@example.com';
+  String get emailHint => 'Enter your email';
 
   @override
   String get orgHint => 'Organization ka naam';
@@ -4292,4 +4316,106 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get defaultAnalysisSummary => 'Guidance generated from provided evidence.';
+
+  @override
+  String get guestFeatureTitle => 'Sign In Required';
+
+  @override
+  String get guestChatMessage => 'Chat with our AI legal assistant is only available for signed-in users. Create an account to save your conversations and access personalized guidance.';
+
+  @override
+  String get guestComplaintMessage => 'Filing complaints requires an account to safely store your information and track status. Sign in to get started.';
+
+  @override
+  String get guestDownloadMessage => 'Downloading and saving documents requires an account. Create an account to save your generated documents and access them anytime.';
+
+  @override
+  String get guestGenerateMessage => 'Generating documents requires an account to save your work. Sign in to generate and manage your legal documents.';
+
+  @override
+  String get guestSubmitMessage => 'Submitting forms requires an account. Sign in to submit your information and track your requests.';
+
+  @override
+  String get guestSaveMessage => 'Saving your work requires an account. Create an account to store your progress and access it later.';
+
+  @override
+  String get guestSimulatorMessage => 'Scenario simulation with personalized feedback requires an account. Sign in to track your learning progress.';
+
+  @override
+  String get continueExploring => 'Continue Exploring';
+
+  @override
+  String get signInToAccess => 'Sign In to Access This Feature';
+
+  @override
+  String get guestCanExplore => 'As a guest, you can explore all available information and resources. Sign in to unlock interactive features and save your work.';
+
+  @override
+  String get guestBannerTitle => 'Exploring as Guest';
+
+  @override
+  String get guestBannerMessage => 'You can view information, but services require sign in.';
+
+  @override
+  String get signInForFeatures => 'Sign In for Full Features';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get passwordHint => 'Enter your password';
+
+  @override
+  String get passwordRule => 'Use 8+ characters with uppercase, lowercase, number, and symbol.';
+
+  @override
+  String get noAccount => 'Don\'t have an account? ';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get enterEmail => 'Enter your email';
+
+  @override
+  String get orText => 'or';
+
+  @override
+  String get passwordRequirements => 'Password must be 6+ characters and include uppercase, lowercase, number, and symbol.';
+
+  @override
+  String get bySigningUp => 'By signing up, you agree to our ';
+
+  @override
+  String get andText => ' and ';
+
+  @override
+  String get nameMinCharacters => 'Name must be at least 3 characters';
+
+  @override
+  String get passwordMinCharacters => 'Password must be at least 6 characters';
+
+  @override
+  String get passwordComplexity => 'Use uppercase, lowercase, number, and symbol';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get emailRequired => 'Please enter your email';
+
+  @override
+  String get emailInvalid => 'Please enter a valid email';
+
+  @override
+  String get passwordRequired => 'Please enter your password';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 8 characters';
+
+  @override
+  String get enterEmailFirst => 'Please enter your email first';
 }

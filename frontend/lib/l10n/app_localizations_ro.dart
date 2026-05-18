@@ -51,7 +51,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get delete => 'khatam karein';
 
   @override
-  String get documents => 'Dastawaizaat';
+  String get documents => 'Documents';
 
   @override
   String get profile => 'Profile';
@@ -90,7 +90,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get recentActivity => 'haalia sargrmiyan';
 
   @override
-  String get noRecentActivity => 'koi haalia sargrmi nahi hai';
+  String get noRecentActivity => 'Koi haal hi ki sargarmi nahi';
 
   @override
   String get askAi => 'Ai se poochein';
@@ -680,16 +680,16 @@ class AppLocalizationsRo extends AppLocalizations {
   String get uploadEvidenceDocuments => 'Saboot Ki Dastawaiz Upload Karein';
 
   @override
-  String get fullName => 'Poora naam';
+  String get fullName => 'Poora Naam';
 
   @override
-  String get email => 'Email Address';
+  String get email => 'Email';
 
   @override
   String get password => 'Password';
 
   @override
-  String get confirmPassword => 'Password Ki Tasdeeq Karein';
+  String get confirmPassword => 'Password Confirm Karein';
 
   @override
   String get fieldRequired => 'Yeh Field Zaruri Hai';
@@ -704,13 +704,13 @@ class AppLocalizationsRo extends AppLocalizations {
   String get minimumCharacters => 'Kam Az Kam 6 Haroof Hone Chahiye';
 
   @override
-  String get createAccount => 'Account Banaye';
+  String get createAccount => 'Account Banayein';
 
   @override
-  String get signIn => 'Sign In Karein';
+  String get signIn => 'Sign In';
 
   @override
-  String get forgotPassword => 'Password Bhul Gaye?';
+  String get forgotPassword => 'Password bhool gaye?';
 
   @override
   String get alreadyHaveAccount => 'Pehle Se Account Hai?';
@@ -767,37 +767,61 @@ class AppLocalizationsRo extends AppLocalizations {
   String get emailCopied => 'Email copy ho gayi';
 
   @override
-  String get joinLegalSathi => 'Legal Sathi Main Shamil Hon';
+  String get joinLegalSathi => 'Legal Sathi Join Karein';
 
   @override
-  String get createAccountSubtitle => 'Apne Documents Aur Chat History Ko Mehfuz Karne Ke Liye Ek Account Banayein';
+  String get createAccountSubtitle => 'Apne documents aur chat history save karne ke liye account banayein';
 
   @override
   String get welcomeBack => 'Khush Aamdeed';
 
   @override
-  String get signInSubtitle => 'Apne Kanooni Mashwara Tak Rasai Ke Liye Sign In Karein';
+  String get signInSubtitle => 'apne legal assistant tak rasai ke liye sign in karein';
 
   @override
-  String get enterFullName => 'Apna naam likhein';
+  String get enterFullName => 'Apna poora naam likhein';
 
   @override
-  String get createPassword => 'Password Banaye';
+  String get createPassword => 'Password banayein';
 
   @override
-  String get confirmYourPassword => 'Apna Password Darj Karein';
+  String get confirmYourPassword => 'Apna password dobara likhein';
+
+  @override
+  String get continueWithGoogle => 'Google ke sath continue karein';
 
   @override
   String get enterPassword => 'Apna Password Darj Karein';
 
   @override
-  String get continueAsGuest => 'Mehman Ke Taur Par Jaari Rakhen';
+  String get continueAsGuest => 'baghair account continue karein';
 
   @override
-  String get termsOfService => 'Khidmat Ki Shurut';
+  String get termsOfService => 'Terms of Service';
 
   @override
-  String get privacyPolicy => 'Razdari Ki Policy';
+  String get appName => 'Legal Saathi';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get welcomeAsGuest => 'Mehmaan ke taur par khush aamdeed';
+
+  @override
+  String get guestDescription => 'Mukammal features, documents save karne aur cases track karne ke liye sign up karein.';
+
+  @override
+  String get signUpNow => 'Abhi Sign Up Karein';
+
+  @override
+  String get activitiesWillAppear => 'Aap ki activities yahan nazar aayengi';
+
+  @override
+  String get justNow => 'Abhi';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
 
   @override
   String get bySigningUpYouAgree => 'Sign Up Karte Waqt Aap Hamari Razamandi Dete Hain';
@@ -809,16 +833,16 @@ class AppLocalizationsRo extends AppLocalizations {
   String get passwordAtLeast6Chars => 'Password Kam Az Kam 6 Haroof Hona Chahiye';
 
   @override
-  String get pleaseEnterFullName => 'Braah Karim Apna Mukammal Naam Darj Karein';
+  String get pleaseEnterFullName => 'Barah e karam apna poora naam likhein';
 
   @override
-  String get pleaseEnterEmail => 'Braah Karim Apni Email Darj Karein';
+  String get pleaseEnterEmail => 'Barah e karam apni email likhein';
 
   @override
-  String get pleaseEnterPassword => 'Braah Karim Apna Password Darj Karein';
+  String get pleaseEnterPassword => 'Barah e karam password likhein';
 
   @override
-  String get pleaseConfirmPassword => 'Braah Karim Apne Password Ki Tasdeeq Karein';
+  String get pleaseConfirmPassword => 'Barah e karam password confirm karein';
 
   @override
   String get pleaseEnterEmailFirst => 'Pehle Apni Email Darj Karein';
@@ -2415,7 +2439,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get invalidPhone => 'Valid phone number likhein';
 
   @override
-  String get invalidEmail => 'Sahi email likhein';
+  String get invalidEmail => 'Barah e karam valid email likhein';
 
   @override
   String get complaintSaved => 'Aap ki complaint save ho gayi hai';
@@ -3262,7 +3286,7 @@ class AppLocalizationsRo extends AppLocalizations {
   String get selectWorkplaceLocation => 'Apni workplace location select karein';
 
   @override
-  String get emailHint => 'your.email@example.com';
+  String get emailHint => 'apna email enter karein';
 
   @override
   String get orgHint => 'Organization/Company name';
@@ -4292,4 +4316,106 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get defaultAnalysisSummary => 'Provided evidence se guidance generate ki gayi hai';
+
+  @override
+  String get guestFeatureTitle => 'Sign In Required';
+
+  @override
+  String get guestChatMessage => 'Chat with our AI legal assistant is only available for signed-in users. Create an account to save your conversations and access personalized guidance.';
+
+  @override
+  String get guestComplaintMessage => 'Filing complaints requires an account to safely store your information and track status. Sign in to get started.';
+
+  @override
+  String get guestDownloadMessage => 'Downloading and saving documents requires an account. Create an account to save your generated documents and access them anytime.';
+
+  @override
+  String get guestGenerateMessage => 'Generating documents requires an account to save your work. Sign in to generate and manage your legal documents.';
+
+  @override
+  String get guestSubmitMessage => 'Submitting forms requires an account. Sign in to submit your information and track your requests.';
+
+  @override
+  String get guestSaveMessage => 'Saving your work requires an account. Create an account to store your progress and access it later.';
+
+  @override
+  String get guestSimulatorMessage => 'Scenario simulation with personalized feedback requires an account. Sign in to track your learning progress.';
+
+  @override
+  String get continueExploring => 'Continue Exploring';
+
+  @override
+  String get signInToAccess => 'Sign In to Access This Feature';
+
+  @override
+  String get guestCanExplore => 'As a guest, you can explore all available information and resources. Sign in to unlock interactive features and save your work.';
+
+  @override
+  String get guestBannerTitle => 'Exploring as Guest';
+
+  @override
+  String get guestBannerMessage => 'You can view information, but services require sign in.';
+
+  @override
+  String get signInForFeatures => 'Sign In for Full Features';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get passwordHint => 'apna password enter karein';
+
+  @override
+  String get passwordRule => 'kam az kam 8 characters, uppercase, lowercase, number aur symbol istemal karein';
+
+  @override
+  String get noAccount => 'account nahi hai? ';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get enterEmail => 'Apni email likhein';
+
+  @override
+  String get orText => 'یا';
+
+  @override
+  String get passwordRequirements => 'Password kam az kam 6 characters ka ho aur uppercase, lowercase, number aur symbol shamil ho.';
+
+  @override
+  String get bySigningUp => 'Sign up karke aap hamari ';
+
+  @override
+  String get andText => ' aur ';
+
+  @override
+  String get nameMinCharacters => 'Naam kam az kam 3 characters ka hona chahiye';
+
+  @override
+  String get passwordMinCharacters => 'Password kam az kam 6 characters ka hona chahiye';
+
+  @override
+  String get passwordComplexity => 'Uppercase, lowercase, number aur symbol istemal karein';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords match nahi karte';
+
+  @override
+  String get emailRequired => 'barah e karam email enter karein';
+
+  @override
+  String get emailInvalid => 'valid email enter karein';
+
+  @override
+  String get passwordRequired => 'barah e karam password enter karein';
+
+  @override
+  String get passwordTooShort => 'password kam az kam 8 characters ka hona chahiye';
+
+  @override
+  String get enterEmailFirst => 'pehle email enter karein';
 }

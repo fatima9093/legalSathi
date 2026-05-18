@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 /// `flutter run --dart-define=API_HOST=192.168.1.105`
 class ApiConfig {
   /// ← Change this to your laptop IP before the seminar demo.
-  static const String laptopHost = '192.168.1.215';
+  static const String laptopHost = '192.168.18.42';
 
   static const int port = 8000;
 
