@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
+import 'template_view_screen.dart';
+import 'ombudsperson_complaints_steps_screen.dart';
 
 class RightsAndEscalationScreen extends StatelessWidget {
   const RightsAndEscalationScreen({super.key});
@@ -194,7 +196,17 @@ class RightsAndEscalationScreen extends StatelessWidget {
                 title: loc.templateReconstitution,
                 subtitle: loc.templateReconstitutionDesc,
                 onTap: () {
-                  // TODO: Navigate to template
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TemplateViewScreen(
+                        title: EscalationTemplates.committeeReconstitutionTitle,
+                        body: EscalationTemplates.committeeReconstitutionBody,
+                        downloadFilename:
+                            'committee_reconstitution_request.pdf',
+                      ),
+                    ),
+                  );
                 },
               ),
 
@@ -205,7 +217,17 @@ class RightsAndEscalationScreen extends StatelessWidget {
                 title: loc.templateEscalation,
                 subtitle: loc.templateEscalationDesc,
                 onTap: () {
-                  // TODO: Navigate to template
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TemplateViewScreen(
+                        title: EscalationTemplates.escalationLetterTitle,
+                        body: EscalationTemplates.escalationLetterBody,
+                        downloadFilename:
+                            'escalation_letter_to_ombudsperson.pdf',
+                      ),
+                    ),
+                  );
                 },
               ),
 
@@ -215,8 +237,19 @@ class RightsAndEscalationScreen extends StatelessWidget {
               SizedBox(
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Download templates functionality
+                  onPressed: () async {
+                    // Download both templates
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TemplateViewScreen(
+                          title: 'Both Templates',
+                          body:
+                              '${EscalationTemplates.committeeReconstitutionTitle}\n\n${EscalationTemplates.committeeReconstitutionBody}\n\n\n${EscalationTemplates.escalationLetterTitle}\n\n${EscalationTemplates.escalationLetterBody}',
+                          downloadFilename: 'escalation_templates_both.pdf',
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF00401A),
@@ -254,7 +287,13 @@ class RightsAndEscalationScreen extends StatelessWidget {
                 height: 50,
                 child: OutlinedButton(
                   onPressed: () {
-                    // TODO: Navigate to Ombudsperson filing
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const OmbudspersonComplaintsStepsScreen(),
+                      ),
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Color(0xFF00401A), width: 2),

@@ -1,4 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../screen_with_nav.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 
@@ -33,6 +37,88 @@ class GeneratedFIAComplaintScreen extends StatefulWidget {
 
 class _GeneratedFIAComplaintScreenState
     extends State<GeneratedFIAComplaintScreen> {
+  String _generateFullText() {
+    final loc = AppLocalizations.of(context)!;
+    final buffer = StringBuffer();
+
+    buffer.writeln(loc.fiaCyberComplaint);
+    buffer.writeln(loc.generatedByAI);
+    buffer.writeln();
+    buffer.writeln(loc.formalComplaintTitle);
+    buffer.writeln();
+    buffer.writeln(loc.toDirector);
+    buffer.writeln(
+      '${loc.date}: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
+    );
+    buffer.writeln();
+    buffer.writeln(loc.complainantDetails);
+    buffer.writeln('${loc.name}: ${widget.fullName}');
+    buffer.writeln('${loc.cnic}: ${widget.cnic}');
+    buffer.writeln('${loc.phone}: ${widget.phone}');
+    buffer.writeln('${loc.email}: ${widget.email}');
+    buffer.writeln('${loc.address}: ${widget.address}');
+    buffer.writeln();
+    buffer.writeln(loc.subjectPeca);
+    buffer.writeln();
+    buffer.writeln(loc.respected);
+    buffer.writeln(
+      'I am writing to file a formal complaint regarding a cyber crime that I have experienced. This complaint is being submitted under the Prevention of Electronic Crimes Act (PECA), 2016.',
+    );
+    buffer.writeln();
+    buffer.writeln(loc.incidentDetails);
+    buffer.writeln('${loc.dateOfIncident}: ${widget.dateOfIncident}');
+    buffer.writeln();
+    buffer.writeln(loc.descriptionIncident);
+    buffer.writeln(widget.incidentDescription);
+    buffer.writeln();
+    if (widget.suspectInfo.isNotEmpty) {
+      buffer.writeln(loc.suspectInfo);
+      buffer.writeln(widget.suspectInfo);
+      buffer.writeln();
+    }
+    if (widget.evidenceAvailable.isNotEmpty) {
+      buffer.writeln(loc.evidenceAvailable);
+      buffer.writeln(widget.evidenceAvailable);
+      buffer.writeln();
+    }
+    buffer.writeln(loc.finalRequest);
+    buffer.writeln();
+    buffer.writeln('${loc.sincerely}');
+    buffer.writeln();
+    buffer.writeln(widget.fullName);
+
+    return buffer.toString();
+  }
+
+  Future<void> _downloadAsTxt() async {
+    try {
+      final text = _generateFullText();
+      final directory = await getTemporaryDirectory();
+      final path =
+          '${directory.path}/fia_complaint_${DateTime.now().millisecondsSinceEpoch}.txt';
+      final file = File(path);
+      await file.writeAsString(text);
+
+      await Share.shareXFiles([XFile(path)], subject: 'FIA Cyber Complaint');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to download: $e')));
+      }
+    }
+  }
+
+  Future<void> _copyToClipboard() async {
+    final text = _generateFullText();
+    await Clipboard.setData(ClipboardData(text: text));
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Copied to clipboard')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
@@ -123,7 +209,7 @@ class _GeneratedFIAComplaintScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                           Text(
+                          Text(
                             loc.fiaCyberComplaint,
                             style: TextStyle(
                               color: Colors.white,
@@ -132,7 +218,7 @@ class _GeneratedFIAComplaintScreenState
                             ),
                           ),
                           const SizedBox(height: 4),
-                           Text(
+                          Text(
                             loc.generatedByAI,
                             style: TextStyle(
                               color: Colors.white70,
@@ -149,15 +235,13 @@ class _GeneratedFIAComplaintScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildSection(
-                            loc.formalComplaintTitle
-                          ),
+                          _buildSection(loc.formalComplaintTitle),
                           const SizedBox(height: 16),
                           _buildSection(loc.toDirector),
                           _buildSection(
                             '${loc.date}: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                           ),
-                         const SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           _buildSection(loc.complainantDetails),
                           _buildDetail(loc.name, widget.fullName),
                           _buildDetail(loc.cnic, widget.cnic),
@@ -179,7 +263,10 @@ class _GeneratedFIAComplaintScreenState
                           ),
                           const SizedBox(height: 16),
                           _buildSection(loc.incidentDetails),
-                          _buildDetail(loc.dateOfIncident, widget.dateOfIncident),
+                          _buildDetail(
+                            loc.dateOfIncident,
+                            widget.dateOfIncident,
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             loc.descriptionIncident,
@@ -200,7 +287,8 @@ class _GeneratedFIAComplaintScreenState
                           ),
                           const SizedBox(height: 16),
                           if (widget.suspectInfo.isNotEmpty) ...[
-                            Text(loc.suspectInfo,
+                            Text(
+                              loc.suspectInfo,
                               style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -219,7 +307,8 @@ class _GeneratedFIAComplaintScreenState
                             const SizedBox(height: 16),
                           ],
                           if (widget.evidenceAvailable.isNotEmpty) ...[
-                            Text(loc.evidenceAvailable,
+                            Text(
+                              loc.evidenceAvailable,
                               style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -274,10 +363,10 @@ class _GeneratedFIAComplaintScreenState
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            // TODO: Implement edit functionality
+                            Navigator.pop(context);
                           },
                           icon: const Icon(Icons.edit_outlined, size: 18),
-                           label: Text(loc.edit),
+                          label: Text(loc.edit),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: const Color(0xFF00401A),
                             side: const BorderSide(color: Color(0xFF00401A)),
@@ -289,7 +378,7 @@ class _GeneratedFIAComplaintScreenState
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            // TODO: Implement regenerate functionality
+                            Navigator.pop(context);
                           },
                           icon: const Icon(Icons.refresh_outlined, size: 18),
                           label: Text(loc.regenerate),
@@ -306,11 +395,9 @@ class _GeneratedFIAComplaintScreenState
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: Implement download functionality
-                      },
+                      onPressed: _downloadAsTxt,
                       icon: const Icon(Icons.download_outlined, size: 18),
-                     label: Text(loc.downloadTxt),
+                      label: Text(loc.downloadTxt),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00401A),
                         foregroundColor: Colors.white,
@@ -322,11 +409,9 @@ class _GeneratedFIAComplaintScreenState
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
-                      onPressed: () {
-                        // TODO: Implement copy functionality
-                      },
+                      onPressed: _copyToClipboard,
                       icon: const Icon(Icons.content_copy_outlined, size: 18),
-                       label: Text(loc.copyClipboard),
+                      label: Text(loc.copyClipboard),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.black87,
                         side: BorderSide(color: Colors.grey.shade400),
@@ -353,7 +438,8 @@ class _GeneratedFIAComplaintScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(loc.nextSteps,
+                    Text(
+                      loc.nextSteps,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -364,12 +450,12 @@ class _GeneratedFIAComplaintScreenState
                     _buildNextStep(loc.complaintStep1),
                     const SizedBox(height: 8),
                     _buildNextStep(loc.complaintStep2),
-                  
+
                     const SizedBox(height: 8),
                     _buildNextStep(loc.complaintStep3),
-                    
+
                     const SizedBox(height: 8),
-                   _buildNextStep(loc.complaintStep4),
+                    _buildNextStep(loc.complaintStep4),
                   ],
                 ),
               ),
@@ -385,7 +471,8 @@ class _GeneratedFIAComplaintScreenState
                 color: Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(loc.fiaHelpline,
+              child: Text(
+                loc.fiaHelpline,
                 style: TextStyle(fontSize: 12, color: Colors.black87),
                 textAlign: TextAlign.center,
               ),

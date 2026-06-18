@@ -1,5 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:front_end/models/complaint_model.dart';
+import 'package:front_end/services/notification_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:front_end/config/api_config.dart';
 
 class ComplaintService {
   SupabaseClient get _client => Supabase.instance.client;
@@ -47,7 +51,9 @@ class ComplaintService {
           .eq('complaint_id', complaintId)
           .maybeSingle();
       if (res != null) {
-        final complaint = _rowToComplaint(Map<String, dynamic>.from(res as Map));
+        final complaint = _rowToComplaint(
+          Map<String, dynamic>.from(res as Map),
+        );
         return {'success': true, 'complaint': complaint};
       }
       return {'success': false, 'message': 'Complaint not found'};
@@ -96,20 +102,27 @@ class ComplaintService {
       if (!result['success']) return result;
 
       final complaint = result['complaint'] as ComplaintModel;
-      final evidenceFiles = List<EvidenceFile>.from(complaint.evidenceFiles ?? []);
-      evidenceFiles.add(EvidenceFile(
-        fileName: fileName,
-        fileType: fileType,
-        localPath: localPath,
-        fileSize: fileSize,
-        uploadedAt: DateTime.now(),
-      ));
+      final evidenceFiles = List<EvidenceFile>.from(
+        complaint.evidenceFiles ?? [],
+      );
+      evidenceFiles.add(
+        EvidenceFile(
+          fileName: fileName,
+          fileType: fileType,
+          localPath: localPath,
+          fileSize: fileSize,
+          uploadedAt: DateTime.now(),
+        ),
+      );
 
       final updatedComplaint = complaint.copyWith(
         evidenceFiles: evidenceFiles,
         updatedAt: DateTime.now(),
       );
-      await _client.from('complaints').update(_complaintToRow(updatedComplaint)).eq('complaint_id', complaintId);
+      await _client
+          .from('complaints')
+          .update(_complaintToRow(updatedComplaint))
+          .eq('complaint_id', complaintId);
 
       return {
         'success': true,
@@ -133,14 +146,19 @@ class ComplaintService {
       if (!result['success']) return result;
 
       final complaint = result['complaint'] as ComplaintModel;
-      final evidenceFiles = List<EvidenceFile>.from(complaint.evidenceFiles ?? []);
+      final evidenceFiles = List<EvidenceFile>.from(
+        complaint.evidenceFiles ?? [],
+      );
       evidenceFiles.removeWhere((file) => file.fileName == fileName);
 
       final updatedComplaint = complaint.copyWith(
         evidenceFiles: evidenceFiles,
         updatedAt: DateTime.now(),
       );
-      await _client.from('complaints').update(_complaintToRow(updatedComplaint)).eq('complaint_id', complaintId);
+      await _client
+          .from('complaints')
+          .update(_complaintToRow(updatedComplaint))
+          .eq('complaint_id', complaintId);
 
       return {'success': true, 'message': 'Evidence removed successfully'};
     } catch (e) {
@@ -153,16 +171,80 @@ class ComplaintService {
 
   Future<Map<String, dynamic>> submitComplaint(String complaintId) async {
     try {
-      await _client.from('complaints').update({
-        'status': 'submitted',
-        'submitted_at': DateTime.now().toIso8601String(),
-      }).eq('complaint_id', complaintId);
+      await _client
+          .from('complaints')
+          .update({
+            'status': 'submitted',
+            'submitted_at': DateTime.now().toIso8601String(),
+          })
+          .eq('complaint_id', complaintId);
+
+      // Create notification
+      await NotificationService().createNotificationForCurrentUser(
+        title: 'Complaint Submitted!',
+        message: 'Your complaint has been successfully submitted.',
+        actionType: 'complaint',
+        actionId: complaintId,
+      );
 
       return {'success': true, 'message': 'Complaint submitted successfully'};
     } catch (e) {
       return {
         'success': false,
         'message': 'Error submitting complaint: ${e.toString()}',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> sendComplaintEmail({
+    required String complaintId,
+    required String fullName,
+    required String email,
+    required String phone,
+    required String workplace,
+    required String designation,
+    required String city,
+    required String incidentDate,
+    required String description,
+    required String cnic,
+    String? accusedName,
+    List<String>? harassmentTypes,
+    String? accusedDesignation,
+  }) async {
+    try {
+      final url = Uri.parse('${ApiConfig.apiBaseUrl}/complaints/send-email');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'complaint_id': complaintId,
+          'full_name': fullName,
+          'email': email,
+          'phone': phone,
+          'workplace': workplace,
+          'designation': designation,
+          'city': city,
+          'incident_date': incidentDate,
+          'description': description,
+          'cnic': cnic,
+          'accused_name': accusedName,
+          'harassment_types': harassmentTypes,
+          'accused_designation': accusedDesignation,
+        }),
+      );
+      if (response.statusCode == 200) {
+        final result = jsonDecode(response.body) as Map<String, dynamic>;
+        return result;
+      } else {
+        return {
+          'success': false,
+          'message': 'Failed to send email: ${response.body}',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error sending email: ${e.toString()}',
       };
     }
   }
@@ -212,8 +294,11 @@ class ComplaintService {
     final evidence = row['evidence_files'];
     final list = evidence is List
         ? (evidence)
-            .map((e) => EvidenceFile.fromMap(Map<String, dynamic>.from(e as Map)))
-            .toList()
+              .map(
+                (e) =>
+                    EvidenceFile.fromMap(Map<String, dynamic>.from(e as Map)),
+              )
+              .toList()
         : <EvidenceFile>[];
     final createdAt = row['created_at'];
     final updatedAt = row['updated_at'];
@@ -233,8 +318,12 @@ class ComplaintService {
       accusedName: row['accused_name'] as String?,
       accusedDesignation: row['accused_designation'] as String?,
       evidenceFiles: list.isEmpty ? null : list,
-      createdAt: createdAt != null ? DateTime.tryParse(createdAt.toString()) : null,
-      updatedAt: updatedAt != null ? DateTime.tryParse(updatedAt.toString()) : null,
+      createdAt: createdAt != null
+          ? DateTime.tryParse(createdAt.toString())
+          : null,
+      updatedAt: updatedAt != null
+          ? DateTime.tryParse(updatedAt.toString())
+          : null,
       status: row['status'] as String?,
     );
   }

@@ -68,23 +68,23 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-       return AppLocalizations.of(context)!.pleaseEnterPassword;
+      return AppLocalizations.of(context)!.pleaseEnterPassword;
     }
     if (value.length < 6) {
-return AppLocalizations.of(context)!.passwordMinCharacters;
+      return AppLocalizations.of(context)!.passwordMinCharacters;
     }
     if (!RegExp(r'[A-Z]').hasMatch(value) ||
         !RegExp(r'[a-z]').hasMatch(value) ||
         !RegExp(r'[0-9]').hasMatch(value) ||
-        !RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(value)) {
-     return AppLocalizations.of(context)!.passwordComplexity;
+        !RegExp(r'[!@#\$%^&*(),.?":{}|<>_]').hasMatch(value)) {
+      return AppLocalizations.of(context)!.passwordComplexity;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-     return AppLocalizations.of(context)!.pleaseConfirmPassword;
+      return AppLocalizations.of(context)!.pleaseConfirmPassword;
     }
     if (value != _passwordController.text) {
       return AppLocalizations.of(context)!.passwordsDoNotMatch;
@@ -154,7 +154,7 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title:  Text(
+        title: Text(
           loc.createAccount,
           style: TextStyle(
             color: Colors.black,
@@ -183,8 +183,8 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                     const SizedBox(height: 20),
 
                     // Title
-                     Text(
-                       loc.joinLegalSathi,
+                    Text(
+                      loc.joinLegalSathi,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -195,7 +195,7 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                     const SizedBox(height: 12),
 
                     // Subtitle
-                     Text(
+                    Text(
                       loc.createAccountSubtitle,
                       style: TextStyle(
                         fontSize: 14,
@@ -233,7 +233,7 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                     const SizedBox(height: 24),
 
                     // Full Name label
-                     Text(
+                    Text(
                       loc.fullName,
                       style: TextStyle(
                         fontSize: 14,
@@ -281,7 +281,7 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                     const SizedBox(height: 20),
 
                     // Email label
-                     Text(
+                    Text(
                       loc.email,
                       style: TextStyle(
                         fontSize: 14,
@@ -330,7 +330,7 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                     const SizedBox(height: 20),
 
                     // Password label
-                     Text(
+                    Text(
                       loc.password,
                       style: TextStyle(
                         fontSize: 14,
@@ -401,7 +401,7 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                     const SizedBox(height: 20),
 
                     // Confirm Password label
-                     Text(
+                    Text(
                       loc.confirmPassword,
                       style: TextStyle(
                         fontSize: 14,
@@ -482,7 +482,7 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                                 strokeWidth: 2,
                               ),
                             )
-                          :  Text(
+                          : Text(
                               loc.createAccount,
                               style: TextStyle(
                                 fontSize: 16,
@@ -504,11 +504,9 @@ return AppLocalizations.of(context)!.passwordMinCharacters;
                           height: 1.5,
                         ),
                         children: [
-                           TextSpan(
-                            text: loc.bySigningUp,
-                          ),
+                          TextSpan(text: loc.bySigningUp),
                           TextSpan(
-                            text:loc.termsOfService,
+                            text: loc.termsOfService,
                             style: const TextStyle(
                               color: Color(0xFF00401A),
                               fontWeight: FontWeight.w600,

@@ -302,7 +302,7 @@ class _OmbudspersonComplaintFormScreenState
                     const SizedBox(height: 20),
 
                     // Phone Number
-                    _buildLabel('loc.phone'),
+                    _buildLabel(loc.phone),
                     const SizedBox(height: 8),
                     _buildTextField(
                       controller: _phoneController,

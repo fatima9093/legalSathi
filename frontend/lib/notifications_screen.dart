@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/notification_service.dart';
 import 'package:front_end/models/notification_model.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -14,11 +15,36 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   final NotificationService _service = NotificationService();
   List<NotificationModel> _items = [];
   bool _loading = true;
+  String? _userId;
 
   @override
   void initState() {
     super.initState();
+    _userId = Supabase.instance.client.auth.currentUser?.id;
     _loadNotifications();
+    if (_userId != null) {
+      _service.subscribeToNotifications(
+        userId: _userId!,
+        onNotification: (newNotification) {
+          if (mounted) {
+            setState(() {
+              _items.insert(0, newNotification);
+            });
+          }
+        },
+        onError: (error) {
+          debugPrint('Realtime error: $error');
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_userId != null) {
+      _service.unsubscribeFromNotifications(_userId!);
+    }
+    super.dispose();
   }
 
   Future<void> _loadNotifications() async {

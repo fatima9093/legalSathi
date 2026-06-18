@@ -122,6 +122,37 @@ class _SubmissionInstructionsScreenState
     final loc = AppLocalizations.of(context)!;
     setState(() => _isSubmitting = true);
 
+    // Send email first
+    final emailResult = await _complaintService.sendComplaintEmail(
+      complaintId: widget.complaintId,
+      fullName: widget.complaint.fullName ?? '',
+      email: widget.complaint.email ?? '',
+      phone: widget.complaint.phone ?? '',
+      workplace: widget.complaint.workplace ?? '',
+      designation: widget.complaint.designation ?? '',
+      city: widget.complaint.city ?? '',
+      incidentDate: widget.complaint.incidentDate ?? '',
+      description: widget.complaint.description ?? '',
+      cnic: widget.complaint.cnic ?? '',
+      accusedName: widget.complaint.accusedName,
+      harassmentTypes: widget.complaint.harassmentType?.split(','),
+      accusedDesignation: widget.complaint.accusedDesignation,
+    );
+
+    if (!emailResult['success']) {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(emailResult['message'] ?? 'Failed to send email'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+
+    // Now submit the complaint
     final result = await _complaintService.submitComplaint(widget.complaintId);
 
     setState(() => _isSubmitting = false);

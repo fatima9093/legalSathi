@@ -2128,6 +2128,49 @@ async def get_user_documents_stats(user_id: str):
         )
 
 
+from pydantic import BaseModel, Field
+from typing import Optional, List
+
+class SendComplaintEmailRequest(BaseModel):
+    complaint_id: str
+    full_name: str
+    email: str
+    phone: str
+    workplace: str
+    designation: str
+    city: str
+    incident_date: str
+    description: str
+    cnic: str
+    accused_name: Optional[str] = None
+    harassment_types: Optional[List[str]] = None
+    accused_designation: Optional[str] = None
+
+@app.post("/api/complaints/send-email")
+async def send_complaint_email_endpoint(request: SendComplaintEmailRequest):
+    """Send complaint email using email service"""
+    try:
+        from email_service import get_email_service
+        email_service = get_email_service()
+        result = email_service.send_complaint_email(
+            complaint_id=request.complaint_id,
+            full_name=request.full_name,
+            email=request.email,
+            phone=request.phone,
+            workplace=request.workplace,
+            designation=request.designation,
+            city=request.city,
+            incident_date=request.incident_date,
+            description=request.description,
+            cnic=request.cnic,
+            accused_name=request.accused_name,
+            harassment_types=request.harassment_types,
+            accused_designation=request.accused_designation,
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
     print("\n🚀 Starting Legal Sathi RAG API...")

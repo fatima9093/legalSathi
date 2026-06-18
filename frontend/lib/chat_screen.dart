@@ -27,8 +27,13 @@ import 'package:front_end/utils/smooth_page_route.dart';
 
 class ChatScreen extends StatefulWidget {
   final ModuleType? selectedModule;
+  final bool startWithVoiceInput;
 
-  const ChatScreen({super.key, this.selectedModule});
+  const ChatScreen({
+    super.key,
+    this.selectedModule,
+    this.startWithVoiceInput = false,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -169,6 +174,9 @@ class _ChatScreenState extends State<ChatScreen> {
     // Check if user is guest
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkGuestAccess();
+      if (widget.startWithVoiceInput) {
+        _startListening();
+      }
     });
 
     _speech = stt.SpeechToText();

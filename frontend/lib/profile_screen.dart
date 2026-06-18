@@ -7,6 +7,8 @@ import 'package:front_end/help_center_screen.dart';
 import 'package:front_end/about_screen.dart';
 import 'package:front_end/notifications_screen.dart';
 import 'package:front_end/language_selection_screen.dart';
+import 'package:front_end/create_account/signin_screen.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -269,7 +271,7 @@ class ProfileScreen extends StatelessWidget {
                     if (confirmed == true && context.mounted) {
                       await authService.signOut();
                       if (context.mounted) {
-                        Navigator.pushReplacementNamed(context, '/onboarding');
+                        await navigateToSignInAfterLogout(context);
                       }
                     }
                   },

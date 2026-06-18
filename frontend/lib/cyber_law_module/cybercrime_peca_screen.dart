@@ -5,6 +5,7 @@ import 'package:front_end/cyber_law_module/online_harrasment_screen.dart';
 import 'package:front_end/cyber_law_module/fia_complaint_generator.dart';
 import 'package:front_end/cyber_law_module/report_fake_account_screen.dart';
 import 'package:front_end/cyber_law_module/evidence_extractor_screen.dart';
+import 'package:front_end/cyber_law_module/screenshot_evidence_reader_screen.dart';
 import 'package:front_end/scenario_simulator_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
 import 'package:front_end/l10n/app_localizations.dart';
@@ -17,11 +18,8 @@ class CyberCrimePECAScreen extends StatefulWidget {
 }
 
 class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
-  final _searchController = TextEditingController();
-
   @override
   void dispose() {
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -66,34 +64,6 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
             ),
 
             const SizedBox(height: 20),
-
-            // Search bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.searchSections,
-                  hintStyle: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 14,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
 
             // List items
             _buildListItem(
@@ -196,7 +166,8 @@ class _CyberCrimePECAScreenState extends State<CyberCrimePECAScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const EvidenceExtractorScreen(),
+                    builder: (context) =>
+                        const ScreenshotEvidenceReaderScreen(),
                   ),
                 );
               },

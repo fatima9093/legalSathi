@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
+import 'package:front_end/create_account/signin_screen.dart';
 
 import 'home_screen.dart';
 import 'onboarding_screen.dart';
@@ -53,14 +55,25 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 3), () async {
       if (!mounted) return;
 
       final session = Supabase.instance.client.auth.currentSession;
-      final nextPage = session != null
-          ? const HomeScreen()
-          : const OnboardingScreen();
+      final onboardingCompleted = await hasCompletedOnboarding();
 
+      Widget nextPage;
+      if (session != null) {
+        // User is logged in
+        nextPage = const HomeScreen();
+      } else if (!onboardingCompleted) {
+        // Show onboarding only on first app launch
+        nextPage = const OnboardingScreen();
+      } else {
+        // Onboarding completed, but not logged in → go to login
+        nextPage = const SignInScreen();
+      }
+
+      if (!mounted) return;
       Navigator.of(
         context,
       ).pushReplacement(MaterialPageRoute(builder: (_) => nextPage));

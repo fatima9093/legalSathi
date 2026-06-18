@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/supabase_deep_link_handler.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/services/notification_service.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,6 +30,7 @@ void main() async {
   if (!kIsWeb) {
     await SupabaseDeepLinkHandler.init();
   }
+  await NotificationService().initialize();
   runApp(
     ChangeNotifierProvider(
       create: (_) => LanguageProvider()..loadSavedLanguage(),

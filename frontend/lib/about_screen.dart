@@ -16,7 +16,7 @@ class AboutScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          AppLocalizations.of(context)!.settings,
+          'About',
           style: const TextStyle(
             color: Colors.black,
             fontSize: 18,

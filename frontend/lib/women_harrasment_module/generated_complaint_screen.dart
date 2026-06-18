@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:front_end/l10n/app_localizations.dart';
@@ -5,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'draft_complaint_form_data.dart';
 
@@ -402,6 +405,25 @@ Date: $currentDate''';
                 ),
               ),
 
+              const SizedBox(height: 12),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: OutlinedButton.icon(
+                  onPressed: () => _downloadAsTxt(context),
+                  icon: const Icon(Icons.text_snippet, size: 18),
+                  label: Text('Download as TXT'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF00401A),
+                    minimumSize: const Size(double.infinity, 56),
+                    side: const BorderSide(color: Color(0xFF00401A), width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+
               const SizedBox(height: 16),
 
               // Warning message
@@ -495,23 +517,17 @@ Date: $currentDate''';
     final pdf = pw.Document();
 
     pdf.addPage(
-      pw.Page(
+      pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(40),
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                'FORMAL COMPLAINT OF HARASSMENT AT WORKPLACE',
-                style: pw.TextStyle(
-                  fontSize: 16,
-                  fontWeight: pw.FontWeight.bold,
-                ),
-              ),
-              pw.SizedBox(height: 20),
-              pw.Text(complaintText, style: const pw.TextStyle(fontSize: 11)),
-            ],
-          );
+          return [
+            pw.Text(
+              complaintText,
+              style: const pw.TextStyle(fontSize: 11),
+              textAlign: pw.TextAlign.left,
+            ),
+          ];
         },
       ),
     );
@@ -519,5 +535,26 @@ Date: $currentDate''';
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
     );
+  }
+
+  Future<void> _downloadAsTxt(BuildContext context) async {
+    try {
+      final directory = await getTemporaryDirectory();
+      final path =
+          '${directory.path}/formal_complaint_${DateTime.now().millisecondsSinceEpoch}.txt';
+      final file = File(path);
+      await file.writeAsString(complaintText);
+
+      // Share the file
+      await Share.shareXFiles([
+        XFile(path),
+      ], subject: 'Formal Complaint of Harassment');
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to download TXT: $e')));
+      }
+    }
   }
 }

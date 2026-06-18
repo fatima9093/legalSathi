@@ -61,6 +61,9 @@ dependencies:
   # Speech to Text
   speech_to_text: ^7.0.0
   permission_handler: ^12.0.1
+  
+  # Local Notifications
+  flutter_local_notifications: ^18.0.1
 
   # Markdown rendering for AI responses
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
 import '../language_selection_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -43,7 +44,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ];
   }
 
-  void _navigateToLanguageSelection() {
+  Future<void> _navigateToLanguageSelection() async {
+    // Mark onboarding as completed before navigating away
+    await markOnboardingCompleted();
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LanguageSelectionScreen()),

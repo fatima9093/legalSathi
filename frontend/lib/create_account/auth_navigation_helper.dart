@@ -1,6 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/home_screen.dart';
+import 'package:front_end/create_account/signin_screen.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// Onboarding completion flag key
+const String _onboardingCompletedKey = 'onboarding_completed';
+
+/// Check if onboarding has been completed
+Future<bool> hasCompletedOnboarding() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(_onboardingCompletedKey) ?? false;
+}
+
+/// Mark onboarding as completed
+Future<void> markOnboardingCompleted() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool(_onboardingCompletedKey, true);
+}
+
+/// Clear onboarding flag (only called when app is uninstalled/reset, NOT on logout)
+Future<void> clearOnboardingFlag() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove(_onboardingCompletedKey);
+}
+
+/// Navigate to SignIn after logout. Does NOT clear onboarding flag.
+/// Ensures onboarding is never shown again after first completion.
+Future<void> navigateToSignInAfterLogout(BuildContext context) async {
+  if (!context.mounted) return;
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const SignInScreen()),
+  );
+}
 
 /// After email or Google auth succeeds, wait for session and go home.
 Future<void> navigateToHomeAfterAuth(
@@ -44,7 +78,9 @@ Future<void> handleGoogleSignIn(
     if (result['pending'] == true) {
       messenger.showSnackBar(
         SnackBar(
-          content: Text(result['message'] as String? ?? 'Complete sign-in in the browser'),
+          content: Text(
+            result['message'] as String? ?? 'Complete sign-in in the browser',
+          ),
           backgroundColor: Colors.blue,
         ),
       );

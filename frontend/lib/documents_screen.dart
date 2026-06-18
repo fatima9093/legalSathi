@@ -4,6 +4,7 @@ import 'package:front_end/l10n/app_localizations.dart';
 import 'package:front_end/services/http_client_wrapper.dart';
 import 'package:front_end/services/documents_service.dart';
 import 'package:front_end/services/auth_service.dart';
+import 'package:front_end/notifications_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DocumentsScreen extends StatefulWidget {
@@ -196,7 +197,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: Colors.black),
             onPressed: () {
-              // Navigate to notifications
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificationsScreen(),
+                ),
+              );
             },
           ),
         ],

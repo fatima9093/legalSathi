@@ -19,11 +19,8 @@ class LabourRightsScreen extends StatefulWidget {
 }
 
 class _LabourRightsScreenState extends State<LabourRightsScreen> {
-  final TextEditingController _searchController = TextEditingController();
-
   @override
   void dispose() {
-    _searchController.dispose();
     super.dispose();
   }
 
@@ -63,34 +60,6 @@ class _LabourRightsScreenState extends State<LabourRightsScreen> {
                   fontSize: 18,
                   color: Colors.black87,
                   height: 1.5,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Search bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: AppLocalizations.of(context)!.searchSectionsHint,
-                  hintStyle: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 14,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey.shade400),
                 ),
               ),
             ),

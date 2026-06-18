@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:front_end/models/error_models.dart';
 import 'package:front_end/models/notification_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,8 +14,49 @@ class NotificationService {
   NotificationService._internal();
 
   final SupabaseClient _supabase = Supabase.instance.client;
-
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   static const String _tableName = 'notifications';
+  RealtimeChannel? _realtimeChannel;
+
+  /// Initialize local notifications
+  Future<void> initialize() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  /// Show a local notification
+  Future<void> showLocalNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+          'legal_sathi_channel',
+          'Legal Sathi Notifications',
+          channelDescription: 'Notifications from Legal Sathi app',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+    await _flutterLocalNotificationsPlugin.show(
+      id,
+      title,
+      body,
+      platformChannelSpecifics,
+    );
+  }
 
   /// Fetch all notifications for the current user
   Future<ApiResult<List<NotificationModel>>> getNotifications({
@@ -52,7 +94,7 @@ class NotificationService {
       return ApiResult<List<NotificationModel>>.failure(
         AppError(
           type: ErrorType.unknown,
-          message: 'Failed to fetch notifications',
+          message: 'Error fetching notifications',
           originalError: e,
           stackTrace: st,
         ),
@@ -86,7 +128,7 @@ class NotificationService {
       return ApiResult<int>.failure(
         AppError(
           type: ErrorType.unknown,
-          message: 'Failed to fetch unread count',
+          message: 'Error fetching unread count',
           originalError: e,
           stackTrace: st,
         ),
@@ -97,6 +139,16 @@ class NotificationService {
   /// Mark notification as read
   Future<ApiResult<void>> markAsRead(String notificationId) async {
     try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return ApiResult<void>.failure(
+          AppError(
+            type: ErrorType.unauthorized,
+            message: 'User not authenticated',
+          ),
+        );
+      }
+
       await _supabase
           .from(_tableName)
           .update({'is_read': true})
@@ -108,7 +160,7 @@ class NotificationService {
       return ApiResult<void>.failure(
         AppError(
           type: ErrorType.unknown,
-          message: 'Failed to mark notification as read',
+          message: 'Error marking notification as read',
           originalError: e,
           stackTrace: st,
         ),
@@ -141,7 +193,7 @@ class NotificationService {
       return ApiResult<void>.failure(
         AppError(
           type: ErrorType.unknown,
-          message: 'Failed to mark all notifications as read',
+          message: 'Error marking all notifications as read',
           originalError: e,
           stackTrace: st,
         ),
@@ -152,6 +204,16 @@ class NotificationService {
   /// Delete a notification
   Future<ApiResult<void>> deleteNotification(String notificationId) async {
     try {
+      final userId = _supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return ApiResult<void>.failure(
+          AppError(
+            type: ErrorType.unauthorized,
+            message: 'User not authenticated',
+          ),
+        );
+      }
+
       await _supabase.from(_tableName).delete().eq('id', notificationId);
 
       return ApiResult<void>.success(null);
@@ -160,12 +222,37 @@ class NotificationService {
       return ApiResult<void>.failure(
         AppError(
           type: ErrorType.unknown,
-          message: 'Failed to delete notification',
+          message: 'Error deleting notification',
           originalError: e,
           stackTrace: st,
         ),
       );
     }
+  }
+
+  /// Create a new notification for current user (for client-side use)
+  Future<ApiResult<NotificationModel>> createNotificationForCurrentUser({
+    required String title,
+    required String message,
+    String? actionType,
+    String? actionId,
+  }) async {
+    final userId = _supabase.auth.currentUser?.id;
+    if (userId == null) {
+      return ApiResult<NotificationModel>.failure(
+        AppError(
+          type: ErrorType.unauthorized,
+          message: 'User not authenticated',
+        ),
+      );
+    }
+    return createNotification(
+      userId: userId,
+      title: title,
+      message: message,
+      actionType: actionType,
+      actionId: actionId,
+    );
   }
 
   /// Create a new notification (for backend use)
@@ -190,13 +277,23 @@ class NotificationService {
       final notification = NotificationModel.fromJson(
         (response as List)[0] as Map<String, dynamic>,
       );
+      await showLocalNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title: title,
+        body: message,
+      );
       return ApiResult<NotificationModel>.success(notification);
     } catch (e, st) {
       debugPrint('Error creating notification: $e\n$st');
+      await showLocalNotification(
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        title: title,
+        body: message,
+      );
       return ApiResult<NotificationModel>.failure(
         AppError(
           type: ErrorType.unknown,
-          message: 'Failed to create notification',
+          message: 'Error creating notification',
           originalError: e,
           stackTrace: st,
         ),
@@ -210,16 +307,32 @@ class NotificationService {
     required Function(NotificationModel) onNotification,
     required Function(dynamic error) onError,
   }) {
-    // Realtime API surface varies between supabase client versions.
-    // To keep analyzer happy and avoid runtime errors, provide a no-op
-    // placeholder here. Callers can implement polling or a platform
-    // specific realtime integration if needed.
-    debugPrint('subscribeToNotifications: realtime not enabled in this build');
+    _realtimeChannel = _supabase.channel('notifications:$userId');
+    _realtimeChannel!
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'notifications',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: (payload) {
+            final newNotification = NotificationModel.fromJson(
+              payload.newRecord,
+            );
+            onNotification(newNotification);
+          },
+        )
+        .subscribe();
   }
 
-  /// Unsubscribe from real-time notifications (no-op placeholder)
+  /// Unsubscribe from real-time notifications
   Future<void> unsubscribeFromNotifications(String userId) async {
-    debugPrint('unsubscribeFromNotifications: noop');
-    return;
+    if (_realtimeChannel != null) {
+      await _supabase.removeChannel(_realtimeChannel!);
+      _realtimeChannel = null;
+    }
   }
 }

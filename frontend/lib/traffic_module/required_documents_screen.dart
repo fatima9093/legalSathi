@@ -113,12 +113,16 @@ class RequiredDocumentsScreen extends StatelessWidget {
                 isRequired: true,
               ),
 
+              const SizedBox(height: 12),
+
               _buildDocumentItem(
                 context,
                 title: loc.routePermit,
                 description: loc.routePermitDesc,
                 isRequired: false,
               ),
+
+              const SizedBox(height: 12),
 
               _buildDocumentItem(
                 context,

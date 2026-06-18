@@ -13,7 +13,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _voiceMode = true;
   bool _notifications = true;
-  bool _darkMode = false;
   String _selectedLanguage = 'English'; // ← still kept for local display
 
   @override
@@ -161,43 +160,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           onChanged: (value) {
                             setState(() {
                               _notifications = value;
-                            });
-                          },
-                          activeThumbColor: Colors.white,
-                          activeTrackColor: const Color(0xFF00401A),
-                        ),
-                      ),
-
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: Colors.grey.shade200,
-                      ),
-
-                      // Dark Mode
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        leading: const Icon(
-                          Icons.dark_mode_outlined,
-                          color: Colors.black87,
-                          size: 24,
-                        ),
-                        title: Text(
-                          AppLocalizations.of(context)!.darkMode,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        trailing: Switch(
-                          value: _darkMode,
-                          onChanged: (value) {
-                            setState(() {
-                              _darkMode = value;
                             });
                           },
                           activeThumbColor: Colors.white,

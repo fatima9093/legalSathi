@@ -114,7 +114,7 @@ class AuthService {
     if (!RegExp(r'[A-Z]').hasMatch(password)) return false;
     if (!RegExp(r'[a-z]').hasMatch(password)) return false;
     if (!RegExp(r'[0-9]').hasMatch(password)) return false;
-    return RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(password);
+    return RegExp(r'[!@#\$%^&*(),.?":{}|<>_]').hasMatch(password);
   }
 
   Future<Map<String, dynamic>> signUp({

@@ -4,6 +4,22 @@ import 'package:front_end/l10n/app_localizations.dart';
 class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});
 
+  void _showHelpDetail(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(child: Text(content)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +106,11 @@ class HelpCenterScreen extends StatelessWidget {
                     subtitle: AppLocalizations.of(
                       context,
                     )!.learnBasicsNavigatingApp,
-                    onTap: () {},
+                    onTap: () => _showHelpDetail(
+                      context,
+                      AppLocalizations.of(context)!.howToUseLegalSathi,
+                      'Use the bottom navigation bar to switch between Home, Chat, Documents, and Profile. Use the search bar to ask legal questions to our AI.',
+                    ),
                   ),
 
                   const SizedBox(height: 12),
@@ -102,7 +122,11 @@ class HelpCenterScreen extends StatelessWidget {
                     subtitle: AppLocalizations.of(
                       context,
                     )!.stepByStepGuideUploadingDocuments,
-                    onTap: () {},
+                    onTap: () => _showHelpDetail(
+                      context,
+                      AppLocalizations.of(context)!.howToUploadEvidence,
+                      'Go to Documents or use Quick Actions. Tap upload, select your files (images or PDFs), and submit.',
+                    ),
                   ),
 
                   const SizedBox(height: 12),
@@ -112,7 +136,11 @@ class HelpCenterScreen extends StatelessWidget {
                     iconColor: const Color(0xFF00401A),
                     title: 'How OCR Works',
                     subtitle: 'Understanding document scanning and analysis',
-                    onTap: () {},
+                    onTap: () => _showHelpDetail(
+                      context,
+                      'How OCR Works',
+                      'Our OCR (Optical Character Recognition) extracts text from your uploaded images and PDFs for analysis.',
+                    ),
                   ),
 
                   const SizedBox(height: 12),
@@ -122,7 +150,11 @@ class HelpCenterScreen extends StatelessWidget {
                     iconColor: const Color(0xFF00401A),
                     title: 'How to Draft Documents',
                     subtitle: 'Creating FIRs, complaints, and legal documents',
-                    onTap: () {},
+                    onTap: () => _showHelpDetail(
+                      context,
+                      'How to Draft Documents',
+                      'Use the Draft Document quick action or go to Cyber Law module to generate legal documents like FIRs and complaints.',
+                    ),
                   ),
 
                   const SizedBox(height: 12),
@@ -132,7 +164,11 @@ class HelpCenterScreen extends StatelessWidget {
                     iconColor: const Color(0xFF00401A),
                     title: 'How to Report an Issue',
                     subtitle: 'Get help with technical problems',
-                    onTap: () {},
+                    onTap: () => _showHelpDetail(
+                      context,
+                      'How to Report an Issue',
+                      'For technical support, you can contact us through the in-app contact button or visit our website.',
+                    ),
                   ),
 
                   const SizedBox(height: 24),

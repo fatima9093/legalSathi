@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/traffic_module/road_traffic_law_screen.dart';
 import 'package:front_end/women_harrasment_module/women_harrasment_law_screen.dart';
+import 'package:front_end/labour_rights_module/labour_rights_screen.dart';
 import 'package:front_end/cyber_law_module/cybercrime_peca_screen.dart';
 import 'package:front_end/services/auth_service.dart';
 import 'package:front_end/services/recent_activity_service.dart';
@@ -8,6 +9,7 @@ import 'package:front_end/models/recent_activity_model.dart';
 import 'package:front_end/notifications_screen.dart';
 import 'package:front_end/profile_screen.dart';
 import 'package:front_end/create_account/signin_screen.dart';
+import 'package:front_end/create_account/auth_navigation_helper.dart';
 import 'package:front_end/chat_screen.dart';
 import 'package:front_end/scenario_simulator_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
@@ -39,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final welcomeFontSize = isSmallScreen ? 12.0 : 14.0;
     final categoryTitleSize = isSmallScreen ? 11.0 : 13.0;
     final categorySubtitleSize = isSmallScreen ? 9.0 : 10.0;
-    final quickActionLabelSize = isSmallScreen ? 9.0 : 10.0;
 
     // Responsive spacing
     final horizontalPadding = isSmallScreen ? 12.0 : 16.0;
@@ -157,10 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             if (confirmed == true && context.mounted) {
                               await _authService.signOut();
                               if (context.mounted) {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  '/onboarding',
-                                );
+                                await navigateToSignInAfterLogout(context);
                               }
                             }
                           },
@@ -257,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        SmoothPageRoute(page: const RoadTrafficLawScreen()),
+                        SmoothPageRoute(page: const ChatScreen()),
                       );
                     },
                     child: Container(
@@ -316,12 +314,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                   child: GridView.count(
-                    crossAxisCount: isSmallScreen ? 1 : 2,
+                    crossAxisCount: 2,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: isSmallScreen ? 12 : 16,
-                    crossAxisSpacing: isSmallScreen ? 12 : 16,
-                    childAspectRatio: isSmallScreen ? 2.2 : 1.8,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.85,
                     children: [
                       _buildCategoryButton(
                         title: 'Women\nHarrassment',
@@ -372,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            SmoothPageRoute(page: const CyberCrimePECAScreen()),
+                            SmoothPageRoute(page: const LabourRightsScreen()),
                           );
                         },
                       ),
@@ -403,81 +401,75 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Quick Actions
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  child: GridView.count(
-                    crossAxisCount: isSmallScreen ? 2 : 4,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: isSmallScreen ? 10 : 12,
-                    crossAxisSpacing: isSmallScreen ? 10 : 12,
-                    childAspectRatio: 1.0,
-                    children: [
-                      _buildQuickAction(
-                        AppLocalizations.of(context)!.askAi,
-                        Icons.chat_bubble_outline,
-                        isSmall: isSmallScreen,
-                        fontSize: quickActionLabelSize,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const CyberCrimePECAScreen(),
-                            ),
-                          );
-                        },
+                  child: SizedBox(
+                    height: 100,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildQuickAction(
+                            AppLocalizations.of(context)!.askAi,
+                            Icons.chat_bubble_outline,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ChatScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          _buildQuickAction(
+                            AppLocalizations.of(context)!.uploadEvidence,
+                            Icons.camera_alt_outlined,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const UploadEvidenceSelectionScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          _buildQuickAction(
+                            AppLocalizations.of(context)!.draftDocument,
+                            Icons.local_offer_outlined,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DraftDocumentTypeScreen(
+                                        extractedText: '',
+                                        classifiedDomain: '',
+                                        tags: [],
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          _buildQuickAction(
+                            AppLocalizations.of(context)!.simulate,
+                            Icons.play_circle_outline,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ScenarioSimulatorScreen(
+                                        moduleType: ModuleType.general,
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                      _buildQuickAction(
-                        AppLocalizations.of(context)!.uploadEvidence,
-                        Icons.camera_alt_outlined,
-                        isSmall: isSmallScreen,
-                        fontSize: quickActionLabelSize,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const UploadEvidenceSelectionScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildQuickAction(
-                        AppLocalizations.of(context)!.draftDocument,
-                        Icons.local_offer_outlined,
-                        isSmall: isSmallScreen,
-                        fontSize: quickActionLabelSize,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const DraftDocumentTypeScreen(
-                                    extractedText: '',
-                                    classifiedDomain: '',
-                                    tags: [],
-                                  ),
-                            ),
-                          );
-                        },
-                      ),
-                      _buildQuickAction(
-                        AppLocalizations.of(context)!.simulate,
-                        Icons.play_circle_outline,
-                        isSmall: isSmallScreen,
-                        fontSize: quickActionLabelSize,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const ScenarioSimulatorScreen(
-                                    moduleType: ModuleType.general,
-                                  ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 SizedBox(height: verticalSpacing),
@@ -598,7 +590,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ChatScreen()),
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const ChatScreen(startWithVoiceInput: true),
+                ),
               );
             },
             backgroundColor: const Color(0xFF00401A),
@@ -682,145 +677,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        padding: EdgeInsets.all(cardPadding),
-        child: isSmall
-            ? Row(
-                children: [
-                  Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00401A),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 20),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          title.replaceAll('\n', ' '),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: categoryTitleSize,
-                            color: Colors.black,
-                            height: 1.2,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          urduText,
-                          style: TextStyle(
-                            fontSize: categorySubtitleSize - 1,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00401A),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 24),
-                  ),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: categoryTitleSize,
-                        color: Colors.black,
-                        height: 1.2,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Flexible(
-                    child: Text(
-                      urduText,
-                      style: TextStyle(
-                        fontSize: categorySubtitleSize,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Flexible(
-                    child: Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: categorySubtitleSize,
-                        color: Colors.grey[600],
-                        height: 1.2,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-      ),
-    );
-  }
-
-  Widget _buildQuickAction(
-    String label,
-    IconData icon, {
-    VoidCallback? onTap,
-    required bool isSmall,
-    required double fontSize,
-  }) {
-    return GestureDetector(
-      onTap: onTap ?? () {},
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
+        padding: const EdgeInsets.all(12),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: const Color(0xFF00401A), size: isSmall ? 24 : 28),
-            SizedBox(height: isSmall ? 6 : 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color(0xFF00401A),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: Colors.white, size: 24),
+            ),
+            const SizedBox(height: 10),
+            Flexible(
               child: Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w500,
+                title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
                   color: Colors.black,
                   height: 1.2,
                 ),
@@ -828,7 +705,77 @@ class _HomeScreenState extends State<HomeScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(height: 4),
+            Flexible(
+              child: Text(
+                urduText,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Flexible(
+              child: Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey[600],
+                  height: 1.3,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickAction(String label, IconData icon, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap ?? () {},
+      child: SizedBox(
+        width: 90,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: const Color(0xFF00401A), size: 26),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    height: 1.3,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
