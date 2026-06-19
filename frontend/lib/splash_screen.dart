@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:front_end/create_account/auth_navigation_helper.dart';
 import 'package:front_end/create_account/signin_screen.dart';
+import 'package:front_end/services/supabase_auth_callback_handler.dart';
 
 import 'home_screen.dart';
 import 'onboarding_screen.dart';
@@ -57,6 +58,9 @@ class _SplashScreenState extends State<SplashScreen>
 
     Timer(const Duration(seconds: 3), () async {
       if (!mounted) return;
+
+      // Reset link flow uses ChangePasswordScreen directly — never splash.
+      if (SupabaseAuthCallbackHandler.hasPendingPasswordRecovery) return;
 
       final session = Supabase.instance.client.auth.currentSession;
       final onboardingCompleted = await hasCompletedOnboarding();

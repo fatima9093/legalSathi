@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:front_end/create_account/auth_navigation_helper.dart';
+import 'package:front_end/create_account/change_password_screen.dart';
 import 'package:front_end/create_account/create_account_screen.dart';
 import 'package:front_end/home_screen.dart';
 import 'package:front_end/services/auth_service.dart';
@@ -127,14 +128,22 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  // Handle Forgot Password
+  // Forgot password on login: send reset email, or open change screen if signed in.
   Future<void> _handleForgotPassword() async {
     final loc = AppLocalizations.of(context)!;
-    final email = _emailController.text.trim();
 
+    if (_authService.isLoggedIn) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
+      );
+      return;
+    }
+
+    final email = _emailController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
+        SnackBar(
           content: Text(loc.enterEmailFirst),
           backgroundColor: Colors.orange,
         ),
@@ -142,14 +151,28 @@ class _SignInScreenState extends State<SignInScreen> {
       return;
     }
 
-    final result = await _authService.resetPassword(email);
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(loc.emailInvalid),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final result = await _authService.requestPasswordReset(email);
+    setState(() => _isLoading = false);
 
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(result['message']),
-        backgroundColor: result['success'] ? Colors.green : Colors.red,
+        content: Text(result['message'] as String),
+        backgroundColor: result['success'] == true ? Colors.green : Colors.red,
+        duration: const Duration(seconds: 6),
       ),
     );
   }

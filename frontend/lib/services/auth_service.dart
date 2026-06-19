@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:front_end/config/auth_redirect_config.dart';
 import 'package:front_end/config/google_auth_config.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,6 +24,8 @@ class AuthService {
   /// Prefer session?.user so we use the same object the client considers "current".
   User? get _authUser =>
       _client.auth.currentSession?.user ?? _client.auth.currentUser;
+
+  bool get isLoggedIn => _authUser != null;
 
   AppUser? get currentUser {
     final user = _authUser;
@@ -433,15 +436,101 @@ class AuthService {
     await _client.auth.signOut(scope: SignOutScope.local);
   }
 
-  Future<Map<String, dynamic>> resetPassword(String email) async {
+  /// Send password-reset email (login page — user is not signed in).
+  Future<Map<String, dynamic>> requestPasswordReset(String email) async {
     try {
-      await _client.auth.resetPasswordForEmail(email.trim());
-      return {'success': true, 'message': 'Password reset email sent'};
+      await _client.auth.resetPasswordForEmail(
+        email.trim(),
+        redirectTo: AuthRedirectConfig.redirectUrl,
+      );
+      return {
+        'success': true,
+        'message':
+            'Reset link sent! Check your email and open the link on this device, then set a new password.',
+      };
     } on AuthException catch (e) {
-      String message = e.message.isNotEmpty
-          ? e.message
-          : 'Failed to send reset email';
+      final msg = e.message.toLowerCase();
+      String message;
+      if (msg.contains('invalid email')) {
+        message = 'Please enter a valid email address';
+      } else if (msg.contains('rate limit')) {
+        message = 'Too many requests. Please wait a few minutes and try again.';
+      } else {
+        message = e.message.isNotEmpty
+            ? e.message
+            : 'Failed to send reset email';
+      }
       return {'success': false, 'message': message};
+    } catch (e) {
+      debugPrint('requestPasswordReset error: $e');
+      return {
+        'success': false,
+        'message': 'Could not send reset email. Check your connection and try again.',
+      };
+    }
+  }
+
+  /// Change password while signed in. Saves to Supabase Auth (auth.users).
+  Future<Map<String, dynamic>> changePassword({
+    required String newPassword,
+  }) async {
+    if (!isLoggedIn) {
+      return {
+        'success': false,
+        'message': 'Please sign in first to change your password.',
+      };
+    }
+
+    try {
+      if (!isStrongPassword(newPassword)) {
+        return {
+          'success': false,
+          'message':
+              'Password must be at least 8 characters and include uppercase, lowercase, number, and symbol.',
+        };
+      }
+
+      await _client.auth.updateUser(UserAttributes(password: newPassword));
+
+      return {
+        'success': true,
+        'message': 'Password updated successfully!',
+      };
+    } on AuthException catch (e) {
+      return {
+        'success': false,
+        'message': e.message.isNotEmpty
+            ? e.message
+            : 'Failed to update password. Please try again.',
+      };
+    } catch (e) {
+      debugPrint('changePassword error: $e');
+      return {
+        'success': false,
+        'message': 'Something went wrong. Please try again.',
+      };
+    }
+  }
+
+  /// After email reset link: save new password, then sign out so user logs in fresh.
+  Future<Map<String, dynamic>> completePasswordResetFromEmail({
+    required String newPassword,
+  }) async {
+    final changeResult = await changePassword(newPassword: newPassword);
+    if (changeResult['success'] != true) return changeResult;
+
+    try {
+      await signOut();
+      return {
+        'success': true,
+        'message': 'Your password has been reset. Please sign in with your new password.',
+      };
+    } catch (e) {
+      debugPrint('completePasswordResetFromEmail signOut error: $e');
+      return {
+        'success': true,
+        'message': 'Password updated. Please go back and sign in again.',
+      };
     }
   }
 

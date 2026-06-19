@@ -4418,4 +4418,37 @@ class AppLocalizationsRo extends AppLocalizations {
 
   @override
   String get enterEmailFirst => 'pehle email enter karein';
+
+  @override
+  String get resetPasswordTitle => 'Set New Password';
+
+  @override
+  String get resetPasswordSubtitle => 'Choose a strong password for your account';
+
+  @override
+  String get setNewPassword => 'Update Password';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get signInFirstToChangePassword => 'You must sign in first before you can change your password. After signing in, go to Profile → Settings → Change Password.';
+
+  @override
+  String get signInRequiredTitle => 'Sign in required';
+
+  @override
+  String get passwordResetSuccessTitle => 'Password reset';
+
+  @override
+  String get passwordResetSuccessMessage => 'Your password has been reset successfully. Go back and sign in with your new password.';
+
+  @override
+  String get passwordResetCloseTabMessage => 'Your password has been reset successfully.';
+
+  @override
+  String get passwordResetCloseTabHint => 'You can close this browser tab now. Return to the Legal Sathi app window (where you tapped Forgot Password) and sign in with your new password.';
+
+  @override
+  String get goToSignIn => 'Go to Sign In';
 }

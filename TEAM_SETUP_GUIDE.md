@@ -61,6 +61,9 @@ This command will:
 ```bash
 flutter run
 ```
+for continue with google
+use 
+flutter run -d chrome --web-port=3000
 
 Or select your device in VS Code/Android Studio and click Run.
 
@@ -138,6 +141,7 @@ The API will be available at: `http://localhost:8000`
 API Documentation: `http://localhost:8000/docs`
 
 ---
+
 
 ## 🗂️ Project Structure
 

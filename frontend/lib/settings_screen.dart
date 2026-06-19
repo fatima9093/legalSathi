@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:front_end/create_account/change_password_screen.dart';
 import 'package:front_end/l10n/app_localizations.dart';
+import 'package:front_end/services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:front_end/providers/language_provider.dart';
 
@@ -11,6 +13,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final AuthService _authService = AuthService();
   bool _voiceMode = true;
   bool _notifications = true;
   String _selectedLanguage = 'English'; // ← still kept for local display
@@ -92,6 +95,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           _showLanguageDialog();
                         },
                       ),
+
+                      if (_authService.isLoggedIn) ...[
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Colors.grey.shade200,
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          leading: const Icon(
+                            Icons.lock_outline,
+                            color: Colors.black87,
+                            size: 24,
+                          ),
+                          title: Text(
+                            AppLocalizations.of(context)!.changePassword,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          trailing: const Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ChangePasswordScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
 
                       Divider(
                         height: 1,

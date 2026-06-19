@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:front_end/l10n/app_localizations.dart';
+import 'package:front_end/services/supabase_auth_callback_handler.dart';
 import 'package:front_end/services/supabase_deep_link_handler.dart';
 import 'package:front_end/services/auth_service.dart';
 import 'package:front_end/services/notification_service.dart';
@@ -17,20 +18,26 @@ import 'screens/dynamic_documents_screen.dart';
 import 'chat_screen.dart';
 import 'theme/app_theme.dart';
 
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Supabase.initialize(
     url: supabaseUrl,
     anonKey: supabaseAnonKey,
-    authOptions: const FlutterAuthClientOptions(
-      authFlowType: AuthFlowType.pkce,
+    authOptions: FlutterAuthClientOptions(
+      // Implicit on web so password-reset email links work in any browser
+      // (Gmail opens default Chrome, not the Flutter dev Chrome instance).
+      authFlowType: kIsWeb ? AuthFlowType.implicit : AuthFlowType.pkce,
     ),
   );
   AuthService.initializeSessionExpiryMonitoring();
+  await SupabaseAuthCallbackHandler.init(navigatorKey: rootNavigatorKey);
   if (!kIsWeb) {
     await SupabaseDeepLinkHandler.init();
   }
   await NotificationService().initialize();
+  SupabaseAuthCallbackHandler.markAppStarted();
   runApp(
     ChangeNotifierProvider(
       create: (_) => LanguageProvider()..loadSavedLanguage(),
@@ -47,10 +54,11 @@ class MyApp extends StatelessWidget {
     final langProvider = context.watch<LanguageProvider>();
 
     return MaterialApp(
+      navigatorKey: rootNavigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Legal Sathi',
       theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
+      home: SupabaseAuthCallbackHandler.initialScreen(),
       navigatorObservers: [SmoothTransitionsObserver()],
 
       // Localization

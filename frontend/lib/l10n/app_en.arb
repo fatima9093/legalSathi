@@ -1933,7 +1933,18 @@
   "emailInvalid": "Please enter a valid email",
   "passwordRequired": "Please enter your password",
   "passwordTooShort": "Password must be at least 8 characters",
-  "enterEmailFirst": "Please enter your email first"
+  "enterEmailFirst": "Please enter your email first",
+  "resetPasswordTitle": "Set New Password",
+  "resetPasswordSubtitle": "Choose a strong password for your account",
+  "setNewPassword": "Update Password",
+  "changePassword": "Change Password",
+  "signInFirstToChangePassword": "You must sign in first before you can change your password. After signing in, go to Profile → Settings → Change Password.",
+  "signInRequiredTitle": "Sign in required",
+  "passwordResetSuccessTitle": "Password reset",
+  "passwordResetSuccessMessage": "Your password has been reset successfully. Go back and sign in with your new password.",
+  "passwordResetCloseTabMessage": "Your password has been reset successfully.",
+  "passwordResetCloseTabHint": "You can close this browser tab now. Return to the Legal Sathi app window (where you tapped Forgot Password) and sign in with your new password.",
+  "goToSignIn": "Go to Sign In"
 
 }
 

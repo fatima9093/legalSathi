@@ -8838,6 +8838,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter your email first'**
   String get enterEmailFirst;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set New Password'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a strong password for your account'**
+  String get resetPasswordSubtitle;
+
+  /// No description provided for @setNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Password'**
+  String get setNewPassword;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @signInFirstToChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'You must sign in first before you can change your password. After signing in, go to Profile → Settings → Change Password.'**
+  String get signInFirstToChangePassword;
+
+  /// No description provided for @signInRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in required'**
+  String get signInRequiredTitle;
+
+  /// No description provided for @passwordResetSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset'**
+  String get passwordResetSuccessTitle;
+
+  /// No description provided for @passwordResetSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password has been reset successfully. Go back and sign in with your new password.'**
+  String get passwordResetSuccessMessage;
+
+  /// No description provided for @passwordResetCloseTabMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password has been reset successfully.'**
+  String get passwordResetCloseTabMessage;
+
+  /// No description provided for @passwordResetCloseTabHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can close this browser tab now. Return to the Legal Sathi app window (where you tapped Forgot Password) and sign in with your new password.'**
+  String get passwordResetCloseTabHint;
+
+  /// No description provided for @goToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Sign In'**
+  String get goToSignIn;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
