@@ -1,5 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:front_end/models/scenario_model.dart';
-
+import 'package:front_end/l10n/app_localizations.dart';
 /// Service to manage scenario data across all modules
 class ScenarioService {
   static final ScenarioService _instance = ScenarioService._internal();
@@ -11,170 +12,173 @@ class ScenarioService {
   ScenarioService._internal();
 
   /// Get all module scenarios
-  Map<ModuleType, ModuleScenarioConfig> getAllModuleScenarios() {
+   Map<ModuleType, ModuleScenarioConfig> getAllModuleScenarios(BuildContext context) {
     return {
-      ModuleType.traffic: _getTrafficScenarios(),
-      ModuleType.womenHarassment: _getWomenHarassmentScenarios(),
-      ModuleType.cyberCrime: _getCyberCrimeScenarios(),
-      ModuleType.labourRights: _getLabourRightsScenarios(),
+      ModuleType.traffic: _getTrafficScenarios(context),
+      ModuleType.womenHarassment: _getWomenHarassmentScenarios(context),
+      ModuleType.cyberCrime: _getCyberCrimeScenarios(context),
+      ModuleType.labourRights: _getLabourRightsScenarios(context),
     };
   }
 
   /// Get scenarios for a specific module
-  ModuleScenarioConfig getModuleScenarios(ModuleType moduleType) {
+  ModuleScenarioConfig getModuleScenarios(BuildContext context, ModuleType moduleType) {
     switch (moduleType) {
       case ModuleType.traffic:
-        return _getTrafficScenarios();
+        return _getTrafficScenarios(context);
       case ModuleType.womenHarassment:
-        return _getWomenHarassmentScenarios();
+        return _getWomenHarassmentScenarios(context);
       case ModuleType.cyberCrime:
-        return _getCyberCrimeScenarios();
+        return _getCyberCrimeScenarios(context);
       case ModuleType.labourRights:
-        return _getLabourRightsScenarios();
+        return _getLabourRightsScenarios(context);
       case ModuleType.general:
-        return _getGeneralScenarios();
+        return _getGeneralScenarios(context);
     }
   }
 
   /// TRAFFIC & ROAD RULES SCENARIOS
-  ModuleScenarioConfig _getTrafficScenarios() {
+  ModuleScenarioConfig _getTrafficScenarios(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return ModuleScenarioConfig(
       moduleType: ModuleType.traffic,
-      moduleName: 'Road & Traffic Law',
+     moduleName: loc.trafficModuleName,
       moduleIcon: 'assets/icons/traffic.svg',
       chatScreenPath: 'chat_traffic',
       scenarios: [
         Scenario(
           id: 'traffic_1',
-          title: 'Traffic Violation Fine',
-          description: 'You received a traffic ticket or penalty challan',
+          title: loc.traffic1Title,
+          description: loc.traffic1Desc,
           moduleType: ModuleType.traffic,
           chatNavigationRoute: 'chat_traffic',
           chatScreenName: 'Traffic Assistant Chat',
           guidanceSteps: [
-            GuidanceStep(
-              title: 'Understanding Your Violation',
-              description:
-                  'Know what violation you committed and the legal implications',
+             GuidanceStep(
+              title: loc.traffic1Step1Title,
+              description: loc.traffic1Step1Desc,
               points: [
-                'Check the violation code on your challan',
-                'Understand the section under which you were fined (Motor Vehicles Act)',
-                'Know the fine amount and deadline for payment',
-                'Learn about your right to appeal',
+                 loc.traffic1Step1P1,
+                loc.traffic1Step1P2,
+                loc.traffic1Step1P3,
+                loc.traffic1Step1P4,
               ],
               icon: 'assets/icons/info.svg',
             ),
             GuidanceStep(
-              title: 'Do\'s & Don\'ts',
-              description: 'Important steps to follow',
-              points: [
-                '✓ DO pay the fine on time to avoid additional penalties',
-                '✓ DO keep your receipt and violation notice for records',
-                '✓ DO appeal if you believe the violation is unfair',
-                '✗ DON\'T ignore the challan - it may result in suspension',
-                '✗ DON\'T try to bribe traffic officers - it\'s illegal',
-              ],
+              title: loc.traffic1Step2Title,
+              description: loc.traffic1Step2Desc,
               icon: 'assets/icons/rules.svg',
+              points: [
+                loc.traffic1Step2P1,
+                loc.traffic1Step2P2,
+                loc.traffic1Step2P3,
+                loc.traffic1Step2P4,
+                loc.traffic1Step2P5,
+              ],
+            
             ),
             GuidanceStep(
-              title: 'Immediate Actions',
-              description: 'Steps to take right now',
-              points: [
-                'Pay the fine within the deadline',
-                'If appealing, file a case in traffic court within specified period',
-                'Collect all evidence (documents, witnesses)',
-                'Contact a traffic lawyer if needed',
-              ],
+              title: loc.traffic1Step3Title,
+              description: loc.traffic1Step3Desc,
               icon: 'assets/icons/action.svg',
+              points: [
+                loc.traffic1Step3P1,
+                loc.traffic1Step3P2,
+                loc.traffic1Step3P3,
+                loc.traffic1Step3P4,
+              ],
             ),
           ],
         ),
+
         Scenario(
           id: 'traffic_2',
-          title: 'Traffic Accident Dispute',
-          description:
-              'You were involved in a traffic accident and need guidance',
+          title: loc.traffic2Title,
+          description: loc.traffic2Desc,
           moduleType: ModuleType.traffic,
           chatNavigationRoute: 'chat_traffic',
-          chatScreenName: 'Traffic Assistant Chat',
+          chatScreenName: loc.trafficChatScreenName,
           guidanceSteps: [
             GuidanceStep(
-              title: 'At the Scene of Accident',
-              description: 'What to do immediately after the accident',
-              points: [
-                'Move to a safe location if possible',
-                'Alert other traffic using hazard lights',
-                'Call police (100 or traffic helpline)',
-                'Do not admit fault or sign any documents',
-                'Gather witness information and take photos',
-              ],
+              title: loc.traffic2Step1Title,
+              description: loc.traffic2Step1Desc,
               icon: 'assets/icons/emergency.svg',
+              points: [
+                loc.traffic2Step1P1,
+                loc.traffic2Step1P2,
+                loc.traffic2Step1P3,
+                loc.traffic2Step1P4,
+                loc.traffic2Step1P5,
+              ],
             ),
             GuidanceStep(
-              title: 'Documentation Required',
-              description: 'Collect these documents for your protection',
-              points: [
-                'Police report (FIR) number',
-                'Insurance policy details',
-                'Photographs of vehicles and accident site',
-                'Medical certificates if injured',
-                'Witness contacts and statements',
-              ],
+              title: loc.traffic2Step2Title,
+              description: loc.traffic2Step2Desc,
               icon: 'assets/icons/document.svg',
+              points: [
+                loc.traffic2Step2P1,
+                loc.traffic2Step2P2,
+                loc.traffic2Step2P3,
+                loc.traffic2Step2P4,
+                loc.traffic2Step2P5,
+              ],
             ),
             GuidanceStep(
-              title: 'Legal Rights & Claims',
-              description: 'Know your compensation options',
-              points: [
-                'File motor accident claim within 6 months',
-                'Get vehicle assessment done by insurance surveyor',
-                'Claim medical expenses and loss of earnings',
-                'Know your right to sue for damages',
-              ],
+              title: loc.traffic2Step3Title,
+              description: loc.traffic2Step3Desc,
               icon: 'assets/icons/rights.svg',
+              points: [
+                loc.traffic2Step3P1,
+                loc.traffic2Step3P2,
+                loc.traffic2Step3P3,
+                loc.traffic2Step3P4,
+              ],
             ),
           ],
         ),
+
         Scenario(
           id: 'traffic_3',
-          title: 'License Suspension/Cancellation',
-          description: 'Your driving license is suspended or cancelled',
+          title: loc.traffic3Title,
+          description: loc.traffic3Desc,
           moduleType: ModuleType.traffic,
           chatNavigationRoute: 'chat_traffic',
-          chatScreenName: 'Traffic Assistant Chat',
+          chatScreenName: loc.trafficChatScreenName,
           guidanceSteps: [
             GuidanceStep(
-              title: 'Understanding Suspension vs Cancellation',
-              description: 'Know the difference and implications',
-              points: [
-                'Suspension: Temporary - license paused for fixed period',
-                'Cancellation: Permanent - license revoked',
-                'Reasons: Traffic violations, medical grounds, age',
-                'Your driving during suspension is illegal',
-              ],
+              title: loc.traffic3Step1Title,
+              description: loc.traffic3Step1Desc,
               icon: 'assets/icons/info.svg',
+              points: [
+                loc.traffic3Step1P1,
+                loc.traffic3Step1P2,
+                loc.traffic3Step1P3,
+                loc.traffic3Step1P4,
+              ],
             ),
             GuidanceStep(
-              title: 'Appeal Process',
-              description: 'How to challenge the action',
-              points: [
-                'File appeal in Regional Transport Authority (RTA) office',
-                'Timeline: Within 30 days of notice',
-                'Gather evidence to support your case',
-                'Attend hearing and present your case',
-              ],
+              title: loc.traffic3Step2Title,
+              description: loc.traffic3Step2Desc,
               icon: 'assets/icons/appeal.svg',
+              points: [
+                loc.traffic3Step2P1,
+                loc.traffic3Step2P2,
+                loc.traffic3Step2P3,
+                loc.traffic3Step2P4,
+              ],
             ),
             GuidanceStep(
-              title: 'Recovery Steps',
-              description: 'Steps to get your license restored',
-              points: [
-                'Complete suspension period',
-                'Pass refresher test if required',
-                'Pay fees and submit renewal application',
-                'Collect renewed license from RTA',
-              ],
+              title: loc.traffic3Step3Title,
+              description: loc.traffic3Step3Desc,
               icon: 'assets/icons/action.svg',
+              points: [
+                loc.traffic3Step3P1,
+                loc.traffic3Step3P2,
+                loc.traffic3Step3P3,
+                loc.traffic3Step3P4,
+              ],
+             
             ),
           ],
         ),
@@ -183,148 +187,149 @@ class ScenarioService {
   }
 
   /// WOMEN HARASSMENT SCENARIOS
-  ModuleScenarioConfig _getWomenHarassmentScenarios() {
-    return ModuleScenarioConfig(
-      moduleType: ModuleType.womenHarassment,
-      moduleName: 'Women Harassment',
-      moduleIcon: 'assets/icons/women.svg',
-      chatScreenPath: 'chat_women_harassment',
-      scenarios: [
-        Scenario(
-          id: 'women_1',
-          title: 'Workplace Sexual Harassment',
-          description: 'You experienced harassment at your workplace',
-          moduleType: ModuleType.womenHarassment,
-          chatNavigationRoute: 'chat_women_harassment',
-          chatScreenName: 'Women Harassment Assistant Chat',
-          guidanceSteps: [
+  ModuleScenarioConfig _getWomenHarassmentScenarios(BuildContext context) {
+  final loc = AppLocalizations.of(context)!;
+
+  return ModuleScenarioConfig(
+    moduleType: ModuleType.womenHarassment,
+    moduleName: loc.womenModuleName,
+    moduleIcon: 'assets/icons/women.svg',
+    chatScreenPath: 'chat_women_harassment',
+    scenarios: [
+      Scenario(
+        id: 'women_1',
+        title: loc.women1Title,
+        description: loc.women1Desc,
+        moduleType: ModuleType.womenHarassment,
+        chatNavigationRoute: 'chat_women_harassment',
+        chatScreenName: loc.womenChatName,
+        guidanceSteps: [
             GuidanceStep(
-              title: 'Understand Your Rights',
-              description: 'Know the legal protections available to you',
-              points: [
-                'Sexual Harassment of Women at Workplace Act protects you',
-                'Harassment includes unwanted advances, comments, or touching',
-                'Your employer must provide a safe work environment',
-                'You have the right to complain without fear of retaliation',
-              ],
-              icon: 'assets/icons/rights.svg',
+            title: loc.women1Step1Title,
+            description: loc.women1Step1Desc,
+            icon: 'assets/icons/rights.svg',
+            points: [
+              loc.women1Step1P1,
+              loc.women1Step1P2,
+              loc.women1Step1P3,
+              loc.women1Step1P4,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.women1Step2Title,
+            description: loc.women1Step2Desc,
+            icon: 'assets/icons/action.svg',
+            points: [
+              loc.women1Step2P1,
+              loc.women1Step2P2,
+              loc.women1Step2P3,
+              loc.women1Step2P4,
+              loc.women1Step2P5,
+              loc.women1Step2P6,
+            ],
             ),
-            GuidanceStep(
-              title: 'Immediate Actions',
-              description: 'What to do when harassment occurs',
-              points: [
-                '✓ Say "NO" clearly and firmly to unwanted behavior',
-                '✓ Document incidents with dates, times, and witnesses',
-                '✓ Inform the harasser in writing that their behavior is unwelcome',
-                '✓ Report to HR or Internal Complaints Committee (ICC)',
-                '✓ Keep copies of all communications',
-                '✗ DON\'T delay reporting - report immediately',
-              ],
-              icon: 'assets/icons/action.svg',
-            ),
-            GuidanceStep(
-              title: 'Complaint & Investigation',
-              description: 'The formal complaint process',
-              points: [
-                'File complaint with ICC or HR within specified period',
-                'Provide written statement with evidence',
-                'Company must investigate within 90 days',
-                'You have protection against retaliation',
-                'Keep records of entire process',
-              ],
-              icon: 'assets/icons/process.svg',
-            ),
-          ],
-        ),
-        Scenario(
-          id: 'women_2',
-          title: 'Street Sexual Harassment',
-          description: 'You faced harassment or misbehavior in public',
-          moduleType: ModuleType.womenHarassment,
-          chatNavigationRoute: 'chat_women_harassment',
-          chatScreenName: 'Women Harassment Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Understanding the Law',
-              description: 'Legal protections for street harassment',
-              points: [
-                'Indecent Assault is a criminal offense',
-                'Eve-teasing and stalking are punishable offenses',
-                'You can file FIR with any police station',
-                'You are protected under Section 354 IPC',
-              ],
-              icon: 'assets/icons/law.svg',
-            ),
-            GuidanceStep(
-              title: 'Safety First - In the Moment',
-              description: 'How to respond immediately',
-              points: [
-                '✓ Move to a crowded/safe area immediately',
-                '✓ Call 100 (Police emergency) or Women Safety helpline',
-                '✓ Tell nearby people what\'s happening',
-                '✓ Try to remember description of harasser',
-                '✓ Seek medical help if injured',
-                '✗ DON\'T confront alone or engage in argument',
-              ],
-              icon: 'assets/icons/safety.svg',
-            ),
-            GuidanceStep(
-              title: 'Filing a Police Report',
-              description: 'Steps to lodge an FIR',
-              points: [
-                'Go to nearest police station with a witness if possible',
-                'File FIR mentioning specific details and date/time',
-                'Medical examination if physical contact occurred',
-                'Get FIR copy for your records',
-                'Follow up on case progress regularly',
-              ],
-              icon: 'assets/icons/police.svg',
+             GuidanceStep(
+            title: loc.women1Step3Title,
+            description: loc.women1Step3Desc,
+            icon: 'assets/icons/process.svg',
+            points: [
+              loc.women1Step3P1,
+              loc.women1Step3P2,
+              loc.women1Step3P3,
+              loc.women1Step3P4,
+              loc.women1Step3P5,]
             ),
           ],
         ),
         Scenario(
-          id: 'women_3',
-          title: 'Domestic Violence',
-          description: 'You are experiencing abuse at home',
-          moduleType: ModuleType.womenHarassment,
-          chatNavigationRoute: 'chat_women_harassment',
-          chatScreenName: 'Women Harassment Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'You Are Not Alone',
-              description: 'Know your rights and available support',
-              points: [
-                'Domestic violence is a serious crime',
-                'Protection of Women from Domestic Violence Act provides support',
-                'You can get protection orders without filing FIR',
-                'Multiple support systems available (legal, medical, shelter)',
+        id: 'women_2',
+        title: loc.women2Title,
+        description: loc.women2Desc,
+        moduleType: ModuleType.womenHarassment,
+        chatNavigationRoute: 'chat_women_harassment',
+        chatScreenName: loc.womenChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.women2Step1Title,
+            description: loc.women2Step1Desc,
+            icon: 'assets/icons/law.svg',
+            points: [
+              loc.women2Step1P1,
+              loc.women2Step1P2,
+              loc.women2Step1P3,
+              loc.women2Step1P4,
               ],
-              icon: 'assets/icons/support.svg',
+             
             ),
             GuidanceStep(
-              title: 'Safety Planning',
-              description: 'Protect yourself and document abuse',
-              points: [
-                '✓ Keep important documents in safe place',
-                '✓ Have emergency contacts saved (helpline, friend, family)',
-                '✓ Document injuries with photos and date',
-                '✓ Keep records of violence incidents',
-                '✓ Know shelter locations in your area',
-                '✗ DON\'T minimize the abuse or blame yourself',
-              ],
-              icon: 'assets/icons/safety.svg',
+            title: loc.women2Step2Title,
+            description: loc.women2Step2Desc,
+            icon: 'assets/icons/safety.svg',
+            points: [
+              loc.women2Step2P1,
+              loc.women2Step2P2,
+              loc.women2Step2P3,
+              loc.women2Step2P4,
+              loc.women2Step2P5,
+              loc.women2Step2P6,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.women2Step3Title,
+            description: loc.women2Step3Desc,
+            icon: 'assets/icons/police.svg',
+            points: [
+              loc.women2Step3P1,
+              loc.women2Step3P2,
+              loc.women2Step3P3,
+              loc.women2Step3P4,
+              loc.women2Step3P5,
+            ],
+            ),
+          ],
+        ),
+        Scenario(
+        id: 'women_3',
+        title: loc.women3Title,
+        description: loc.women3Desc,
+        moduleType: ModuleType.womenHarassment,
+        chatNavigationRoute: 'chat_women_harassment',
+        chatScreenName: loc.womenChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.women3Step1Title,
+            description: loc.women3Step1Desc,
+            icon: 'assets/icons/support.svg',
+            points: [
+              loc.women3Step1P1,
+              loc.women3Step1P2,
+              loc.women3Step1P3,
+              loc.women3Step1P4,
+            ],
             ),
             GuidanceStep(
-              title: 'Legal Options',
-              description: 'Steps to seek justice and safety',
-              points: [
-                'File FIR for criminal case',
-                'Apply for Protection Order in Family Court',
-                'Seek medical examination and documentation',
-                'Contact domestic violence helpline for support',
-                'Legal aid available if you cannot afford lawyer',
-              ],
-              icon: 'assets/icons/justice.svg',
+            title: loc.women3Step2Title,
+            description: loc.women3Step2Desc,
+            icon: 'assets/icons/safety.svg',
+            points: [
+              loc.women3Step2P1,
+              loc.women3Step2P2,
+              loc.women3Step2P3,
+              loc.women3Step2P4,
+              loc.women3Step2P5,
+              loc.women3Step2P6,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.women3Step3Title,
+            description: loc.women3Step3Desc,
+            icon: 'assets/icons/justice.svg',
+            points: [
+              loc.women3Step3P1,
+              loc.women3Step3P2,
+              loc.women3Step3P3,
+              loc.women3Step3P4,
+              loc.women3Step3P5,]
             ),
           ],
         ),
@@ -333,150 +338,152 @@ class ScenarioService {
   }
 
   /// CYBER CRIME SCENARIOS
-  ModuleScenarioConfig _getCyberCrimeScenarios() {
-    return ModuleScenarioConfig(
-      moduleType: ModuleType.cyberCrime,
-      moduleName: 'Cyber Crime',
-      moduleIcon: 'assets/icons/cyber.svg',
-      chatScreenPath: 'chat_cyber_crime',
-      scenarios: [
-        Scenario(
-          id: 'cyber_1',
-          title: 'Online Financial Fraud',
-          description: 'You lost money due to online scam or fraud',
-          moduleType: ModuleType.cyberCrime,
-          chatNavigationRoute: 'chat_cyber_crime',
-          chatScreenName: 'Cyber Crime Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Immediate Actions',
-              description: 'Act quickly to minimize loss',
-              points: [
-                'Block compromised accounts immediately',
-                'Change all passwords (email, banking, social media)',
-                'Contact your bank and block credit/debit cards',
-                'Check bank statements for unauthorized transactions',
-                'Apply for fraud alert with credit bureau',
-              ],
-              icon: 'assets/icons/emergency.svg',
-            ),
-            GuidanceStep(
-              title: 'Know the Crime',
-              description: 'Understand what happened legally',
-              points: [
-                'Online banking fraud is Section 420 IPC',
-                'Identity theft is Section 66C of IT Act',
-                'Phishing and spoofing are also criminal offenses',
-                'You can file FIR with cyber crime unit',
-                'Your bank may also file complaint on your behalf',
-              ],
-              icon: 'assets/icons/crime.svg',
-            ),
-            GuidanceStep(
-              title: 'Recovery & Legal Steps',
-              description: 'What you can do to recover and prosecute',
-              points: [
-                'File FIR at local cyber crime police station',
-                'Provide all transaction records and evidence',
-                'Chase with bank for chargeback/reversal',
-                'Register with RBI\'s cybercrime cell',
-                'Consider civil suit for damages if needed',
-              ],
-              icon: 'assets/icons/process.svg',
-            ),
-          ],
-        ),
-        Scenario(
-          id: 'cyber_2',
-          title: 'Revenge Porn / Intimate Image Abuse',
-          description: 'Your private images are shared without consent online',
-          moduleType: ModuleType.cyberCrime,
-          chatNavigationRoute: 'chat_cyber_crime',
-          chatScreenName: 'Cyber Crime Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Know Your Rights',
-              description: 'Legal protections against image abuse',
-              points: [
-                'Sharing intimate images without consent is criminal',
-                'Section 354D IPC (Stalking) covers this',
-                'Section 67A IT Act provides additional protection',
-                'POCSO Act applies if minor is involved',
-                'Criminal AND civil remedies available',
-              ],
-              icon: 'assets/icons/rights.svg',
-            ),
-            GuidanceStep(
-              title: 'Immediate Response',
-              description: 'Act fast to contain the spread',
-              points: [
-                '✓ Report immediately to platform where image is shared',
-                '✓ Use platform\'s "report non-consensual intimate image" option',
-                '✓ Take screenshots of posts with timestamps',
-                '✓ Document URLs and usernames',
-                '✓ Tell trusted friends about situation for support',
-                '✗ DON\'T try to contact harasser yourself',
-                '✗ DON\'T spread more images trying to retrieve them',
-              ],
-              icon: 'assets/icons/action.svg',
-            ),
-            GuidanceStep(
-              title: 'Legal Recourse',
-              description: 'Criminal and civil options',
-              points: [
-                'File FIR with cyber crime police immediately',
-                'File complaint with social media platform',
-                'File complaint with NCW (National Commission for Women)',
-                'Request platform to remove content',
-                'Consider civil suit for damages and injunction',
-              ],
-              icon: 'assets/icons/justice.svg',
-            ),
-          ],
-        ),
-        Scenario(
-          id: 'cyber_3',
-          title: 'Account Hacking / Identity Theft',
-          description: 'Your email or social media account was hacked',
-          moduleType: ModuleType.cyberCrime,
-          chatNavigationRoute: 'chat_cyber_crime',
-          chatScreenName: 'Cyber Crime Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Securing Your Accounts',
-              description: 'Steps to regain control',
-              points: [
-                'Use recovery email/phone to regain account access',
-                'Change password immediately',
-                'Enable two-factor authentication',
-                'Check account activity history',
-                'Remove suspicious connected apps',
-              ],
-              icon: 'assets/icons/security.svg',
-            ),
-            GuidanceStep(
-              title: 'Damage Assessment',
-              description: 'Check what was done with your account',
-              points: [
-                '✓ Check sent emails/messages to identify scams',
-                '✓ Look for unauthorized purchases or money transfers',
-                '✓ Check if personal information was changed',
-                '✓ Monitor linked financial accounts',
-                '✓ Notify contacts who received messages from your account',
-              ],
-              icon: 'assets/icons/assessment.svg',
-            ),
-            GuidanceStep(
-              title: 'Legal Action',
-              description: 'File police complaint and protect yourself',
-              points: [
-                'File FIR with cyber crime unit',
-                'Report to social media company\'s safety team',
-                'Document all evidence of hacking',
-                'Monitor for identity theft (credit reports)',
-                'Consider hiring cybersecurity expert for investigation',
-              ],
-              icon: 'assets/icons/justice.svg',
+  ModuleScenarioConfig _getCyberCrimeScenarios(BuildContext context) {
+  final loc = AppLocalizations.of(context)!;
+
+  return ModuleScenarioConfig(
+    moduleType: ModuleType.cyberCrime,
+    moduleName: loc.cyberModuleName,
+    moduleIcon: 'assets/icons/cyber.svg',
+    chatScreenPath: 'chat_cyber_crime',
+    scenarios: [
+      Scenario(
+        id: 'cyber_1',
+        title: loc.cyber1Title,
+        description: loc.cyber1Desc,
+        moduleType: ModuleType.cyberCrime,
+        chatNavigationRoute: 'chat_cyber_crime',
+        chatScreenName: loc.cyberChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.cyber1Step1Title,
+            description: loc.cyber1Step1Desc,
+            icon: 'assets/icons/emergency.svg',
+            points: [
+              loc.cyber1Step1P1,
+              loc.cyber1Step1P2,
+              loc.cyber1Step1P3,
+              loc.cyber1Step1P4,
+              loc.cyber1Step1P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.cyber1Step2Title,
+            description: loc.cyber1Step2Desc,
+            icon: 'assets/icons/crime.svg',
+            points: [
+              loc.cyber1Step2P1,
+              loc.cyber1Step2P2,
+              loc.cyber1Step2P3,
+              loc.cyber1Step2P4,
+              loc.cyber1Step2P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.cyber1Step3Title,
+            description: loc.cyber1Step3Desc,
+            icon: 'assets/icons/process.svg',
+            points: [
+              loc.cyber1Step3P1,
+              loc.cyber1Step3P2,
+              loc.cyber1Step3P3,
+              loc.cyber1Step3P4,
+              loc.cyber1Step3P5,
+            ],
+          ),
+        ],
+      ),
+
+      Scenario(
+        id: 'cyber_2',
+        title: loc.cyber2Title,
+        description: loc.cyber2Desc,
+        moduleType: ModuleType.cyberCrime,
+        chatNavigationRoute: 'chat_cyber_crime',
+        chatScreenName: loc.cyberChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.cyber2Step1Title,
+            description: loc.cyber2Step1Desc,
+            icon: 'assets/icons/rights.svg',
+            points: [
+              loc.cyber2Step1P1,
+              loc.cyber2Step1P2,
+              loc.cyber2Step1P3,
+              loc.cyber2Step1P4,
+              loc.cyber2Step1P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.cyber2Step2Title,
+            description: loc.cyber2Step2Desc,
+            icon: 'assets/icons/action.svg',
+            points: [
+              loc.cyber2Step2P1,
+              loc.cyber2Step2P2,
+              loc.cyber2Step2P3,
+              loc.cyber2Step2P4,
+              loc.cyber2Step2P5,
+              loc.cyber2Step2P6,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.cyber2Step3Title,
+            description: loc.cyber2Step3Desc,
+            icon: 'assets/icons/justice.svg',
+            points: [
+              loc.cyber2Step3P1,
+              loc.cyber2Step3P2,
+              loc.cyber2Step3P3,
+              loc.cyber2Step3P4,
+              loc.cyber2Step3P5,
+            ],
+          ),
+        ],
+      ),
+
+      Scenario(
+        id: 'cyber_3',
+        title: loc.cyber3Title,
+        description: loc.cyber3Desc,
+        moduleType: ModuleType.cyberCrime,
+        chatNavigationRoute: 'chat_cyber_crime',
+        chatScreenName: loc.cyberChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.cyber3Step1Title,
+            description: loc.cyber3Step1Desc,
+            icon: 'assets/icons/security.svg',
+            points: [
+              loc.cyber3Step1P1,
+              loc.cyber3Step1P2,
+              loc.cyber3Step1P3,
+              loc.cyber3Step1P4,
+              loc.cyber3Step1P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.cyber3Step2Title,
+            description: loc.cyber3Step2Desc,
+            icon: 'assets/icons/assessment.svg',
+            points: [
+              loc.cyber3Step2P1,
+              loc.cyber3Step2P2,
+              loc.cyber3Step2P3,
+              loc.cyber3Step2P4,
+              loc.cyber3Step2P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.cyber3Step3Title,
+            description: loc.cyber3Step3Desc,
+            icon: 'assets/icons/justice.svg',
+            points: [
+              loc.cyber3Step3P1,
+              loc.cyber3Step3P2,
+              loc.cyber3Step3P3,
+              loc.cyber3Step3P4,
+              loc.cyber3Step3P5,]
             ),
           ],
         ),
@@ -485,152 +492,153 @@ class ScenarioService {
   }
 
   /// LABOUR RIGHTS SCENARIOS
-  ModuleScenarioConfig _getLabourRightsScenarios() {
-    return ModuleScenarioConfig(
-      moduleType: ModuleType.labourRights,
-      moduleName: 'Labour Rights',
-      moduleIcon: 'assets/icons/labour.svg',
-      chatScreenPath: 'chat_labour_rights',
-      scenarios: [
+  ModuleScenarioConfig _getLabourRightsScenarios(BuildContext context) {
+  final loc = AppLocalizations.of(context)!;
+
+  return ModuleScenarioConfig(
+    moduleType: ModuleType.labourRights,
+    moduleName: loc.labourModuleName,
+    moduleIcon: 'assets/icons/labour.svg',
+    chatScreenPath: 'chat_labour_rights',
+    scenarios: [
         Scenario(
-          id: 'labour_1',
-          title: 'Unfair Dismissal',
-          description: 'You were fired without proper notice or compensation',
-          moduleType: ModuleType.labourRights,
-          chatNavigationRoute: 'chat_labour_rights',
-          chatScreenName: 'Labour Rights Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Understanding Your Rights',
-              description: 'Employer cannot fire you arbitrarily',
-              points: [
-                'Industrial Disputes Act (1947) protects workers',
-                'Employer must provide valid reason for termination',
-                'You must be given written notice and opportunity to respond',
-                'Wrongful termination is punishable by law',
-                'You have right to compensation and reinstatement',
-              ],
-              icon: 'assets/icons/rights.svg',
-            ),
-            GuidanceStep(
-              title: 'Immediate Documentation',
-              description: 'Collect evidence right away',
-              points: [
-                '✓ Keep a copy of termination letter',
-                '✓ Document details of dismissal (date, time, witnesses)',
-                '✓ Collect all salary slips and employment documents',
-                '✓ Note any performance reviews and communication',
-                '✓ Gather witness statements from colleagues',
-                '✓ Keep all company policy documents',
-              ],
-              icon: 'assets/icons/document.svg',
-            ),
-            GuidanceStep(
-              title: 'Legal Steps',
-              description: 'How to seek remedy',
-              points: [
-                'File complaint with Labour Commissioner/Department',
-                'File claim for unpaid wages, notice pay, severance',
-                'Seek reinstatement or compensation',
-                'File before Industrial Tribunal if needed',
-                'Free legal aid available if you cannot afford lawyer',
-              ],
-              icon: 'assets/icons/process.svg',
+        id: 'labour_1',
+        title: loc.labour1Title,
+        description: loc.labour1Desc,
+        moduleType: ModuleType.labourRights,
+        chatNavigationRoute: 'chat_labour_rights',
+        chatScreenName: loc.labourChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.labour1Step1Title,
+            description: loc.labour1Step1Desc,
+            icon: 'assets/icons/rights.svg',
+            points: [
+              loc.labour1Step1P1,
+              loc.labour1Step1P2,
+              loc.labour1Step1P3,
+              loc.labour1Step1P4,
+              loc.labour1Step1P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.labour1Step2Title,
+            description: loc.labour1Step2Desc,
+            icon: 'assets/icons/document.svg',
+            points: [
+              loc.labour1Step2P1,
+              loc.labour1Step2P2,
+              loc.labour1Step2P3,
+              loc.labour1Step2P4,
+              loc.labour1Step2P5,
+              loc.labour1Step2P6,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.labour1Step3Title,
+            description: loc.labour1Step3Desc,
+            icon: 'assets/icons/process.svg',
+            points: [
+              loc.labour1Step3P1,
+              loc.labour1Step3P2,
+              loc.labour1Step3P3,
+              loc.labour1Step3P4,
+              loc.labour1Step3P5,
+            ],
             ),
           ],
         ),
         Scenario(
-          id: 'labour_2',
-          title: 'Non-payment of Wages',
-          description: 'Your employer is not paying your salary',
-          moduleType: ModuleType.labourRights,
-          chatNavigationRoute: 'chat_labour_rights',
-          chatScreenName: 'Labour Rights Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Know Your Entitlement',
-              description: 'What you must legally be paid',
-              points: [
-                'Minimum wage as per state law is mandatory',
-                'Wages must be paid on time (on agreed date)',
-                'You cannot be deducted without valid reason',
-                'Deductions must be for specific purposes only',
-                'Unpaid wages + penalty interest recoverable',
-              ],
-              icon: 'assets/icons/money.svg',
-            ),
-            GuidanceStep(
-              title: 'Immediate Steps',
-              description: 'Act immediately',
-              points: [
-                '✓ Send formal written demand for payment with deadline',
-                '✓ Keep records of all communication with employer',
-                '✓ Document work hours and dates worked',
-                '✓ Calculate total pending amount accurately',
-                '✓ Keep bank statements showing payment failures',
-                '✗ DON\'T accept verbal promises - get in writing',
-              ],
-              icon: 'assets/icons/action.svg',
-            ),
-            GuidanceStep(
-              title: 'Filing Complaint',
-              description: 'Formal legal action',
-              points: [
-                'File complaint with Labour Department/Commissioner',
-                'File case in Labour Court for recovery',
-                'Include all unpaid salary + damages',
-                'Complaint free under Payment of Wages Act',
-                'Company must appear and explain non-payment',
-              ],
-              icon: 'assets/icons/legal.svg',
+        id: 'labour_2',
+        title: loc.labour2Title,
+        description: loc.labour2Desc,
+        moduleType: ModuleType.labourRights,
+        chatNavigationRoute: 'chat_labour_rights',
+        chatScreenName: loc.labourChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.labour2Step1Title,
+            description: loc.labour2Step1Desc,
+            icon: 'assets/icons/money.svg',
+            points: [
+              loc.labour2Step1P1,
+              loc.labour2Step1P2,
+              loc.labour2Step1P3,
+              loc.labour2Step1P4,
+              loc.labour2Step1P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.labour2Step2Title,
+            description: loc.labour2Step2Desc,
+            icon: 'assets/icons/action.svg',
+            points: [
+              loc.labour2Step2P1,
+              loc.labour2Step2P2,
+              loc.labour2Step2P3,
+              loc.labour2Step2P4,
+              loc.labour2Step2P5,
+              loc.labour2Step2P6,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.labour2Step3Title,
+            description: loc.labour2Step3Desc,
+            icon: 'assets/icons/legal.svg',
+            points: [
+              loc.labour2Step3P1,
+              loc.labour2Step3P2,
+              loc.labour2Step3P3,
+              loc.labour2Step3P4,
+              loc.labour2Step3P5,
+            ],
             ),
           ],
         ),
         Scenario(
-          id: 'labour_3',
-          title: 'Workplace Injury / Accident',
-          description: 'You were injured at work and need compensation',
-          moduleType: ModuleType.labourRights,
-          chatNavigationRoute: 'chat_labour_rights',
-          chatScreenName: 'Labour Rights Assistant Chat',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Your Rights After Injury',
-              description: 'Compensation and care you deserve',
-              points: [
-                'Employer liable for workplace injuries (Workmen\'s Compensation Act)',
-                'You entitled to medical expenses coverage',
-                'You entitled to disability/partial disability compensation',
-                'You entitled to lost wages during recovery',
-                'In fatal cases, family entitled to compensation',
-              ],
-              icon: 'assets/icons/rights.svg',
-            ),
-            GuidanceStep(
-              title: 'Immediate Actions',
-              description: 'Do this right after injury',
-              points: [
-                '✓ Report injury to employer immediately',
-                '✓ Get written acknowledgment of incident',
-                '✓ Seek immediate medical treatment',
-                '✓ Take photos of injury and accident site',
-                '✓ Get witness statements from colleagues',
-                '✓ Keep all medical bills and receipts',
-                '✗ DON\'T sign any settlement without consulting lawyer',
-              ],
-              icon: 'assets/icons/emergency.svg',
-            ),
-            GuidanceStep(
-              title: 'Claiming Compensation',
-              description: 'Steps to receive compensation',
-              points: [
-                'File claim with Workmen\'s Compensation Commissioner',
-                'Attach medical reports and accident evidence',
-                'Claim unpaid wages during recovery period',
-                'Claim permanent disability compensation if applicable',
-                'Employer must present insurance certificate',
-              ],
-              icon: 'assets/icons/claim.svg',
+        id: 'labour_3',
+        title: loc.labour3Title,
+        description: loc.labour3Desc,
+        moduleType: ModuleType.labourRights,
+        chatNavigationRoute: 'chat_labour_rights',
+        chatScreenName: loc.labourChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.labour3Step1Title,
+            description: loc.labour3Step1Desc,
+            icon: 'assets/icons/rights.svg',
+            points: [
+              loc.labour3Step1P1,
+              loc.labour3Step1P2,
+              loc.labour3Step1P3,
+              loc.labour3Step1P4,
+              loc.labour3Step1P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.labour3Step2Title,
+            description: loc.labour3Step2Desc,
+            icon: 'assets/icons/emergency.svg',
+            points: [
+              loc.labour3Step2P1,
+              loc.labour3Step2P2,
+              loc.labour3Step2P3,
+              loc.labour3Step2P4,
+              loc.labour3Step2P5,
+              loc.labour3Step2P6,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.labour3Step3Title,
+            description: loc.labour3Step3Desc,
+            icon: 'assets/icons/claim.svg',
+            points: [
+              loc.labour3Step3P1,
+              loc.labour3Step3P2,
+              loc.labour3Step3P3,
+              loc.labour3Step3P4,
+              loc.labour3Step3P5,
+            ],
             ),
           ],
         ),
@@ -639,59 +647,61 @@ class ScenarioService {
   }
 
   /// GENERAL SCENARIOS (FOR QUICK ACTIONS)
-  ModuleScenarioConfig _getGeneralScenarios() {
-    return ModuleScenarioConfig(
-      moduleType: ModuleType.general,
-      moduleName: 'Legal Guidance',
-      moduleIcon: 'assets/icons/legal.svg',
-      chatScreenPath: 'home', // Navigate back to home to select module
-      scenarios: [
-        Scenario(
-          id: 'general_1',
-          title: 'Choose Your Concern',
-          description: 'Let AI guide you through legal scenarios',
-          moduleType: ModuleType.general,
-          chatNavigationRoute: 'home',
-          chatScreenName: 'Legal Advisor',
-          guidanceSteps: [
-            GuidanceStep(
-              title: 'Welcome to AI Legal Advisor',
-              description: 'Get legal guidance for your specific situation',
-              points: [
-                'Describe your legal concern in your own words',
-                'AI will ask clarifying questions to understand better',
-                'Get relevant legal information and next steps',
-                'Receive guidance based on Indian laws',
-                'All actions happen within the app',
-              ],
-              icon: 'assets/icons/help.svg',
-            ),
-            GuidanceStep(
-              title: 'What You Can Get Help With',
-              description: 'Choose the relevant category',
-              points: [
-                '🚗 Road & Traffic Rules - Violations, accidents, licenses',
-                '👩 Women Harassment - Workplace, street, domestic',
-                '💻 Cyber Crime - Fraud, hacking, online abuse',
-                '⚖️ Labour Rights - Wages, dismissal, workplace safety',
-              ],
-              icon: 'assets/icons/category.svg',
-            ),
-            GuidanceStep(
-              title: 'How to Use This Service',
-              description: 'Step-by-step process',
-              points: [
-                'Select your legal concern category',
-                'Review important guidance and dos/don\'ts',
-                'Click "Start Chat" to speak with AI advisor',
-                'Get personalized legal guidance',
-                'Receive recommended next actions',
-              ],
-              icon: 'assets/icons/guide.svg',
-            ),
-          ],
-        ),
-      ],
-    );
+  ModuleScenarioConfig _getGeneralScenarios(BuildContext context) {
+  final loc = AppLocalizations.of(context)!;
+
+  return ModuleScenarioConfig(
+    moduleType: ModuleType.general,
+    moduleName: loc.generalModuleName,
+    moduleIcon: 'assets/icons/legal.svg',
+    chatScreenPath: 'home',
+    scenarios: [
+      Scenario(
+        id: 'general_1',
+        title: loc.general1Title,
+        description: loc.general1Desc,
+        moduleType: ModuleType.general,
+        chatNavigationRoute: 'home',
+        chatScreenName: loc.generalChatName,
+        guidanceSteps: [
+          GuidanceStep(
+            title: loc.general1Step1Title,
+            description: loc.general1Step1Desc,
+            icon: 'assets/icons/help.svg',
+            points: [
+              loc.general1Step1P1,
+              loc.general1Step1P2,
+              loc.general1Step1P3,
+              loc.general1Step1P4,
+              loc.general1Step1P5,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.general1Step2Title,
+            description: loc.general1Step2Desc,
+            icon: 'assets/icons/category.svg',
+            points: [
+              loc.general1Step2P1,
+              loc.general1Step2P2,
+              loc.general1Step2P3,
+              loc.general1Step2P4,
+            ],
+          ),
+          GuidanceStep(
+            title: loc.general1Step3Title,
+            description: loc.general1Step3Desc,
+            icon: 'assets/icons/guide.svg',
+            points: [
+              loc.general1Step3P1,
+              loc.general1Step3P2,
+              loc.general1Step3P3,
+              loc.general1Step3P4,
+              loc.general1Step3P5,
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
   }
-}
+  }

@@ -6,6 +6,7 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -16,7 +17,7 @@ class AboutScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'About',
+          loc.about,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -43,8 +44,8 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             // App Name
-            const Text(
-              'Legal Sathi',
+             Text(
+              loc.appName,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
@@ -105,7 +106,7 @@ class AboutScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 12),
                         Text(
-                          'Legal Sathi is an AI-powered legal assistant designed to help Pakistani citizens understand their legal rights and navigate the legal system. We provide information on criminal law, civil law, labour rights, cyber crime, and more.\n\nOur mission is to make legal information accessible to everyone, regardless of their background or resources. We help users draft legal documents, understand laws, and take informed action.',
+                           loc.aboutDescription,
                           style: TextStyle(
                             fontSize: 13,
                             height: 1.5,
@@ -136,8 +137,8 @@ class AboutScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Version Information',
+                        Text(
+                          loc.versionInfo,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -145,11 +146,11 @@ class AboutScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        _buildInfoRow('Version', '1.0.0'),
+                        _buildInfoRow(loc.version, '1.0.0'),
                         const SizedBox(height: 12),
-                        _buildInfoRow('Build', '2026.01.15'),
+                        _buildInfoRow(loc.build, '2026.01.15'),
                         const SizedBox(height: 12),
-                        _buildInfoRow('Platform', 'Mobile App'),
+                        _buildInfoRow(loc.platform, loc.mobileApp),
                       ],
                     ),
                   ),
@@ -171,30 +172,28 @@ class AboutScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Column(
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Developer',
-                          style: TextStyle(
+                           loc.developer,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Row(
                           children: [
-                            Text(
-                              'Developed with ',
-                              style: TextStyle(
+                              Text(loc.developedWith,
+                              style: const TextStyle(
                                 fontSize: 13,
                                 color: Colors.black54,
                               ),
                             ),
-                            Icon(Icons.favorite, size: 14, color: Colors.red),
-                            Text(
-                              ' for the people of Pakistan',
+                            const Icon(Icons.favorite, size: 14, color: Colors.red),
+                               Text(loc.forPakistan,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.black54,
@@ -233,8 +232,7 @@ class AboutScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Legal Disclaimer',
+                               Text(loc.legalDisclaimerTitle,
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -242,8 +240,7 @@ class AboutScreen extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              Text(
-                                'Legal Sathi provides general legal information only. This is not legal advice and should not replace consultation with a qualified lawyer. Always consult a legal professional for specific legal matters.',
+                               Text(loc.legalDisclaimer,
                                 style: TextStyle(
                                   fontSize: 13,
                                   height: 1.5,
@@ -260,8 +257,8 @@ class AboutScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // Copyright Footer
-                  const Text(
-                    '© 2026 Legal Sathi. All rights reserved.',
+                   Text(
+                     loc.copyright,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: Colors.black54),
                   ),

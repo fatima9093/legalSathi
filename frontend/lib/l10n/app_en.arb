@@ -11,6 +11,12 @@
   "firDraft": "FIR Draft",
   "darkMode": "Dark Mode",
   "home": "Home",
+  "next": "Next",
+"lastStep": "Last Step",
+ "simulation_aiDescription": "AI will guide you step-by-step with legal advice and next actions",
+  "howAiWorks": "How AI Advisor Works:",
+  "stepOf": "Step {current} of {total}",
+
   "chat": "Chat",
   "cancel": "Cancel",
   "delete": "Delete",
@@ -42,10 +48,24 @@
   "medicalReports": "Medical Reports",
   "policeReports": "Police Reports",
   "diary": "Diary",
+  "incidentNotes": "Incident Notes",
   "hrwarningemails": "HR Warning Emails",
   "patternOfBehavior": "Pattern of Behavior",
   "whatnotTodo": "What not to do",
   "tipsForPreservivngDigitalFiles": "Tips for Preserving Digital Files",
+  "evidenceWhatsAppDescription": "Screenshots of harassing messages with timestamps and sender information visible.",
+  "evidenceEmailsDescription": "Email correspondence showing harassment, including headers with dates and times.",
+  "evidenceVoiceNotesDescription": "Audio recordings of threatening or harassing voice messages (where legal).",
+  "evidenceCctvDescription": "Video evidence from security cameras showing incidents of harassment.",
+  "evidenceCallRecordingsDescription": "Recorded phone conversations (only legal with consent in Pakistan).",
+  "evidenceScreenshotsDescription": "Screen captures of harassing content from social media or other platforms.",
+  "evidencePhotosDescription": "Photographic evidence of physical harassment or threats.",
+  "evidenceDigitalCommunicationDescription": "Any other form of digital communication showing harassment.",
+  "evidenceWitnessStatementsDescription": "Written statements from people who witnessed the harassment.",
+  "evidenceDiaryIncidentNotesDescription": "Personal records documenting dates, times, and details of incidents.",
+  "evidenceMedicalReportsDescription": "Medical documentation of physical or psychological harm caused by harassment.",
+  "evidenceHrWarningEmailsDescription": "Official warnings or complaints filed with HR department.",
+  "evidencePatternOfBehaviorDescription": "Documentation showing repeated instances of harassment over time.",
   "uploadEvidenceForAiReview": "Upload evidence for AI review", 
   "evidenceCollectionGuide": "Evidence Collection Guide",
   "typeYourQuestion": "Type your question here...",
@@ -1944,8 +1964,606 @@
   "passwordResetSuccessMessage": "Your password has been reset successfully. Go back and sign in with your new password.",
   "passwordResetCloseTabMessage": "Your password has been reset successfully.",
   "passwordResetCloseTabHint": "You can close this browser tab now. Return to the Legal Sathi app window (where you tapped Forgot Password) and sign in with your new password.",
-  "goToSignIn": "Go to Sign In"
+  "goToSignIn": "Go to Sign In",
+  "tipsBackupCloudStorage": "Back up to cloud storage immediately",
+  "tipsMultipleCopies": "Keep multiple copies in different locations",
+  "tipsDontCompress": "Don't compress or reduce image quality",
+  "tipsNoteMetadata": "Note metadata (date, time, sender)",
+  "tipsStoreChronologically": "Store chronologically with labels",
+  "limitedAccessTitle": "Limited Access",
+  "limitedAccessMessage": "Scenario simulations with progress tracking are available for signed-in users. You can still view the scenarios as a guest.",
+  "continueAsGuest": "Continue as Guest",
+  "signIn": "Sign In",
 
+  "selectYourScenario": "Select Your Scenario",
+  "selectLegalDomain": "Select Legal Domain *",
+  "describeLegalSituation": "Describe Your Legal Situation",
+  "aiGuidanceSubtitle": "AI will guide you step-by-step with legal advice and next actions",
+
+  "womenHarassment": "Women Harassment",
+  "womenHarassmentDesc": "Workplace harassment, protection act, ombudsperson complaints",
+
+  "labourRights": "Labour Rights",
+  "labourRightsDesc": "Wages, overtime, leave, contract violations, labour complaints",
+
+  "cyberCrime": "Cyber Crime (PECA)",
+  "cyberCrimeDesc": "Online harassment, blackmail, fake accounts, FIA complaints",
+
+  "trafficLaw": "Road & Traffic Law",
+  "trafficLawDesc": "Traffic violations, challans, fines, police misconduct",
+
+  "howAiWorks": "How AI Advisor Works:",
+  "aiStep1": "Describe your situation in your own words",
+  "aiStep2": "AI asks clarifying questions if needed",
+  "aiStep3": "Get step-by-step legal guidance (PECA, Labour Act, etc.)",
+  "aiStep4": "Receive relevant law references",
+  "aiStep5": "Get complaint and legal remedies recommendations",
+  "aiStep6": "All actions happen within the chat",
+
+  "stepProgress": "Step {current} of {total}",
+  "startChat": "Start Chat with AI Advisor",
+  "previous": "Previous",
+  "next": "Next",
+  "lastStep": "Last Step",
+"simulation_suspectInfo": "Suspect Information (if known)",
+  "simulate": "Simulate",
+  "simulation_aiStep1": "Describe your situation in your own words",
+  "simulation_aiStep2": "AI asks clarifying questions if needed",
+  "simulation_aiStep3": "Get step-by-step legal guidance (PECA, Labour Act, etc.)",
+  "simulation_aiStep4": "Receive relevant law references",
+  "simulation_aiStep5": "Get complaint and legal remedies recommendations",
+  "simulation_aiStep6": "All actions happen within the chat",
+
+  "trafficAccidentDisputeTitle": "Traffic Accident Dispute",
+  "trafficAccidentDisputeDesc": "You were involved in a traffic accident and need guidance",
+
+  "accidentSceneTitle": "At the Scene of Accident",
+  "accidentSceneDesc": "What to do immediately after the accident",
+  "moveToSafeLocation": "Move to a safe location if possible",
+  "alertTrafficHazard": "Alert other traffic using hazard lights",
+  "callPolice": "Call police or traffic helpline",
+  "dontAdmitFault": "Do not admit fault or sign documents",
+  "gatherWitnessInfo": "Gather witness information and photos",
+
+  "accidentDocsTitle": "Documentation Required",
+  "accidentDocsDesc": "Collect these documents for your protection",
+  "firNumber": "FIR number",
+  "insuranceDetails": "Insurance policy details",
+  "accidentPhotos": "Photographs of accident site",
+  "medicalCertificate": "Medical certificates if injured",
+  "witnessStatements": "Witness contacts and statements",
+
+  "accidentRightsTitle": "Legal Rights & Claims",
+  "accidentRightsDesc": "Know your compensation options",
+  "fileMotorClaim": "File motor accident claim within 6 months",
+  "vehicleAssessment": "Get vehicle assessment done",
+  "claimMedicalExpenses": "Claim medical expenses and loss of earnings",
+  "rightToSue": "Know your right to sue for damages",
+
+  "licenseIssueTitle": "License Suspension/Cancellation",
+  "licenseIssueDesc": "Your driving license is suspended or cancelled",
+
+  "suspensionVsCancellationTitle": "Suspension vs Cancellation",
+  "suspensionVsCancellationDesc": "Know the difference and implications",
+  "suspensionDefinition": "Suspension is temporary license pause",
+  "cancellationDefinition": "Cancellation is permanent revocation",
+  "violationReasons": "Reasons include violations or medical issues",
+  "illegalDrivingWarning": "Driving during suspension is illegal",
+
+  "appealProcessTitle": "Appeal Process",
+  "appealProcessDesc": "How to challenge the decision",
+  "fileRTAAppeal": "File appeal in RTA office",
+  "appealDeadline": "File within 30 days",
+  "gatherEvidence": "Gather supporting evidence",
+  "attendHearing": "Attend hearing and present case",
+
+  "recoveryStepsTitle": "Recovery Steps",
+  "recoveryStepsDesc": "Steps to restore your license",
+  "completeSuspension": "Complete suspension period",
+  "passRefresherTest": "Pass refresher test if required",
+  "payFees": "Pay required fees",
+  "collectLicense": "Collect renewed license",
+  "trafficModuleName": "Road & Traffic Law",
+  "womenModuleName": "Women Harassment",
+  "cyberModuleName": "Cyber Crime",
+  "labourModuleName": "Labour Rights",
+  "generalModuleName": "General",
+
+  "trafficChatScreenName": "Traffic Assistant Chat",
+
+  "traffic1Title": "Traffic Violation Fine",
+  "traffic1Desc": "You received a traffic ticket or penalty challan",
+
+  "traffic1Step1Title": "Understanding Your Violation",
+  "traffic1Step1Desc": "Know what violation you committed and the legal implications",
+  "traffic1Step1P1": "Check the violation code on your challan",
+  "traffic1Step1P2": "Understand the section under Motor Vehicles Act",
+  "traffic1Step1P3": "Know the fine amount and deadline",
+  "traffic1Step1P4": "Learn about your right to appeal",
+
+  "traffic1Step2Title": "Do's & Don'ts",
+  "traffic1Step2Desc": "Important steps to follow",
+  "traffic1Step2P1": "Pay the fine on time",
+  "traffic1Step2P2": "Keep receipt and challan safe",
+  "traffic1Step2P3": "Appeal if you think it is unfair",
+  "traffic1Step2P4": "Do not ignore the challan",
+  "traffic1Step2P5": "Do not offer bribes",
+
+  "traffic1Step3Title": "Immediate Actions",
+  "traffic1Step3Desc": "Steps to take right now",
+  "traffic1Step3P1": "Pay fine within deadline",
+  "traffic1Step3P2": "File appeal in traffic court if needed",
+  "traffic1Step3P3": "Collect all evidence",
+  "traffic1Step3P4": "Contact a lawyer if required",
+
+  "traffic2Title": "Traffic Accident Dispute",
+  "traffic2Desc": "You were involved in a traffic accident and need guidance",
+
+  "traffic2Step1Title": "At the Scene of Accident",
+  "traffic2Step1Desc": "What to do immediately after accident",
+  "traffic2Step1P1": "Move to a safe place",
+  "traffic2Step1P2": "Turn on hazard lights",
+  "traffic2Step1P3": "Call police (100)",
+  "traffic2Step1P4": "Do not admit fault",
+  "traffic2Step1P5": "Collect witness info and photos",
+
+  "traffic2Step2Title": "Documentation Required",
+  "traffic2Step2Desc": "Collect these documents",
+  "traffic2Step2P1": "FIR number",
+  "traffic2Step2P2": "Insurance details",
+  "traffic2Step2P3": "Photos of accident",
+  "traffic2Step2P4": "Medical certificates",
+  "traffic2Step2P5": "Witness statements",
+
+  "traffic2Step3Title": "Legal Rights & Claims",
+  "traffic2Step3Desc": "Know your compensation rights",
+  "traffic2Step3P1": "File claim within 6 months",
+  "traffic2Step3P2": "Get vehicle inspection",
+  "traffic2Step3P3": "Claim medical expenses",
+  "traffic2Step3P4": "Right to sue for damages",
+
+  "traffic3Title": "License Suspension/Cancellation",
+  "traffic3Desc": "Your driving license is suspended or cancelled",
+
+  "traffic3Step1Title": "Suspension vs Cancellation",
+  "traffic3Step1Desc": "Understand the difference",
+  "traffic3Step1P1": "Suspension is temporary",
+  "traffic3Step1P2": "Cancellation is permanent",
+  "traffic3Step1P3": "Causes include violations or medical issues",
+  "traffic3Step1P4": "Driving during suspension is illegal",
+
+  "traffic3Step2Title": "Appeal Process",
+  "traffic3Step2Desc": "How to challenge decision",
+  "traffic3Step2P1": "File appeal in RTA office",
+  "traffic3Step2P2": "Within 30 days",
+  "traffic3Step2P3": "Collect supporting evidence",
+  "traffic3Step2P4": "Attend hearing",
+
+  "traffic3Step3Title": "Recovery Steps",
+  "traffic3Step3Desc": "How to restore license",
+  "traffic3Step3P1": "Complete suspension period",
+  "traffic3Step3P2": "Pass required tests",
+  "traffic3Step3P3": "Pay fees",
+  "traffic3Step3P4": "Collect renewed license",
+
+  "womenModuleName": "Women Harassment",
+  "womenChatName": "Women Harassment Assistant Chat",
+
+  "women1Title": "Workplace Sexual Harassment",
+  "women1Desc": "You experienced harassment at your workplace",
+
+  "women1Step1Title": "Understand Your Rights",
+  "women1Step1Desc": "Know legal protections available to you",
+  "women1Step1P1": "Sexual Harassment of Women at Workplace Act protects you",
+  "women1Step1P2": "Harassment includes unwanted advances, comments, or touching",
+  "women1Step1P3": "Employer must ensure safe working environment",
+  "women1Step1P4": "You can complain without fear of retaliation",
+
+  "women1Step2Title": "Immediate Actions",
+  "women1Step2Desc": "What to do when harassment occurs",
+  "women1Step2P1": "Say NO clearly and firmly",
+  "women1Step2P2": "Document incidents with details",
+  "women1Step2P3": "Inform harasser in writing",
+  "women1Step2P4": "Report to HR or ICC",
+  "women1Step2P5": "Keep copies of communication",
+  "women1Step2P6": "Do not delay reporting",
+
+  "women1Step3Title": "Complaint & Investigation",
+  "women1Step3Desc": "Formal complaint process",
+  "women1Step3P1": "File complaint with ICC/HR",
+  "women1Step3P2": "Provide written evidence",
+  "women1Step3P3": "Investigation within 90 days",
+  "women1Step3P4": "Protection against retaliation",
+  "women1Step3P5": "Keep records of process",
+
+  "women2Title": "Street Sexual Harassment",
+  "women2Desc": "You faced harassment in public",
+
+  "women2Step1Title": "Understanding the Law",
+  "women2Step1Desc": "Legal protections available",
+  "women2Step1P1": "Indecent assault is a crime",
+  "women2Step1P2": "Stalking and eve-teasing are punishable",
+  "women2Step1P3": "You can file FIR at any police station",
+  "women2Step1P4": "Section 354 IPC applies",
+
+  "women2Step2Title": "Safety First",
+  "women2Step2Desc": "Immediate response",
+  "women2Step2P1": "Move to safe area",
+  "women2Step2P2": "Call emergency number 100",
+  "women2Step2P3": "Inform people nearby",
+  "women2Step2P4": "Remember description of offender",
+  "women2Step2P5": "Seek medical help if needed",
+  "women2Step2P6": "Do not confront alone",
+
+  "women2Step3Title": "Filing FIR",
+  "women2Step3Desc": "Police complaint process",
+  "women2Step3P1": "Go to nearest police station",
+  "women2Step3P2": "File FIR with details",
+  "women2Step3P3": "Get FIR copy",
+  "women2Step3P4": "Medical examination if needed",
+  "women2Step3P5": "Follow up case",
+
+  "women3Title": "Domestic Violence",
+  "women3Desc": "You are experiencing abuse at home",
+
+  "women3Step1Title": "You Are Not Alone",
+  "women3Step1Desc": "Support and legal rights",
+  "women3Step1P1": "Domestic violence is a crime",
+  "women3Step1P2": "Protection of Women Act supports you",
+  "women3Step1P3": "You can get protection order",
+  "women3Step1P4": "Legal and shelter support available",
+
+  "women3Step2Title": "Safety Planning",
+  "women3Step2Desc": "Protect yourself",
+  "women3Step2P1": "Keep documents safe",
+  "women3Step2P2": "Save emergency contacts",
+  "women3Step2P3": "Document injuries",
+  "women3Step2P4": "Record incidents",
+  "women3Step2P5": "Know shelter locations",
+  "women3Step2P6": "Do not blame yourself",
+
+  "women3Step3Title": "Legal Options",
+  "women3Step3Desc": "Legal actions available",
+  "women3Step3P1": "File FIR",
+  "women3Step3P2": "Apply for protection order",
+  "women3Step3P3": "Get medical documentation",
+  "women3Step3P4": "Contact helpline",
+  "women3Step3P5": "Free legal aid available",
+
+  "cyberModuleName": "Cyber Crime",
+  "cyberChatName": "Cyber Crime Assistant Chat",
+
+  "cyber1Title": "Online Financial Fraud",
+  "cyber1Desc": "You lost money due to online scam",
+
+  "cyber1Step1Title": "Immediate Actions",
+  "cyber1Step1Desc": "Act quickly",
+  "cyber1Step1P1": "Block accounts immediately",
+  "cyber1Step1P2": "Change passwords",
+  "cyber1Step1P3": "Contact bank",
+  "cyber1Step1P4": "Check transactions",
+  "cyber1Step1P5": "Enable fraud alert",
+
+  "cyber1Step2Title": "Know the Crime",
+  "cyber1Step2Desc": "Legal understanding",
+  "cyber1Step2P1": "Section 420 IPC applies",
+  "cyber1Step2P2": "Identity theft is cyber crime",
+  "cyber1Step2P3": "Phishing is punishable",
+  "cyber1Step2P4": "File FIR cyber unit",
+  "cyber1Step2P5": "Bank may assist",
+
+  "cyber1Step3Title": "Recovery Steps",
+  "cyber1Step3Desc": "Legal recovery",
+  "cyber1Step3P1": "File FIR",
+  "cyber1Step3P2": "Provide evidence",
+  "cyber1Step3P3": "Request bank reversal",
+  "cyber1Step3P4": "Report to cyber cell",
+  "cyber1Step3P5": "Consider legal action",
+
+  "cyber2Title": "Revenge Porn / Image Abuse",
+  "cyber2Desc": "Private images shared without consent",
+
+  "cyber2Step1Title": "Know Your Rights",
+  "cyber2Step1Desc": "Legal protection",
+  "cyber2Step1P1": "Sharing images is crime",
+  "cyber2Step1P2": "Section 67A IT Act",
+  "cyber2Step1P3": "Section 354D IPC",
+  "cyber2Step1P4": "POCSO applies if minor",
+  "cyber2Step1P5": "POCSO Act applies if a minor is involved",
+
+  "cyber2Step2Title": "Immediate Response",
+  "cyber2Step2Desc": "Act fast",
+  "cyber2Step2P1": "Report platform",
+  "cyber2Step2P2": "Use takedown option",
+  "cyber2Step2P3": "Take screenshots",
+  "cyber2Step2P4": "Save URLs",
+  "cyber2Step2P5": "Inform trusted people",
+  "cyber2Step2P6": "Do not engage attacker",
+
+  "cyber2Step3Title": "Legal Action",
+  "cyber2Step3Desc": "File complaint",
+  "cyber2Step3P1": "File FIR cyber police",
+  "cyber2Step3P2": "Report platform",
+  "cyber2Step3P3": "NCW complaint",
+  "cyber2Step3P4": "Content removal request",
+  "cyber2Step3P5": "Civil case option",
+
+  "cyber3Title": "Account Hacking",
+  "cyber3Desc": "Your account was hacked",
+
+  "cyber3Step1Title": "Secure Account",
+  "cyber3Step1Desc": "Regain control",
+  "cyber3Step1P1": "Recover account",
+  "cyber3Step1P2": "Change password",
+  "cyber3Step1P3": "Enable 2FA",
+  "cyber3Step1P4": "Check activity",
+  "cyber3Step1P5": "Remove unknown apps",
+
+  "cyber3Step2Title": "Damage Check",
+  "cyber3Step2Desc": "Assess impact",
+  "cyber3Step2P1": "Check sent messages",
+  "cyber3Step2P2": "Check transactions",
+  "cyber3Step2P3": "Check changes",
+  "cyber3Step2P4": "Monitor accounts",
+  "cyber3Step2P5": "Inform contacts",
+
+  "cyber3Step3Title": "Legal Action",
+  "cyber3Step3Desc": "Report crime",
+  "cyber3Step3P1": "File FIR",
+  "cyber3Step3P2": "Report platform",
+  "cyber3Step3P3": "Save evidence",
+  "cyber3Step3P4": "Check credit reports",
+  "cyber3Step3P5": "Cyber expert help",
+
+  "labourModuleName": "Labour Rights",
+  "labourChatName": "Labour Rights Assistant Chat",
+
+  "labour1Title": "Unfair Dismissal",
+  "labour1Desc": "You were fired without proper notice or compensation",
+
+  "labour1Step1Title": "Understanding Your Rights",
+  "labour1Step1Desc": "Employer cannot fire you arbitrarily",
+  "labour1Step1P1": "Industrial Disputes Act protects workers",
+  "labour1Step1P2": "Valid reason is required for termination",
+  "labour1Step1P3": "Written notice is mandatory",
+  "labour1Step1P4": "Wrongful termination is illegal",
+  "labour1Step1P5": "You can claim compensation or reinstatement",
+
+  "labour1Step2Title": "Immediate Documentation",
+  "labour1Step2Desc": "Collect evidence",
+  "labour1Step2P1": "Keep termination letter",
+  "labour1Step2P2": "Record dismissal details",
+  "labour1Step2P3": "Collect salary slips",
+  "labour1Step2P4": "Save performance records",
+  "labour1Step2P5": "Gather witness statements",
+  "labour1Step2P6": "Keep company policies",
+
+  "labour1Step3Title": "Legal Steps",
+  "labour1Step3Desc": "How to seek remedy",
+  "labour1Step3P1": "File complaint with Labour Department",
+  "labour1Step3P2": "Claim unpaid wages and severance",
+  "labour1Step3P3": "Seek reinstatement or compensation",
+  "labour1Step3P4": "File Labour Tribunal case",
+  "labour1Step3P5": "Free legal aid available",
+
+  "generalModuleName": "Legal Guidance",
+  "generalChatName": "Legal Advisor",
+
+  "general1Title": "Choose Your Concern",
+  "general1Desc": "Let AI guide your legal issue",
+
+  "general1Step1Title": "Welcome to Legal Advisor",
+  "general1Step1Desc": "Get legal help easily",
+  "general1Step1P1": "Describe your issue",
+  "general1Step1P2": "AI will analyze your case",
+  "general1Step1P3": "Get legal guidance",
+  "general1Step1P4": "Based on laws",
+  "general1Step1P5": "All inside app",
+
+  "general1Step2Title": "Categories",
+  "general1Step2Desc": "Select your issue type",
+  "general1Step2P1": "Traffic law issues",
+  "general1Step2P2": "Women harassment cases",
+  "general1Step2P3": "Cyber crimes",
+  "general1Step2P4": "Labour rights",
+
+  "general1Step3Title": "How to Use",
+  "general1Step3Desc": "Simple steps",
+  "general1Step3P1": "Select category",
+  "general1Step3P2": "Read guidance",
+  "general1Step3P3": "Start AI chat",
+  "general1Step3P4": "Get advice",
+  "general1Step3P5": "Follow steps",
+  "labour2Title": "Non-payment of Wages",
+  "labour2Desc": "Your employer is not paying your salary",
+
+  "labour2Step1Title": "Know Your Entitlement",
+  "labour2Step1Desc": "Your legal wage rights",
+  "labour2Step1P1": "Minimum wage must be paid by law",
+  "labour2Step1P2": "Wages must be paid on time",
+  "labour2Step1P3": "Illegal deductions are not allowed",
+  "labour2Step1P4": "Only lawful deductions are valid",
+  "labour2Step1P5": "You can recover unpaid wages with penalty",
+
+  "labour2Step2Title": "Immediate Steps",
+  "labour2Step2Desc": "Act quickly",
+  "labour2Step2P1": "Send written demand for salary",
+  "labour2Step2P2": "Keep all communication records",
+  "labour2Step2P3": "Record working hours",
+  "labour2Step2P4": "Calculate pending amount",
+  "labour2Step2P5": "Keep bank statements",
+  "labour2Step2P6": "Do not rely on verbal promises",
+
+  "labour2Step3Title": "Filing Complaint",
+  "labour2Step3Desc": "Legal action process",
+  "labour2Step3P1": "File complaint with Labour Department",
+  "labour2Step3P2": "File recovery case in Labour Court",
+  "labour2Step3P3": "Claim unpaid salary + damages",
+  "labour2Step3P4": "Case is free under law",
+  "labour2Step3P5": "Employer must respond legally",
+
+  "labour3Title": "Workplace Injury / Accident",
+  "labour3Desc": "You were injured at work",
+
+  "labour3Step1Title": "Your Rights After Injury",
+  "labour3Step1Desc": "Legal protection and compensation",
+  "labour3Step1P1": "Employer is liable for workplace injury",
+  "labour3Step1P2": "Medical expenses must be covered",
+  "labour3Step1P3": "You can claim disability compensation",
+  "labour3Step1P4": "You can claim lost wages",
+  "labour3Step1P5": "Family gets compensation in fatal cases",
+
+  "labour3Step2Title": "Immediate Actions",
+  "labour3Step2Desc": "What to do after accident",
+  "labour3Step2P1": "Report injury immediately",
+  "labour3Step2P2": "Get written acknowledgment",
+  "labour3Step2P3": "Seek medical treatment",
+  "labour3Step2P4": "Take photos of accident",
+  "labour3Step2P5": "Collect witness statements",
+  "labour3Step2P6": "Do not sign settlement without advice",
+
+  "labour3Step3Title": "Compensation Claim",
+  "labour3Step3Desc": "How to get compensation",
+  "labour3Step3P1": "File claim with Compensation Commissioner",
+  "labour3Step3P2": "Attach medical reports",
+  "labour3Step3P3": "Claim recovery wages",
+  "labour3Step3P4": "Claim disability benefits",
+  "labour3Step3P5": "Employer must provide insurance proof",
+
+  "myDocuments": "My Documents",
+
+  "signInToViewDocs": "Sign in to view and manage your documents",
+  "signInToDownloadDocs": "Sign in to download documents",
+  "signInToManageDocs": "Sign in to manage documents",
+
+  "noDocumentsAvailable": "No documents available",
+  "noDocumentsYet": "No documents yet",
+  "documentsEmptyHint": "Documents you generate or download will appear here",
+  "noDocumentsOfType": "No documents of this type",
+
+  "deleteDocument": "Delete Document",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "retry": "Retry",
+
+  "couldNotOpenDocument": "Could not open document",
+  "documentDeleted": "Document deleted successfully",
+
+  "storageUsage": "Storage Usage",
+
+  "download": "Download",
+
+  "complaints": "Complaints",
+  "templates": "Templates",
+  "generatedPdfs": "Generated PDFs",
+  "uploaded": "Uploaded",
+  "evidence": "Evidence",
+
+  "allDocuments": "All ({count})",
+
+  "openingDocument": "Opening: {title}",
+  "errorMessage": "Error: {message}",
+
+  "bottomNavHome": "Home",
+  "bottomNavChat": "Chat",
+  "bottomNavDocuments": "Documents",
+  "bottomNavProfile": "Profile",
+
+  "@allDocuments": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+
+  "@openingDocument": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+
+  "@errorMessage": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+
+"deleteConfirm": "Are you sure you want to delete \"{title}\"?",
+  "@deleteConfirm": {
+    "description": "Confirm delete dialog message",
+    "placeholders": {
+      "title": {}
+    }
+  },
+   "howToReportIssue": "How to report an issue",
+  "reportIssueSubtitle": "Get help with technical problems",
+  "helpReportContent": "For technical support, contact us through in-app support or website.",
+
+  "faqTitle": "Frequently Asked Questions",
+
+  "faqFreeUse": "Is Legal Sathi free to use?",
+  "faqFreeUseAnswer": "Yes, Legal Sathi is free for all users.",
+
+  "faqLawyerUse": "Can I use this instead of a lawyer?",
+  "faqLawyerUseAnswer": "No, it provides guidance only.",
+
+  "faqAiAccuracy": "How accurate is the AI assistant?",
+  "faqAiAccuracyAnswer": "AI is trained on Pakistani laws but may not be 100% accurate.",
+
+  "faqDataSecurity": "Is my data secure?",
+  "faqDataSecurityAnswer": "Yes, your data is encrypted and secure.",
+  "helpCenter": "Help Center",
+  "howCanWeHelp": "How Can We Help?",
+  "findAnswersAndSupport": "Find answers and support",
+  "helpTopics": "Help Topics",
+
+  "howToUseLegalSathi": "How to use Legal Sathi",
+  "learnBasicsNavigatingApp": "Learn basics of navigating the app",
+
+  "howToUploadEvidence": "How to upload evidence",
+  "stepByStepUpload": "Step by step guide",
+
+  "howOcrWorks": "How OCR works",
+  "ocrSubtitle": "Document scanning and analysis",
+
+  "howToDraftDocuments": "How to draft documents",
+  "draftSubtitle": "FIRs, complaints and legal documents",
+
+  "helpUseAppContent": "Use bottom navigation to move between screens.",
+  "helpUploadContent": "Go to documents and upload files.",
+  "helpOcrContent": "OCR extracts text from images and PDFs.",
+  "helpDraftContent": "Use draft tools to create legal documents.",
+
+  "ok": "OK",
+
+  "faqLanguages": "What languages are supported?",
+  "faqLanguagesAnswer": "English, Urdu, and Roman Urdu are supported.",
+
+  "stillNeedHelp": "Still Need Help?",
+  "contactSupportText": "Contact our support team for assistance",
+  "contactSupport": "Contact Support",
+  "about": "About",
+  "appName": "Legal Sathi",
+  "aiLegalAssistant": "AI Legal Assistant",
+  "urduLine1": "Your Legal",
+  "urduLine2": "Companion",
+
+  "aboutLegalSathi": "About Legal Sathi",
+  "aboutDescription": "Legal Sathi is an AI-powered legal assistant designed to help Pakistani citizens understand their legal rights and navigate the legal system. We provide information on criminal law, civil law, labour rights, cyber crime, and more.\n\nOur mission is to make legal information accessible to everyone, regardless of their background or resources. We help users draft legal documents, understand laws, and take informed action.",
+
+  "versionInfo": "Version Information",
+  "version": "Version",
+  "build": "Build",
+  "platform": "Platform",
+  "mobileApp": "Mobile App",
+
+  "developer": "Developer",
+  "developedWith": "Developed with ",
+  "forPakistan": " for the people of Pakistan",
+
+  "legalDisclaimerTitle": "Legal Disclaimer",
+  "legalDisclaimer": "Legal Sathi provides general legal information only. This is not legal advice and should not replace consultation with a qualified lawyer.",
+
+  "copyright": "© 2026 Legal Sathi. All rights reserved."
 }
 
 
