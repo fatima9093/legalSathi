@@ -5,7 +5,7 @@ import 'package:front_end/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Onboarding completion flag key
-const String _onboardingCompletedKey = 'onboarding_completed_v2';
+const String _onboardingCompletedKey = 'onboarding_completed';
 
 /// Check if onboarding has been completed
 Future<bool> hasCompletedOnboarding() async {

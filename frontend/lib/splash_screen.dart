@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:front_end/create_account/auth_navigation_helper.dart';
-import 'package:front_end/create_account/signin_screen.dart';
 import 'package:front_end/services/supabase_auth_callback_handler.dart';
 
 import 'home_screen.dart';
@@ -63,15 +61,12 @@ class _SplashScreenState extends State<SplashScreen>
       if (SupabaseAuthCallbackHandler.hasPendingPasswordRecovery) return;
 
       final session = Supabase.instance.client.auth.currentSession;
-      final onboardingCompleted = await hasCompletedOnboarding();
 
       Widget nextPage;
       if (session != null) {
         nextPage = const HomeScreen();
-      } else if (!onboardingCompleted) {
-        nextPage = const OnboardingScreen();
       } else {
-        nextPage = const SignInScreen();
+        nextPage = const OnboardingScreen();
       }
 
       if (!mounted) return;
