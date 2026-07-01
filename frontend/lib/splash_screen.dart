@@ -67,13 +67,10 @@ class _SplashScreenState extends State<SplashScreen>
 
       Widget nextPage;
       if (session != null) {
-        // User is logged in
         nextPage = const HomeScreen();
       } else if (!onboardingCompleted) {
-        // Show onboarding only on first app launch
         nextPage = const OnboardingScreen();
       } else {
-        // Onboarding completed, but not logged in → go to login
         nextPage = const SignInScreen();
       }
 

@@ -13,35 +13,39 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-
-  // Define all onboarding data
-  List<OnboardingData> _pages =
-      []; // ← removed "late final", empty list initially
+  bool _pagesInitialized = false;
+  List<OnboardingData> _pages = [];
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Safe to use context here
+    if (_pagesInitialized) return;
+
+    final loc = AppLocalizations.of(context);
+    if (loc == null) return;
+
     _pages = [
       OnboardingData(
         icon: Icons.balance,
         isIconData: true,
-        title: AppLocalizations.of(context)!.knowYourRights,
-        description: AppLocalizations.of(context)!.knowYourRightsDesc,
+        title: loc.knowYourRights,
+        description: loc.knowYourRightsDesc,
       ),
       OnboardingData(
         imagePath: 'assets/legal_image.png',
         isIconData: false,
-        title: AppLocalizations.of(context)!.aiLegalAssistantTitle,
-        description: AppLocalizations.of(context)!.aiLegalAssistantDesc,
+        title: loc.aiLegalAssistantTitle,
+        description: loc.aiLegalAssistantDesc,
       ),
       OnboardingData(
         imagePath: 'assets/draft_image.png',
         isIconData: false,
-        title: AppLocalizations.of(context)!.draftDocumentsTitle,
-        description: AppLocalizations.of(context)!.draftDocumentsDesc,
+        title: loc.draftDocumentsTitle,
+        description: loc.draftDocumentsDesc,
       ),
     ];
+    _pagesInitialized = true;
+    setState(() {});
   }
 
   Future<void> _navigateToLanguageSelection() async {
@@ -56,6 +60,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_pagesInitialized || _pages.isEmpty) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(
+          child: CircularProgressIndicator(color: Color(0xFF00401A)),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
