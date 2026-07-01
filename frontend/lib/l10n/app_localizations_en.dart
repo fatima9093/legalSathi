@@ -42,6 +42,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home => 'Home';
 
   @override
+  String get next => 'Next';
+
+  @override
+  String get lastStep => 'Last Step';
+
+  @override
+  String get simulation_aiDescription => 'AI will guide you step-by-step with legal advice and next actions';
+
+  @override
+  String get howAiWorks => 'How AI Advisor Works:';
+
+  @override
+  String stepOf(Object current, Object total) {
+    return 'Step $current of $total';
+  }
+
+  @override
   String get chat => 'Chat';
 
   @override
@@ -123,7 +140,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get callRecordings => 'Call Recordings';
 
   @override
-  String get witnessStatements => 'Witness Statements';
+  String get witnessStatements => 'Witness contacts and statements';
 
   @override
   String get medicalReports => 'Medical Reports';
@@ -133,6 +150,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diary => 'Diary';
+
+  @override
+  String get incidentNotes => 'Incident Notes';
 
   @override
   String get hrwarningemails => 'HR Warning Emails';
@@ -145,6 +165,45 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tipsForPreservivngDigitalFiles => 'Tips for Preserving Digital Files';
+
+  @override
+  String get evidenceWhatsAppDescription => 'Screenshots of harassing messages with timestamps and sender information visible.';
+
+  @override
+  String get evidenceEmailsDescription => 'Email correspondence showing harassment, including headers with dates and times.';
+
+  @override
+  String get evidenceVoiceNotesDescription => 'Audio recordings of threatening or harassing voice messages (where legal).';
+
+  @override
+  String get evidenceCctvDescription => 'Video evidence from security cameras showing incidents of harassment.';
+
+  @override
+  String get evidenceCallRecordingsDescription => 'Recorded phone conversations (only legal with consent in Pakistan).';
+
+  @override
+  String get evidenceScreenshotsDescription => 'Screen captures of harassing content from social media or other platforms.';
+
+  @override
+  String get evidencePhotosDescription => 'Photographic evidence of physical harassment or threats.';
+
+  @override
+  String get evidenceDigitalCommunicationDescription => 'Any other form of digital communication showing harassment.';
+
+  @override
+  String get evidenceWitnessStatementsDescription => 'Written statements from people who witnessed the harassment.';
+
+  @override
+  String get evidenceDiaryIncidentNotesDescription => 'Personal records documenting dates, times, and details of incidents.';
+
+  @override
+  String get evidenceMedicalReportsDescription => 'Medical documentation of physical or psychological harm caused by harassment.';
+
+  @override
+  String get evidenceHrWarningEmailsDescription => 'Official warnings or complaints filed with HR department.';
+
+  @override
+  String get evidencePatternOfBehaviorDescription => 'Documentation showing repeated instances of harassment over time.';
 
   @override
   String get uploadEvidenceForAiReview => 'Upload evidence for AI review';
@@ -297,9 +356,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get domesticViolence => 'Domestic Violence';
 
   @override
-  String get next => 'Next';
-
-  @override
   String get privacy => 'Privacy Policy';
 
   @override
@@ -414,19 +470,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howCanWeHelp => 'How Can We Help?';
 
   @override
-  String get findAnswersAndSupport => 'Find answers and get support';
+  String get findAnswersAndSupport => 'Find answers and support';
 
   @override
   String get helpTopics => 'Help Topics';
 
   @override
-  String get howToUseLegalSathi => 'How to Use Legal Sathi';
+  String get howToUseLegalSathi => 'How to use Legal Sathi';
 
   @override
-  String get learnBasicsNavigatingApp => 'Learn the basics of navigating the app';
+  String get learnBasicsNavigatingApp => 'Learn basics of navigating the app';
 
   @override
-  String get howToUploadEvidence => 'How to Upload Evidence';
+  String get howToUploadEvidence => 'How to upload evidence';
 
   @override
   String get stepByStepGuideUploadingDocuments => 'Step-by-step guide for uploading documents';
@@ -504,7 +560,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goBack => 'Go Back';
 
   @override
-  String get errorMessage => 'Error';
+  String errorMessage(Object message) {
+    return 'Error: $message';
+  }
 
   @override
   String get successMessage => 'Success';
@@ -4451,4 +4509,1332 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get goToSignIn => 'Go to Sign In';
+
+  @override
+  String get tipsBackupCloudStorage => 'Back up to cloud storage immediately';
+
+  @override
+  String get tipsMultipleCopies => 'Keep multiple copies in different locations';
+
+  @override
+  String get tipsDontCompress => 'Don\'t compress or reduce image quality';
+
+  @override
+  String get tipsNoteMetadata => 'Note metadata (date, time, sender)';
+
+  @override
+  String get tipsStoreChronologically => 'Store chronologically with labels';
+
+  @override
+  String get limitedAccessTitle => 'Limited Access';
+
+  @override
+  String get limitedAccessMessage => 'Scenario simulations with progress tracking are available for signed-in users. You can still view the scenarios as a guest.';
+
+  @override
+  String get selectLegalDomain => 'Select Legal Domain *';
+
+  @override
+  String get describeLegalSituation => 'Describe Your Legal Situation';
+
+  @override
+  String get aiGuidanceSubtitle => 'AI will guide you step-by-step with legal advice and next actions';
+
+  @override
+  String get womenHarassment => 'Women Harassment';
+
+  @override
+  String get womenHarassmentDesc => 'Workplace harassment, protection act, ombudsperson complaints';
+
+  @override
+  String get labourRightsDesc => 'Wages, overtime, leave, contract violations, labour complaints';
+
+  @override
+  String get cyberCrime => 'Cyber Crime (PECA)';
+
+  @override
+  String get cyberCrimeDesc => 'Online harassment, blackmail, fake accounts, FIA complaints';
+
+  @override
+  String get trafficLaw => 'Road & Traffic Law';
+
+  @override
+  String get trafficLawDesc => 'Traffic violations, challans, fines, police misconduct';
+
+  @override
+  String get aiStep1 => 'Describe your situation in your own words';
+
+  @override
+  String get aiStep2 => 'AI asks clarifying questions if needed';
+
+  @override
+  String get aiStep3 => 'Get step-by-step legal guidance (PECA, Labour Act, etc.)';
+
+  @override
+  String get aiStep4 => 'Receive relevant law references';
+
+  @override
+  String get aiStep5 => 'Get complaint and legal remedies recommendations';
+
+  @override
+  String get aiStep6 => 'All actions happen within the chat';
+
+  @override
+  String stepProgress(Object current, Object total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get startChat => 'Start Chat with AI Advisor';
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get simulation_suspectInfo => 'Suspect Information (if known)';
+
+  @override
+  String get simulation_aiStep1 => 'Describe your situation in your own words';
+
+  @override
+  String get simulation_aiStep2 => 'AI asks clarifying questions if needed';
+
+  @override
+  String get simulation_aiStep3 => 'Get step-by-step legal guidance (PECA, Labour Act, etc.)';
+
+  @override
+  String get simulation_aiStep4 => 'Receive relevant law references';
+
+  @override
+  String get simulation_aiStep5 => 'Get complaint and legal remedies recommendations';
+
+  @override
+  String get simulation_aiStep6 => 'All actions happen within the chat';
+
+  @override
+  String get trafficAccidentDisputeTitle => 'Traffic Accident Dispute';
+
+  @override
+  String get trafficAccidentDisputeDesc => 'You were involved in a traffic accident and need guidance';
+
+  @override
+  String get accidentSceneTitle => 'At the Scene of Accident';
+
+  @override
+  String get accidentSceneDesc => 'What to do immediately after the accident';
+
+  @override
+  String get moveToSafeLocation => 'Move to a safe location if possible';
+
+  @override
+  String get alertTrafficHazard => 'Alert other traffic using hazard lights';
+
+  @override
+  String get callPolice => 'Call police or traffic helpline';
+
+  @override
+  String get dontAdmitFault => 'Do not admit fault or sign documents';
+
+  @override
+  String get gatherWitnessInfo => 'Gather witness information and photos';
+
+  @override
+  String get accidentDocsTitle => 'Documentation Required';
+
+  @override
+  String get accidentDocsDesc => 'Collect these documents for your protection';
+
+  @override
+  String get firNumber => 'FIR number';
+
+  @override
+  String get insuranceDetails => 'Insurance policy details';
+
+  @override
+  String get accidentPhotos => 'Photographs of accident site';
+
+  @override
+  String get medicalCertificate => 'Medical certificates if injured';
+
+  @override
+  String get accidentRightsTitle => 'Legal Rights & Claims';
+
+  @override
+  String get accidentRightsDesc => 'Know your compensation options';
+
+  @override
+  String get fileMotorClaim => 'File motor accident claim within 6 months';
+
+  @override
+  String get vehicleAssessment => 'Get vehicle assessment done';
+
+  @override
+  String get claimMedicalExpenses => 'Claim medical expenses and loss of earnings';
+
+  @override
+  String get rightToSue => 'Know your right to sue for damages';
+
+  @override
+  String get licenseIssueTitle => 'License Suspension/Cancellation';
+
+  @override
+  String get licenseIssueDesc => 'Your driving license is suspended or cancelled';
+
+  @override
+  String get suspensionVsCancellationTitle => 'Suspension vs Cancellation';
+
+  @override
+  String get suspensionVsCancellationDesc => 'Know the difference and implications';
+
+  @override
+  String get suspensionDefinition => 'Suspension is temporary license pause';
+
+  @override
+  String get cancellationDefinition => 'Cancellation is permanent revocation';
+
+  @override
+  String get violationReasons => 'Reasons include violations or medical issues';
+
+  @override
+  String get illegalDrivingWarning => 'Driving during suspension is illegal';
+
+  @override
+  String get appealProcessTitle => 'Appeal Process';
+
+  @override
+  String get appealProcessDesc => 'How to challenge the decision';
+
+  @override
+  String get fileRTAAppeal => 'File appeal in RTA office';
+
+  @override
+  String get appealDeadline => 'File within 30 days';
+
+  @override
+  String get gatherEvidence => 'Gather supporting evidence';
+
+  @override
+  String get attendHearing => 'Attend hearing and present case';
+
+  @override
+  String get recoveryStepsTitle => 'Recovery Steps';
+
+  @override
+  String get recoveryStepsDesc => 'Steps to restore your license';
+
+  @override
+  String get completeSuspension => 'Complete suspension period';
+
+  @override
+  String get passRefresherTest => 'Pass refresher test if required';
+
+  @override
+  String get payFees => 'Pay required fees';
+
+  @override
+  String get collectLicense => 'Collect renewed license';
+
+  @override
+  String get trafficModuleName => 'Road & Traffic Law';
+
+  @override
+  String get womenModuleName => 'Women Harassment';
+
+  @override
+  String get cyberModuleName => 'Cyber Crime';
+
+  @override
+  String get labourModuleName => 'Labour Rights';
+
+  @override
+  String get generalModuleName => 'Legal Guidance';
+
+  @override
+  String get trafficChatScreenName => 'Traffic Assistant Chat';
+
+  @override
+  String get traffic1Title => 'Traffic Violation Fine';
+
+  @override
+  String get traffic1Desc => 'You received a traffic ticket or penalty challan';
+
+  @override
+  String get traffic1Step1Title => 'Understanding Your Violation';
+
+  @override
+  String get traffic1Step1Desc => 'Know what violation you committed and the legal implications';
+
+  @override
+  String get traffic1Step1P1 => 'Check the violation code on your challan';
+
+  @override
+  String get traffic1Step1P2 => 'Understand the section under Motor Vehicles Act';
+
+  @override
+  String get traffic1Step1P3 => 'Know the fine amount and deadline';
+
+  @override
+  String get traffic1Step1P4 => 'Learn about your right to appeal';
+
+  @override
+  String get traffic1Step2Title => 'Do\'s & Don\'ts';
+
+  @override
+  String get traffic1Step2Desc => 'Important steps to follow';
+
+  @override
+  String get traffic1Step2P1 => 'Pay the fine on time';
+
+  @override
+  String get traffic1Step2P2 => 'Keep receipt and challan safe';
+
+  @override
+  String get traffic1Step2P3 => 'Appeal if you think it is unfair';
+
+  @override
+  String get traffic1Step2P4 => 'Do not ignore the challan';
+
+  @override
+  String get traffic1Step2P5 => 'Do not offer bribes';
+
+  @override
+  String get traffic1Step3Title => 'Immediate Actions';
+
+  @override
+  String get traffic1Step3Desc => 'Steps to take right now';
+
+  @override
+  String get traffic1Step3P1 => 'Pay fine within deadline';
+
+  @override
+  String get traffic1Step3P2 => 'File appeal in traffic court if needed';
+
+  @override
+  String get traffic1Step3P3 => 'Collect all evidence';
+
+  @override
+  String get traffic1Step3P4 => 'Contact a lawyer if required';
+
+  @override
+  String get traffic2Title => 'Traffic Accident Dispute';
+
+  @override
+  String get traffic2Desc => 'You were involved in a traffic accident and need guidance';
+
+  @override
+  String get traffic2Step1Title => 'At the Scene of Accident';
+
+  @override
+  String get traffic2Step1Desc => 'What to do immediately after accident';
+
+  @override
+  String get traffic2Step1P1 => 'Move to a safe place';
+
+  @override
+  String get traffic2Step1P2 => 'Turn on hazard lights';
+
+  @override
+  String get traffic2Step1P3 => 'Call police (100)';
+
+  @override
+  String get traffic2Step1P4 => 'Do not admit fault';
+
+  @override
+  String get traffic2Step1P5 => 'Collect witness info and photos';
+
+  @override
+  String get traffic2Step2Title => 'Documentation Required';
+
+  @override
+  String get traffic2Step2Desc => 'Collect these documents';
+
+  @override
+  String get traffic2Step2P1 => 'FIR number';
+
+  @override
+  String get traffic2Step2P2 => 'Insurance details';
+
+  @override
+  String get traffic2Step2P3 => 'Photos of accident';
+
+  @override
+  String get traffic2Step2P4 => 'Medical certificates';
+
+  @override
+  String get traffic2Step2P5 => 'Witness statements';
+
+  @override
+  String get traffic2Step3Title => 'Legal Rights & Claims';
+
+  @override
+  String get traffic2Step3Desc => 'Know your compensation rights';
+
+  @override
+  String get traffic2Step3P1 => 'File claim within 6 months';
+
+  @override
+  String get traffic2Step3P2 => 'Get vehicle inspection';
+
+  @override
+  String get traffic2Step3P3 => 'Claim medical expenses';
+
+  @override
+  String get traffic2Step3P4 => 'Right to sue for damages';
+
+  @override
+  String get traffic3Title => 'License Suspension/Cancellation';
+
+  @override
+  String get traffic3Desc => 'Your driving license is suspended or cancelled';
+
+  @override
+  String get traffic3Step1Title => 'Suspension vs Cancellation';
+
+  @override
+  String get traffic3Step1Desc => 'Understand the difference';
+
+  @override
+  String get traffic3Step1P1 => 'Suspension is temporary';
+
+  @override
+  String get traffic3Step1P2 => 'Cancellation is permanent';
+
+  @override
+  String get traffic3Step1P3 => 'Causes include violations or medical issues';
+
+  @override
+  String get traffic3Step1P4 => 'Driving during suspension is illegal';
+
+  @override
+  String get traffic3Step2Title => 'Appeal Process';
+
+  @override
+  String get traffic3Step2Desc => 'How to challenge decision';
+
+  @override
+  String get traffic3Step2P1 => 'File appeal in RTA office';
+
+  @override
+  String get traffic3Step2P2 => 'Within 30 days';
+
+  @override
+  String get traffic3Step2P3 => 'Collect supporting evidence';
+
+  @override
+  String get traffic3Step2P4 => 'Attend hearing';
+
+  @override
+  String get traffic3Step3Title => 'Recovery Steps';
+
+  @override
+  String get traffic3Step3Desc => 'How to restore license';
+
+  @override
+  String get traffic3Step3P1 => 'Complete suspension period';
+
+  @override
+  String get traffic3Step3P2 => 'Pass required tests';
+
+  @override
+  String get traffic3Step3P3 => 'Pay fees';
+
+  @override
+  String get traffic3Step3P4 => 'Collect renewed license';
+
+  @override
+  String get womenChatName => 'Women Harassment Assistant Chat';
+
+  @override
+  String get women1Title => 'Workplace Sexual Harassment';
+
+  @override
+  String get women1Desc => 'You experienced harassment at your workplace';
+
+  @override
+  String get women1Step1Title => 'Understand Your Rights';
+
+  @override
+  String get women1Step1Desc => 'Know legal protections available to you';
+
+  @override
+  String get women1Step1P1 => 'Sexual Harassment of Women at Workplace Act protects you';
+
+  @override
+  String get women1Step1P2 => 'Harassment includes unwanted advances, comments, or touching';
+
+  @override
+  String get women1Step1P3 => 'Employer must ensure safe working environment';
+
+  @override
+  String get women1Step1P4 => 'You can complain without fear of retaliation';
+
+  @override
+  String get women1Step2Title => 'Immediate Actions';
+
+  @override
+  String get women1Step2Desc => 'What to do when harassment occurs';
+
+  @override
+  String get women1Step2P1 => 'Say NO clearly and firmly';
+
+  @override
+  String get women1Step2P2 => 'Document incidents with details';
+
+  @override
+  String get women1Step2P3 => 'Inform harasser in writing';
+
+  @override
+  String get women1Step2P4 => 'Report to HR or ICC';
+
+  @override
+  String get women1Step2P5 => 'Keep copies of communication';
+
+  @override
+  String get women1Step2P6 => 'Do not delay reporting';
+
+  @override
+  String get women1Step3Title => 'Complaint & Investigation';
+
+  @override
+  String get women1Step3Desc => 'Formal complaint process';
+
+  @override
+  String get women1Step3P1 => 'File complaint with ICC/HR';
+
+  @override
+  String get women1Step3P2 => 'Provide written evidence';
+
+  @override
+  String get women1Step3P3 => 'Investigation within 90 days';
+
+  @override
+  String get women1Step3P4 => 'Protection against retaliation';
+
+  @override
+  String get women1Step3P5 => 'Keep records of process';
+
+  @override
+  String get women2Title => 'Street Sexual Harassment';
+
+  @override
+  String get women2Desc => 'You faced harassment in public';
+
+  @override
+  String get women2Step1Title => 'Understanding the Law';
+
+  @override
+  String get women2Step1Desc => 'Legal protections available';
+
+  @override
+  String get women2Step1P1 => 'Indecent assault is a crime';
+
+  @override
+  String get women2Step1P2 => 'Stalking and eve-teasing are punishable';
+
+  @override
+  String get women2Step1P3 => 'You can file FIR at any police station';
+
+  @override
+  String get women2Step1P4 => 'Section 354 IPC applies';
+
+  @override
+  String get women2Step2Title => 'Safety First';
+
+  @override
+  String get women2Step2Desc => 'Immediate response';
+
+  @override
+  String get women2Step2P1 => 'Move to safe area';
+
+  @override
+  String get women2Step2P2 => 'Call emergency number 100';
+
+  @override
+  String get women2Step2P3 => 'Inform people nearby';
+
+  @override
+  String get women2Step2P4 => 'Remember description of offender';
+
+  @override
+  String get women2Step2P5 => 'Seek medical help if needed';
+
+  @override
+  String get women2Step2P6 => 'Do not confront alone';
+
+  @override
+  String get women2Step3Title => 'Filing FIR';
+
+  @override
+  String get women2Step3Desc => 'Police complaint process';
+
+  @override
+  String get women2Step3P1 => 'Go to nearest police station';
+
+  @override
+  String get women2Step3P2 => 'File FIR with details';
+
+  @override
+  String get women2Step3P3 => 'Get FIR copy';
+
+  @override
+  String get women2Step3P4 => 'Medical examination if needed';
+
+  @override
+  String get women2Step3P5 => 'Follow up case';
+
+  @override
+  String get women3Title => 'Domestic Violence';
+
+  @override
+  String get women3Desc => 'You are experiencing abuse at home';
+
+  @override
+  String get women3Step1Title => 'You Are Not Alone';
+
+  @override
+  String get women3Step1Desc => 'Support and legal rights';
+
+  @override
+  String get women3Step1P1 => 'Domestic violence is a crime';
+
+  @override
+  String get women3Step1P2 => 'Protection of Women Act supports you';
+
+  @override
+  String get women3Step1P3 => 'You can get protection order';
+
+  @override
+  String get women3Step1P4 => 'Legal and shelter support available';
+
+  @override
+  String get women3Step2Title => 'Safety Planning';
+
+  @override
+  String get women3Step2Desc => 'Protect yourself';
+
+  @override
+  String get women3Step2P1 => 'Keep documents safe';
+
+  @override
+  String get women3Step2P2 => 'Save emergency contacts';
+
+  @override
+  String get women3Step2P3 => 'Document injuries';
+
+  @override
+  String get women3Step2P4 => 'Record incidents';
+
+  @override
+  String get women3Step2P5 => 'Know shelter locations';
+
+  @override
+  String get women3Step2P6 => 'Do not blame yourself';
+
+  @override
+  String get women3Step3Title => 'Legal Options';
+
+  @override
+  String get women3Step3Desc => 'Legal actions available';
+
+  @override
+  String get women3Step3P1 => 'File FIR';
+
+  @override
+  String get women3Step3P2 => 'Apply for protection order';
+
+  @override
+  String get women3Step3P3 => 'Get medical documentation';
+
+  @override
+  String get women3Step3P4 => 'Contact helpline';
+
+  @override
+  String get women3Step3P5 => 'Free legal aid available';
+
+  @override
+  String get cyberChatName => 'Cyber Crime Assistant Chat';
+
+  @override
+  String get cyber1Title => 'Online Financial Fraud';
+
+  @override
+  String get cyber1Desc => 'You lost money due to online scam';
+
+  @override
+  String get cyber1Step1Title => 'Immediate Actions';
+
+  @override
+  String get cyber1Step1Desc => 'Act quickly';
+
+  @override
+  String get cyber1Step1P1 => 'Block accounts immediately';
+
+  @override
+  String get cyber1Step1P2 => 'Change passwords';
+
+  @override
+  String get cyber1Step1P3 => 'Contact bank';
+
+  @override
+  String get cyber1Step1P4 => 'Check transactions';
+
+  @override
+  String get cyber1Step1P5 => 'Enable fraud alert';
+
+  @override
+  String get cyber1Step2Title => 'Know the Crime';
+
+  @override
+  String get cyber1Step2Desc => 'Legal understanding';
+
+  @override
+  String get cyber1Step2P1 => 'Section 420 IPC applies';
+
+  @override
+  String get cyber1Step2P2 => 'Identity theft is cyber crime';
+
+  @override
+  String get cyber1Step2P3 => 'Phishing is punishable';
+
+  @override
+  String get cyber1Step2P4 => 'File FIR cyber unit';
+
+  @override
+  String get cyber1Step2P5 => 'Bank may assist';
+
+  @override
+  String get cyber1Step3Title => 'Recovery Steps';
+
+  @override
+  String get cyber1Step3Desc => 'Legal recovery';
+
+  @override
+  String get cyber1Step3P1 => 'File FIR';
+
+  @override
+  String get cyber1Step3P2 => 'Provide evidence';
+
+  @override
+  String get cyber1Step3P3 => 'Request bank reversal';
+
+  @override
+  String get cyber1Step3P4 => 'Report to cyber cell';
+
+  @override
+  String get cyber1Step3P5 => 'Consider legal action';
+
+  @override
+  String get cyber2Title => 'Revenge Porn / Image Abuse';
+
+  @override
+  String get cyber2Desc => 'Private images shared without consent';
+
+  @override
+  String get cyber2Step1Title => 'Know Your Rights';
+
+  @override
+  String get cyber2Step1Desc => 'Legal protection';
+
+  @override
+  String get cyber2Step1P1 => 'Sharing images is crime';
+
+  @override
+  String get cyber2Step1P2 => 'Section 67A IT Act';
+
+  @override
+  String get cyber2Step1P3 => 'Section 354D IPC';
+
+  @override
+  String get cyber2Step1P4 => 'POCSO applies if minor';
+
+  @override
+  String get cyber2Step1P5 => 'POCSO Act applies if a minor is involved';
+
+  @override
+  String get cyber2Step2Title => 'Immediate Response';
+
+  @override
+  String get cyber2Step2Desc => 'Act fast';
+
+  @override
+  String get cyber2Step2P1 => 'Report platform';
+
+  @override
+  String get cyber2Step2P2 => 'Use takedown option';
+
+  @override
+  String get cyber2Step2P3 => 'Take screenshots';
+
+  @override
+  String get cyber2Step2P4 => 'Save URLs';
+
+  @override
+  String get cyber2Step2P5 => 'Inform trusted people';
+
+  @override
+  String get cyber2Step2P6 => 'Do not engage attacker';
+
+  @override
+  String get cyber2Step3Title => 'Legal Action';
+
+  @override
+  String get cyber2Step3Desc => 'File complaint';
+
+  @override
+  String get cyber2Step3P1 => 'File FIR cyber police';
+
+  @override
+  String get cyber2Step3P2 => 'Report platform';
+
+  @override
+  String get cyber2Step3P3 => 'NCW complaint';
+
+  @override
+  String get cyber2Step3P4 => 'Content removal request';
+
+  @override
+  String get cyber2Step3P5 => 'Civil case option';
+
+  @override
+  String get cyber3Title => 'Account Hacking';
+
+  @override
+  String get cyber3Desc => 'Your account was hacked';
+
+  @override
+  String get cyber3Step1Title => 'Secure Account';
+
+  @override
+  String get cyber3Step1Desc => 'Regain control';
+
+  @override
+  String get cyber3Step1P1 => 'Recover account';
+
+  @override
+  String get cyber3Step1P2 => 'Change password';
+
+  @override
+  String get cyber3Step1P3 => 'Enable 2FA';
+
+  @override
+  String get cyber3Step1P4 => 'Check activity';
+
+  @override
+  String get cyber3Step1P5 => 'Remove unknown apps';
+
+  @override
+  String get cyber3Step2Title => 'Damage Check';
+
+  @override
+  String get cyber3Step2Desc => 'Assess impact';
+
+  @override
+  String get cyber3Step2P1 => 'Check sent messages';
+
+  @override
+  String get cyber3Step2P2 => 'Check transactions';
+
+  @override
+  String get cyber3Step2P3 => 'Check changes';
+
+  @override
+  String get cyber3Step2P4 => 'Monitor accounts';
+
+  @override
+  String get cyber3Step2P5 => 'Inform contacts';
+
+  @override
+  String get cyber3Step3Title => 'Legal Action';
+
+  @override
+  String get cyber3Step3Desc => 'Report crime';
+
+  @override
+  String get cyber3Step3P1 => 'File FIR';
+
+  @override
+  String get cyber3Step3P2 => 'Report platform';
+
+  @override
+  String get cyber3Step3P3 => 'Save evidence';
+
+  @override
+  String get cyber3Step3P4 => 'Check credit reports';
+
+  @override
+  String get cyber3Step3P5 => 'Cyber expert help';
+
+  @override
+  String get labourChatName => 'Labour Rights Assistant Chat';
+
+  @override
+  String get labour1Title => 'Unfair Dismissal';
+
+  @override
+  String get labour1Desc => 'You were fired without proper notice or compensation';
+
+  @override
+  String get labour1Step1Title => 'Understanding Your Rights';
+
+  @override
+  String get labour1Step1Desc => 'Employer cannot fire you arbitrarily';
+
+  @override
+  String get labour1Step1P1 => 'Industrial Disputes Act protects workers';
+
+  @override
+  String get labour1Step1P2 => 'Valid reason is required for termination';
+
+  @override
+  String get labour1Step1P3 => 'Written notice is mandatory';
+
+  @override
+  String get labour1Step1P4 => 'Wrongful termination is illegal';
+
+  @override
+  String get labour1Step1P5 => 'You can claim compensation or reinstatement';
+
+  @override
+  String get labour1Step2Title => 'Immediate Documentation';
+
+  @override
+  String get labour1Step2Desc => 'Collect evidence';
+
+  @override
+  String get labour1Step2P1 => 'Keep termination letter';
+
+  @override
+  String get labour1Step2P2 => 'Record dismissal details';
+
+  @override
+  String get labour1Step2P3 => 'Collect salary slips';
+
+  @override
+  String get labour1Step2P4 => 'Save performance records';
+
+  @override
+  String get labour1Step2P5 => 'Gather witness statements';
+
+  @override
+  String get labour1Step2P6 => 'Keep company policies';
+
+  @override
+  String get labour1Step3Title => 'Legal Steps';
+
+  @override
+  String get labour1Step3Desc => 'How to seek remedy';
+
+  @override
+  String get labour1Step3P1 => 'File complaint with Labour Department';
+
+  @override
+  String get labour1Step3P2 => 'Claim unpaid wages and severance';
+
+  @override
+  String get labour1Step3P3 => 'Seek reinstatement or compensation';
+
+  @override
+  String get labour1Step3P4 => 'File Labour Tribunal case';
+
+  @override
+  String get labour1Step3P5 => 'Free legal aid available';
+
+  @override
+  String get generalChatName => 'Legal Advisor';
+
+  @override
+  String get general1Title => 'Choose Your Concern';
+
+  @override
+  String get general1Desc => 'Let AI guide your legal issue';
+
+  @override
+  String get general1Step1Title => 'Welcome to Legal Advisor';
+
+  @override
+  String get general1Step1Desc => 'Get legal help easily';
+
+  @override
+  String get general1Step1P1 => 'Describe your issue';
+
+  @override
+  String get general1Step1P2 => 'AI will analyze your case';
+
+  @override
+  String get general1Step1P3 => 'Get legal guidance';
+
+  @override
+  String get general1Step1P4 => 'Based on laws';
+
+  @override
+  String get general1Step1P5 => 'All inside app';
+
+  @override
+  String get general1Step2Title => 'Categories';
+
+  @override
+  String get general1Step2Desc => 'Select your issue type';
+
+  @override
+  String get general1Step2P1 => 'Traffic law issues';
+
+  @override
+  String get general1Step2P2 => 'Women harassment cases';
+
+  @override
+  String get general1Step2P3 => 'Cyber crimes';
+
+  @override
+  String get general1Step2P4 => 'Labour rights';
+
+  @override
+  String get general1Step3Title => 'How to Use';
+
+  @override
+  String get general1Step3Desc => 'Simple steps';
+
+  @override
+  String get general1Step3P1 => 'Select category';
+
+  @override
+  String get general1Step3P2 => 'Read guidance';
+
+  @override
+  String get general1Step3P3 => 'Start AI chat';
+
+  @override
+  String get general1Step3P4 => 'Get advice';
+
+  @override
+  String get general1Step3P5 => 'Follow steps';
+
+  @override
+  String get labour2Title => 'Non-payment of Wages';
+
+  @override
+  String get labour2Desc => 'Your employer is not paying your salary';
+
+  @override
+  String get labour2Step1Title => 'Know Your Entitlement';
+
+  @override
+  String get labour2Step1Desc => 'Your legal wage rights';
+
+  @override
+  String get labour2Step1P1 => 'Minimum wage must be paid by law';
+
+  @override
+  String get labour2Step1P2 => 'Wages must be paid on time';
+
+  @override
+  String get labour2Step1P3 => 'Illegal deductions are not allowed';
+
+  @override
+  String get labour2Step1P4 => 'Only lawful deductions are valid';
+
+  @override
+  String get labour2Step1P5 => 'You can recover unpaid wages with penalty';
+
+  @override
+  String get labour2Step2Title => 'Immediate Steps';
+
+  @override
+  String get labour2Step2Desc => 'Act quickly';
+
+  @override
+  String get labour2Step2P1 => 'Send written demand for salary';
+
+  @override
+  String get labour2Step2P2 => 'Keep all communication records';
+
+  @override
+  String get labour2Step2P3 => 'Record working hours';
+
+  @override
+  String get labour2Step2P4 => 'Calculate pending amount';
+
+  @override
+  String get labour2Step2P5 => 'Keep bank statements';
+
+  @override
+  String get labour2Step2P6 => 'Do not rely on verbal promises';
+
+  @override
+  String get labour2Step3Title => 'Filing Complaint';
+
+  @override
+  String get labour2Step3Desc => 'Legal action process';
+
+  @override
+  String get labour2Step3P1 => 'File complaint with Labour Department';
+
+  @override
+  String get labour2Step3P2 => 'File recovery case in Labour Court';
+
+  @override
+  String get labour2Step3P3 => 'Claim unpaid salary + damages';
+
+  @override
+  String get labour2Step3P4 => 'Case is free under law';
+
+  @override
+  String get labour2Step3P5 => 'Employer must respond legally';
+
+  @override
+  String get labour3Title => 'Workplace Injury / Accident';
+
+  @override
+  String get labour3Desc => 'You were injured at work';
+
+  @override
+  String get labour3Step1Title => 'Your Rights After Injury';
+
+  @override
+  String get labour3Step1Desc => 'Legal protection and compensation';
+
+  @override
+  String get labour3Step1P1 => 'Employer is liable for workplace injury';
+
+  @override
+  String get labour3Step1P2 => 'Medical expenses must be covered';
+
+  @override
+  String get labour3Step1P3 => 'You can claim disability compensation';
+
+  @override
+  String get labour3Step1P4 => 'You can claim lost wages';
+
+  @override
+  String get labour3Step1P5 => 'Family gets compensation in fatal cases';
+
+  @override
+  String get labour3Step2Title => 'Immediate Actions';
+
+  @override
+  String get labour3Step2Desc => 'What to do after accident';
+
+  @override
+  String get labour3Step2P1 => 'Report injury immediately';
+
+  @override
+  String get labour3Step2P2 => 'Get written acknowledgment';
+
+  @override
+  String get labour3Step2P3 => 'Seek medical treatment';
+
+  @override
+  String get labour3Step2P4 => 'Take photos of accident';
+
+  @override
+  String get labour3Step2P5 => 'Collect witness statements';
+
+  @override
+  String get labour3Step2P6 => 'Do not sign settlement without advice';
+
+  @override
+  String get labour3Step3Title => 'Compensation Claim';
+
+  @override
+  String get labour3Step3Desc => 'How to get compensation';
+
+  @override
+  String get labour3Step3P1 => 'File claim with Compensation Commissioner';
+
+  @override
+  String get labour3Step3P2 => 'Attach medical reports';
+
+  @override
+  String get labour3Step3P3 => 'Claim recovery wages';
+
+  @override
+  String get labour3Step3P4 => 'Claim disability benefits';
+
+  @override
+  String get labour3Step3P5 => 'Employer must provide insurance proof';
+
+  @override
+  String get myDocuments => 'My Documents';
+
+  @override
+  String get signInToViewDocs => 'Sign in to view and manage your documents';
+
+  @override
+  String get signInToDownloadDocs => 'Sign in to download documents';
+
+  @override
+  String get signInToManageDocs => 'Sign in to manage documents';
+
+  @override
+  String get noDocumentsAvailable => 'No documents available';
+
+  @override
+  String get noDocumentsYet => 'No documents yet';
+
+  @override
+  String get documentsEmptyHint => 'Documents you generate or download will appear here';
+
+  @override
+  String get noDocumentsOfType => 'No documents of this type';
+
+  @override
+  String get deleteDocument => 'Delete Document';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get couldNotOpenDocument => 'Could not open document';
+
+  @override
+  String get documentDeleted => 'Document deleted successfully';
+
+  @override
+  String get storageUsage => 'Storage Usage';
+
+  @override
+  String get complaints => 'Complaints';
+
+  @override
+  String get generatedPdfs => 'Generated PDFs';
+
+  @override
+  String get uploaded => 'Uploaded';
+
+  @override
+  String allDocuments(Object count) {
+    return 'All ($count)';
+  }
+
+  @override
+  String openingDocument(Object title) {
+    return 'Opening: $title';
+  }
+
+  @override
+  String deleteConfirm(Object title) {
+    return 'Are you sure you want to delete \"$title\"?';
+  }
+
+  @override
+  String get howToReportIssue => 'How to report an issue';
+
+  @override
+  String get reportIssueSubtitle => 'Get help with technical problems';
+
+  @override
+  String get helpReportContent => 'For technical support, contact us through in-app support or website.';
+
+  @override
+  String get faqTitle => 'Frequently Asked Questions';
+
+  @override
+  String get faqFreeUse => 'Is Legal Sathi free to use?';
+
+  @override
+  String get faqFreeUseAnswer => 'Yes, Legal Sathi is free for all users.';
+
+  @override
+  String get faqLawyerUse => 'Can I use this instead of a lawyer?';
+
+  @override
+  String get faqLawyerUseAnswer => 'No, it provides guidance only.';
+
+  @override
+  String get faqAiAccuracy => 'How accurate is the AI assistant?';
+
+  @override
+  String get faqAiAccuracyAnswer => 'AI is trained on Pakistani laws but may not be 100% accurate.';
+
+  @override
+  String get faqDataSecurity => 'Is my data secure?';
+
+  @override
+  String get faqDataSecurityAnswer => 'Yes, your data is encrypted and secure.';
+
+  @override
+  String get stepByStepUpload => 'Step by step guide';
+
+  @override
+  String get howOcrWorks => 'How OCR works';
+
+  @override
+  String get ocrSubtitle => 'Document scanning and analysis';
+
+  @override
+  String get howToDraftDocuments => 'How to draft documents';
+
+  @override
+  String get draftSubtitle => 'FIRs, complaints and legal documents';
+
+  @override
+  String get helpUseAppContent => 'Use bottom navigation to move between screens.';
+
+  @override
+  String get helpUploadContent => 'Go to documents and upload files.';
+
+  @override
+  String get helpOcrContent => 'OCR extracts text from images and PDFs.';
+
+  @override
+  String get helpDraftContent => 'Use draft tools to create legal documents.';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get faqLanguages => 'What languages are supported?';
+
+  @override
+  String get faqLanguagesAnswer => 'English, Urdu, and Roman Urdu are supported.';
+
+  @override
+  String get stillNeedHelp => 'Still Need Help?';
+
+  @override
+  String get contactSupportText => 'Contact our support team for assistance';
+
+  @override
+  String get contactSupport => 'Contact Support';
+
+  @override
+  String get urduLine1 => 'Your Legal';
+
+  @override
+  String get urduLine2 => 'Companion';
+
+  @override
+  String get aboutDescription => 'Legal Sathi is an AI-powered legal assistant designed to help Pakistani citizens understand their legal rights and navigate the legal system. We provide information on criminal law, civil law, labour rights, cyber crime, and more.\n\nOur mission is to make legal information accessible to everyone, regardless of their background or resources. We help users draft legal documents, understand laws, and take informed action.';
+
+  @override
+  String get versionInfo => 'Version Information';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get build => 'Build';
+
+  @override
+  String get platform => 'Platform';
+
+  @override
+  String get mobileApp => 'Mobile App';
+
+  @override
+  String get developer => 'Developer';
+
+  @override
+  String get developedWith => 'Developed with ';
+
+  @override
+  String get forPakistan => ' for the people of Pakistan';
+
+  @override
+  String get legalDisclaimerTitle => 'Legal Disclaimer';
+
+  @override
+  String get legalDisclaimer => 'Legal Sathi provides general legal information only. This is not legal advice and should not replace consultation with a qualified lawyer.';
+
+  @override
+  String get copyright => '© 2026 Legal Sathi. All rights reserved.';
 }

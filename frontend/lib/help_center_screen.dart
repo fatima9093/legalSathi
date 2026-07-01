@@ -13,7 +13,7 @@ class HelpCenterScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.ok),
           ),
         ],
       ),
@@ -99,33 +99,43 @@ class HelpCenterScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  _buildHelpTopicCard(
-                    icon: Icons.menu_book,
-                    iconColor: const Color(0xFF00401A),
-                    title: AppLocalizations.of(context)!.howToUseLegalSathi,
-                    subtitle: AppLocalizations.of(
-                      context,
-                    )!.learnBasicsNavigatingApp,
-                    onTap: () => _showHelpDetail(
-                      context,
-                      AppLocalizations.of(context)!.howToUseLegalSathi,
-                      'Use the bottom navigation bar to switch between Home, Chat, Documents, and Profile. Use the search bar to ask legal questions to our AI.',
+                    _buildHelpTopicCard(
+                      icon: Icons.menu_book,
+                      iconColor: const Color(0xFF00401A),
+                      title: AppLocalizations.of(context)!.howToUseLegalSathi,
+                      subtitle: AppLocalizations.of(context)!.learnBasicsNavigatingApp,
+                      onTap: () => _showHelpDetail(
+                        context,
+                        AppLocalizations.of(context)!.howToUseLegalSathi,
+                        AppLocalizations.of(context)!.helpUseAppContent,
+                      ),
                     ),
-                  ),
+
+                  const SizedBox(height: 12),
+
+                        _buildHelpTopicCard(
+                      icon: Icons.camera_alt_outlined,
+                      iconColor: const Color(0xFF00401A),
+                      title: AppLocalizations.of(context)!.howToUploadEvidence,
+                      subtitle: AppLocalizations.of(context)!.stepByStepGuideUploadingDocuments,
+                      onTap: () => _showHelpDetail(
+                        context,
+                        AppLocalizations.of(context)!.howToUploadEvidence,
+                        AppLocalizations.of(context)!.helpUploadContent,
+                      ),
+                    ),
 
                   const SizedBox(height: 12),
 
                   _buildHelpTopicCard(
-                    icon: Icons.camera_alt_outlined,
+                    icon: Icons.description_outlined,
                     iconColor: const Color(0xFF00401A),
-                    title: AppLocalizations.of(context)!.howToUploadEvidence,
-                    subtitle: AppLocalizations.of(
-                      context,
-                    )!.stepByStepGuideUploadingDocuments,
+                     title: AppLocalizations.of(context)!.howOcrWorks,
+                    subtitle: AppLocalizations.of(context)!.ocrSubtitle,
                     onTap: () => _showHelpDetail(
                       context,
-                      AppLocalizations.of(context)!.howToUploadEvidence,
-                      'Go to Documents or use Quick Actions. Tap upload, select your files (images or PDFs), and submit.',
+                      AppLocalizations.of(context)!.howOcrWorks,
+                      AppLocalizations.of(context)!.helpOcrContent,
                     ),
                   ),
 
@@ -134,26 +144,12 @@ class HelpCenterScreen extends StatelessWidget {
                   _buildHelpTopicCard(
                     icon: Icons.description_outlined,
                     iconColor: const Color(0xFF00401A),
-                    title: 'How OCR Works',
-                    subtitle: 'Understanding document scanning and analysis',
+                    title: AppLocalizations.of(context)!.howToDraftDocuments,
+                    subtitle: AppLocalizations.of(context)!.draftSubtitle,
                     onTap: () => _showHelpDetail(
                       context,
-                      'How OCR Works',
-                      'Our OCR (Optical Character Recognition) extracts text from your uploaded images and PDFs for analysis.',
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  _buildHelpTopicCard(
-                    icon: Icons.description_outlined,
-                    iconColor: const Color(0xFF00401A),
-                    title: 'How to Draft Documents',
-                    subtitle: 'Creating FIRs, complaints, and legal documents',
-                    onTap: () => _showHelpDetail(
-                      context,
-                      'How to Draft Documents',
-                      'Use the Draft Document quick action or go to Cyber Law module to generate legal documents like FIRs and complaints.',
+                      AppLocalizations.of(context)!.howToDraftDocuments,
+                      AppLocalizations.of(context)!.helpDraftContent,
                     ),
                   ),
 
@@ -162,20 +158,20 @@ class HelpCenterScreen extends StatelessWidget {
                   _buildHelpTopicCard(
                     icon: Icons.info_outline,
                     iconColor: const Color(0xFF00401A),
-                    title: 'How to Report an Issue',
-                    subtitle: 'Get help with technical problems',
+                    title: AppLocalizations.of(context)!.howToReportIssue,
+                    subtitle: AppLocalizations.of(context)!.reportIssueSubtitle,
                     onTap: () => _showHelpDetail(
                       context,
-                      'How to Report an Issue',
-                      'For technical support, you can contact us through the in-app contact button or visit our website.',
+                      AppLocalizations.of(context)!.howToReportIssue,
+                      AppLocalizations.of(context)!.helpReportContent,
                     ),
                   ),
 
                   const SizedBox(height: 24),
 
                   // FAQ Section
-                  const Text(
-                    'Frequently Asked Questions',
+                   Text(
+                    AppLocalizations.of(context)!.faqTitle,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -186,41 +182,36 @@ class HelpCenterScreen extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   _buildFAQCard(
-                    question: 'Is Legal Sathi free to use?',
-                    answer:
-                        'Yes, Legal Sathi is currently free for all users. We provide legal information and document drafting assistance at no cost.',
+                    question: AppLocalizations.of(context)!.faqFreeUse,
+                    answer: AppLocalizations.of(context)!.faqFreeUseAnswer,
                   ),
 
                   const SizedBox(height: 12),
 
                   _buildFAQCard(
-                    question: 'Can I use this instead of a lawyer?',
-                    answer:
-                        'No. Legal Sathi provides general legal information and document templates. For legal representation and advice, consult a qualified lawyer.',
+                    question: AppLocalizations.of(context)!.faqLawyerUse,
+                    answer: AppLocalizations.of(context)!.faqLawyerUseAnswer,
                   ),
 
                   const SizedBox(height: 12),
 
                   _buildFAQCard(
-                    question: 'How accurate is the AI assistant?',
-                    answer:
-                        'Our AI is trained on Pakistani laws but may not cover all cases. Always verify information with legal professionals before taking action.',
+                    question: AppLocalizations.of(context)!.faqAiAccuracy,
+                    answer: AppLocalizations.of(context)!.faqAiAccuracyAnswer,
                   ),
 
                   const SizedBox(height: 12),
 
                   _buildFAQCard(
-                    question: 'Is my data secure?',
-                    answer:
-                        'Yes. We use encryption for data storage and transmission. Your information is kept confidential and never shared with third parties.',
+                    question: AppLocalizations.of(context)!.faqDataSecurity,
+                    answer: AppLocalizations.of(context)!.faqDataSecurityAnswer,
                   ),
 
                   const SizedBox(height: 12),
 
                   _buildFAQCard(
-                    question: 'What languages are supported?',
-                    answer:
-                        'Legal Sathi supports English, Roman Urdu, and Urdu. You can switch languages in Settings.',
+                    question: AppLocalizations.of(context)!.faqLanguages,
+                    answer: AppLocalizations.of(context)!.faqLanguagesAnswer,
                   ),
 
                   const SizedBox(height: 32),
@@ -248,9 +239,9 @@ class HelpCenterScreen extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  const Center(
+                   Center(
                     child: Text(
-                      'Still Need Help?',
+                      AppLocalizations.of(context)!.stillNeedHelp,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -261,9 +252,9 @@ class HelpCenterScreen extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  const Center(
+                   Center(
                     child: Text(
-                      'Contact our support team for assistance',
+                       AppLocalizations.of(context)!.contactSupportText,
                       style: TextStyle(fontSize: 13, color: Colors.black54),
                     ),
                   ),
@@ -285,14 +276,13 @@ class HelpCenterScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.chat_bubble_outline, size: 20),
-                          SizedBox(width: 8),
-                          Text(
-                            'Contact Support',
-                            style: TextStyle(
+                          const Icon(Icons.chat_bubble_outline, size: 20),
+                          const SizedBox(width: 8),
+                          Text(AppLocalizations.of(context)!.contactSupport,
+                            style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),

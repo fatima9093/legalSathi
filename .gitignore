@@ -2,8 +2,8 @@
 Backend/.venv/
 Backend/venv/
 Backend/chroma_db/
-.venv/
 venv/
+.venv/
 env/
 __pycache__/
 **/__pycache__/

@@ -33,36 +33,57 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
   @override
   void initState() {
     super.initState();
-    _initializeScenario();
+  
     // Check guest access
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkGuestAccess();
     });
   }
+bool _isInitialized = false;
 
-  void _initializeScenario() {
-    moduleConfig = _scenarioService.getModuleScenarios(widget.moduleType);
-    selectedScenario = moduleConfig.getDefaultScenario();
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+
+  if (!_isInitialized) {
+    _initializeScenario();
+    _isInitialized = true;
   }
+}
+  void _initializeScenario() {
+  final config = _scenarioService.getModuleScenarios(
+    context,
+    widget.moduleType,
+  );
+
+  setState(() {
+    moduleConfig = config;
+    selectedScenario = config.scenarios.isNotEmpty
+        ? config.scenarios.first
+        : config.scenarios.first; // fallback safety
+  });
+}
 
   void _checkGuestAccess() {
     final isGuest = Supabase.instance.client.auth.currentUser == null;
     if (isGuest && mounted) {
+      
       showDialog(
         context: context,
         barrierDismissible: true,
-        builder: (context) => AlertDialog(
+        builder: (context) {
+        final loc = AppLocalizations.of(context)!;
+
+        return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text('Limited Access'),
-          content: const Text(
-            'Scenario simulations with progress tracking are available for signed-in users. You can still view the scenarios as a guest.',
-          ),
+          title: Text(loc.limitedAccessTitle),
+          content: Text(loc.limitedAccessMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Continue as Guest'),
+             child: Text(loc.continueAsGuest),
             ),
             ElevatedButton(
               onPressed: () {
@@ -72,13 +93,13 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                   MaterialPageRoute(builder: (context) => const SignInScreen()),
                 );
               },
-              child: const Text('Sign In'),
+              child: Text(loc.signIn),
             ),
           ],
-        ),
-      );
-    }
-  }
+        );
+      
+    });
+    }}
 
   void _selectScenario(Scenario scenario) {
     setState(() {
@@ -116,7 +137,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
   void _selectModule(ModuleType moduleType) {
     setState(() {
       _selectedModule = moduleType;
-      moduleConfig = _scenarioService.getModuleScenarios(moduleType);
+      moduleConfig = _scenarioService.getModuleScenarios(context, moduleType);
       selectedScenario = moduleConfig.getDefaultScenario();
       _currentStepIndex = 0;
     });
@@ -124,9 +145,11 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
 
   @override
   Widget build(BuildContext context) {
+     final loc = AppLocalizations.of(context)!;
+
     // Show category selection for general entry
     if (widget.moduleType == ModuleType.general && _selectedModule == null) {
-      return _buildCategorySelector();
+      return _buildCategorySelector(loc);
     }
 
     final isMobile = MediaQuery.of(context).size.width < 600;
@@ -164,7 +187,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
         child: Column(
           children: [
             // Scenario Selection (only show if multiple scenarios)
-            if (moduleConfig.scenarios.length > 1) _buildScenarioSelector(),
+            if (moduleConfig.scenarios.length > 1) _buildScenarioSelector(loc),
 
             // Main Content
             Padding(
@@ -192,7 +215,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                   const SizedBox(height: 32),
 
                   // Step Progress Indicator
-                  _buildStepProgress(),
+                  _buildStepProgress(loc),
                   const SizedBox(height: 24),
 
                   // Current Step Content
@@ -200,7 +223,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                   const SizedBox(height: 32),
 
                   // Navigation Buttons
-                  _buildNavigationButtons(),
+                  _buildNavigationButtons(loc),
                   const SizedBox(height: 24),
 
                   // Start Chat Button
@@ -215,8 +238,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Text(
-                        'Start Chat with AI Advisor',
+                       child: Text(loc.startChat,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               color: Colors.white,
@@ -235,7 +257,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
   }
 
   /// Category Selector - shown when entering from Quick Actions
-  Widget _buildCategorySelector() {
+  Widget _buildCategorySelector(AppLocalizations loc) {
     return Scaffold(
       backgroundColor: appBackgroundColor,
       appBar: AppBar(
@@ -280,8 +302,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      'Describe Your Legal Situation',
+                    Text(loc.describeLegalSituation,
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
@@ -291,7 +312,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'AI will guide you step-by-step with legal advice and next actions',
+                      loc.simulation_aiDescription,
                       style: Theme.of(
                         context,
                       ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
@@ -304,7 +325,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
 
               // Select Legal Domain Label
               Text(
-                'Select Legal Domain *',
+                loc.selectLegalDomain,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -314,9 +335,8 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
 
               // Category Options
               _buildCategoryButton(
-                title: 'Women Harassment',
-                subtitle:
-                    'Workplace harassment, protection act,\nombudsperson complaints',
+                title: loc.womenHarassment,
+              subtitle: loc.womenHarassmentDesc,
                 icon: Icons.shield_outlined,
                 iconColor: const Color(0xFFC2185B),
                 iconBgColor: const Color(0xFFFCE4EC),
@@ -325,9 +345,8 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
               const SizedBox(height: 12),
 
               _buildCategoryButton(
-                title: 'Labour Rights',
-                subtitle:
-                    'Wages, overtime, leave, contract violations,\nlabour complaints',
+                title: loc.labourRights,
+              subtitle: loc.labourRightsDesc,
                 icon: Icons.business_center_outlined,
                 iconColor: const Color(0xFF0277BD),
                 iconBgColor: const Color(0xFFE1F5FE),
@@ -336,9 +355,8 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
               const SizedBox(height: 12),
 
               _buildCategoryButton(
-                title: 'Cyber Crime (PECA)',
-                subtitle:
-                    'Online harassment, blackmail, fake accounts,\nFIA complaints',
+                title: loc.cyberCrime,
+              subtitle: loc.cyberCrimeDesc,
                 icon: Icons.security_outlined,
                 iconColor: const Color(0xFFF57C00),
                 iconBgColor: const Color(0xFFFFE0B2),
@@ -347,9 +365,8 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
               const SizedBox(height: 12),
 
               _buildCategoryButton(
-                title: 'Road & Traffic Law',
-                subtitle:
-                    'Traffic violations, challans, fines, police\nmisconduct',
+                title: loc.trafficLaw,
+              subtitle: loc.trafficLawDesc,
                 icon: Icons.directions_car_outlined,
                 iconColor: const Color(0xFF00695C),
                 iconBgColor: const Color(0xFFB2DFDB),
@@ -369,25 +386,19 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'How AI Advisor Works:',
+                      loc.howAiWorks,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: appPrimaryGreen,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _buildInfoPoint(
-                      'Describe your situation in your own words',
-                    ),
-                    _buildInfoPoint('AI asks clarifying questions if needed'),
-                    _buildInfoPoint(
-                      'Get step-by-step legal guidance\n(PECA, Labour Act, etc.)',
-                    ),
-                    _buildInfoPoint('Receive relevant law references'),
-                    _buildInfoPoint(
-                      'Get complaint and legal remedies recommendations',
-                    ),
-                    _buildInfoPoint('All actions happen within the chat'),
+                    _buildInfoPoint(loc.simulation_aiStep1),
+                    _buildInfoPoint(loc.simulation_aiStep2),
+                    _buildInfoPoint(loc.simulation_aiStep3),
+                    _buildInfoPoint(loc.simulation_aiStep4),
+                    _buildInfoPoint(loc.simulation_aiStep5),
+                    _buildInfoPoint(loc.simulation_aiStep6),
                   ],
                 ),
               ),
@@ -493,7 +504,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
     );
   }
 
-  Widget _buildScenarioSelector() {
+  Widget _buildScenarioSelector(AppLocalizations loc) {
     return Container(
       color: Colors.grey[100],
       padding: const EdgeInsets.all(16),
@@ -501,7 +512,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Select Your Scenario',
+            loc.selectYourScenario,
             style: Theme.of(
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -553,7 +564,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
     );
   }
 
-  Widget _buildStepProgress() {
+  Widget _buildStepProgress(AppLocalizations loc){
     final totalSteps = selectedScenario.guidanceSteps.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -561,8 +572,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Step ${_currentStepIndex + 1} of $totalSteps',
+            Text(loc.stepOf(_currentStepIndex + 1, totalSteps),
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: appPrimaryGreen,
                 fontWeight: FontWeight.bold,
@@ -665,7 +675,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
     );
   }
 
-  Widget _buildNavigationButtons() {
+  Widget _buildNavigationButtons(AppLocalizations loc) {
     final totalSteps = selectedScenario.guidanceSteps.length;
     final isFirstStep = _currentStepIndex == 0;
     final isLastStep = _currentStepIndex == totalSteps - 1;
@@ -680,8 +690,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 side: const BorderSide(color: appPrimaryGreen),
               ),
-              child: Text(
-                'Previous',
+              child: Text(loc.previous,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: appPrimaryGreen,
                   fontWeight: FontWeight.bold,
@@ -698,7 +707,7 @@ class _ScenarioSimulatorScreenState extends State<ScenarioSimulatorScreen> {
               padding: const EdgeInsets.symmetric(vertical: 12),
             ),
             child: Text(
-              isLastStep ? 'Last Step' : 'Next',
+               isLastStep ? loc.lastStep : loc.next,
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,

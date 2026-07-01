@@ -12,25 +12,59 @@ class EvidenceChecklistScreen extends StatefulWidget {
 
 class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
   // Primary evidence checkboxes
-  Map<String, bool> primaryEvidence = {
-    'WhatsApp / SMS messages': false,
-    'Emails': false,
-    'Voice notes': false,
-    'CCTV footage': false,
-    'Call recordings': false,
-    'Screenshots': false,
-    'Photos': false,
-    'Digital communication': false,
-  };
+  late Map<String, bool> primaryEvidence;
+  late Map<String, String> primaryEvidenceKeys; // Maps label to key
 
   // Secondary evidence checkboxes
-  Map<String, bool> secondaryEvidence = {
-    'Witness statements': false,
-    'Diary / incident notes': false,
-    'Medical report': false,
-    'HR warning emails': false,
-    'Pattern of behavior': false,
-  };
+  late Map<String, bool> secondaryEvidence;
+  late Map<String, String> secondaryEvidenceKeys; // Maps label to key
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final loc = AppLocalizations.of(context)!;
+
+    final whatsAppLabel = '${loc.whatsApp} / SMS';
+    final diaryLabel = '${loc.diary} / ${loc.incidentNotes}';
+
+    primaryEvidence = {
+      whatsAppLabel: false,
+      loc.emails: false,
+      loc.voiceNotes: false,
+      loc.cctv: false,
+      loc.callRecordings: false,
+      loc.screenshots: false,
+      loc.photos: false,
+      loc.digitalCommunication: false,
+    };
+
+    primaryEvidenceKeys = {
+      whatsAppLabel: 'whatsApp',
+      loc.emails: 'emails',
+      loc.voiceNotes: 'voiceNotes',
+      loc.cctv: 'cctv',
+      loc.callRecordings: 'callRecordings',
+      loc.screenshots: 'screenshots',
+      loc.photos: 'photos',
+      loc.digitalCommunication: 'digitalCommunication',
+    };
+
+    secondaryEvidence = {
+      loc.witnessStatements: false,
+      diaryLabel: false,
+      loc.medicalReports: false,
+      loc.hrwarningemails: false,
+      loc.patternOfBehavior: false,
+    };
+
+    secondaryEvidenceKeys = {
+      loc.witnessStatements: 'witnessStatements',
+      diaryLabel: 'diaryIncidentNotes',
+      loc.medicalReports: 'medicalReports',
+      loc.hrwarningemails: 'hrwarningemails',
+      loc.patternOfBehavior: 'patternOfBehavior',
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,6 +149,7 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
               (item) => _buildChecklistItem(
                 label: item,
                 isChecked: primaryEvidence[item]!,
+                evidenceKey: primaryEvidenceKeys[item],
                 onChanged: (value) {
                   setState(() {
                     primaryEvidence[item] = value!;
@@ -145,6 +180,7 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
               (item) => _buildChecklistItem(
                 label: item,
                 isChecked: secondaryEvidence[item]!,
+                evidenceKey: secondaryEvidenceKeys[item],
                 onChanged: (value) {
                   setState(() {
                     secondaryEvidence[item] = value!;
@@ -206,14 +242,16 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
             _buildGuidanceSection(
               icon: Icons.lightbulb,
               iconColor: Colors.amber.shade700,
-              title: 'Tips for Preserving Digital Files',
+              title: AppLocalizations.of(
+                context,
+              )!.tipsForPreservivngDigitalFiles,
               items: [
-                'Back up to cloud storage immediately',
-                'Keep multiple copies in different locations',
-                'Don\'t compress or reduce image quality',
-                'Note metadata (date, time, sender)',
-                'Store chronologically with labels',
-              ],
+                AppLocalizations.of(context)!.tipsBackupCloudStorage,
+                AppLocalizations.of(context)!.tipsMultipleCopies,
+                AppLocalizations.of(context)!.tipsDontCompress,
+                AppLocalizations.of(context)!.tipsNoteMetadata,
+                AppLocalizations.of(context)!.tipsStoreChronologically,]
+              
             ),
 
             const SizedBox(height: 24),
@@ -241,12 +279,12 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.upload_file, size: 20),
-                    SizedBox(width: 8),
+                  children: [
+                    const Icon(Icons.upload_file, size: 20),
+                    const SizedBox(width: 8),
                     Text(
-                      'Upload Evidence for AI Review',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.uploadEvidenceForAiReview,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -277,7 +315,7 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'AI will analyze your evidence strength and provide suggestions',
+                        AppLocalizations.of(context)!.aiAnalyzeText,
                         style: TextStyle(
                           fontSize: 13,
                           color: Colors.grey.shade800,
@@ -299,6 +337,7 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
   Widget _buildChecklistItem({
     required String label,
     required bool isChecked,
+    required String? evidenceKey,
     required ValueChanged<bool?> onChanged,
   }) {
     return Padding(
@@ -323,7 +362,7 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
               size: 20,
             ),
             onPressed: () {
-              _showInfoDialog(label);
+              _showInfoDialog(evidenceKey);
             },
           ),
           activeColor: const Color(0xFF00401A),
@@ -402,13 +441,15 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
     );
   }
 
-  void _showInfoDialog(String evidenceType) {
-    String description = _getEvidenceDescription(evidenceType);
+  void _showInfoDialog(String? evidenceKey) {
+    final loc = AppLocalizations.of(context)!;
+    String description = _getEvidenceDescription(evidenceKey, loc);
+    String title = _getEvidenceTitle(evidenceKey, loc);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(evidenceType),
+        title: Text(title),
         content: Text(description),
         actions: [
           TextButton(
@@ -423,35 +464,69 @@ class _EvidenceChecklistScreenState extends State<EvidenceChecklistScreen> {
     );
   }
 
-  String _getEvidenceDescription(String evidenceType) {
-    Map<String, String> descriptions = {
-      'WhatsApp / SMS messages':
-          'Screenshots of harassing messages with timestamps and sender information visible.',
-      'Emails':
-          'Email correspondence showing harassment, including headers with dates and times.',
-      'Voice notes':
-          'Audio recordings of threatening or harassing voice messages (where legal).',
-      'CCTV footage':
-          'Video evidence from security cameras showing incidents of harassment.',
-      'Call recordings':
-          'Recorded phone conversations (only legal with consent in Pakistan).',
-      'Screenshots':
-          'Screen captures of harassing content from social media or other platforms.',
-      'Photos': 'Photographic evidence of physical harassment or threats.',
-      'Digital communication':
-          'Any other form of digital communication showing harassment.',
-      'Witness statements':
-          'Written statements from people who witnessed the harassment.',
-      'Diary / incident notes':
-          'Personal records documenting dates, times, and details of incidents.',
-      'Medical report':
-          'Medical documentation of physical or psychological harm caused by harassment.',
-      'HR warning emails':
-          'Official warnings or complaints filed with HR department.',
-      'Pattern of behavior':
-          'Documentation showing repeated instances of harassment over time.',
-    };
+  String _getEvidenceTitle(String? key, AppLocalizations loc) {
+    switch (key) {
+      case 'whatsApp':
+        return '${loc.whatsApp} / SMS';
+      case 'emails':
+        return loc.emails;
+      case 'voiceNotes':
+        return loc.voiceNotes;
+      case 'cctv':
+        return loc.cctv;
+      case 'callRecordings':
+        return loc.callRecordings;
+      case 'screenshots':
+        return loc.screenshots;
+      case 'photos':
+        return loc.photos;
+      case 'digitalCommunication':
+        return loc.digitalCommunication;
+      case 'witnessStatements':
+        return loc.witnessStatements;
+      case 'diaryIncidentNotes':
+        return '${loc.diary} / ${loc.incidentNotes}';
+      case 'medicalReports':
+        return loc.medicalReports;
+      case 'hrwarningemails':
+        return loc.hrwarningemails;
+      case 'patternOfBehavior':
+        return loc.patternOfBehavior;
+      default:
+        return 'Evidence';
+    }
+  }
 
-    return descriptions[evidenceType] ?? 'Important evidence for your case.';
+  String _getEvidenceDescription(String? key, AppLocalizations loc) {
+    switch (key) {
+      case 'whatsApp':
+        return loc.evidenceWhatsAppDescription;
+      case 'emails':
+        return loc.evidenceEmailsDescription;
+      case 'voiceNotes':
+        return loc.evidenceVoiceNotesDescription;
+      case 'cctv':
+        return loc.evidenceCctvDescription;
+      case 'callRecordings':
+        return loc.evidenceCallRecordingsDescription;
+      case 'screenshots':
+        return loc.evidenceScreenshotsDescription;
+      case 'photos':
+        return loc.evidencePhotosDescription;
+      case 'digitalCommunication':
+        return loc.evidenceDigitalCommunicationDescription;
+      case 'witnessStatements':
+        return loc.evidenceWitnessStatementsDescription;
+      case 'diaryIncidentNotes':
+        return loc.evidenceDiaryIncidentNotesDescription;
+      case 'medicalReports':
+        return loc.evidenceMedicalReportsDescription;
+      case 'hrwarningemails':
+        return loc.evidenceHrWarningEmailsDescription;
+      case 'patternOfBehavior':
+        return loc.evidencePatternOfBehaviorDescription;
+      default:
+        return 'Important evidence for your case.';
+    }
   }
 }

@@ -455,7 +455,7 @@ class _FIAComplaintGeneratorScreenState
 
                           const SizedBox(height: 16),
 
-                          _buildLabel('Suspect Information (if known)'),
+                          _buildLabel(loc.simulation_suspectInfo),
                           const SizedBox(height: 8),
                           TextField(
                             controller: _suspectController,

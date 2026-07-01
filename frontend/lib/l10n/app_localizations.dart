@@ -163,6 +163,36 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get home;
 
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @lastStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Step'**
+  String get lastStep;
+
+  /// No description provided for @simulation_aiDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'AI will guide you step-by-step with legal advice and next actions'**
+  String get simulation_aiDescription;
+
+  /// No description provided for @howAiWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How AI Advisor Works:'**
+  String get howAiWorks;
+
+  /// No description provided for @stepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String stepOf(Object current, Object total);
+
   /// No description provided for @chat.
   ///
   /// In en, this message translates to:
@@ -328,7 +358,7 @@ abstract class AppLocalizations {
   /// No description provided for @witnessStatements.
   ///
   /// In en, this message translates to:
-  /// **'Witness Statements'**
+  /// **'Witness contacts and statements'**
   String get witnessStatements;
 
   /// No description provided for @medicalReports.
@@ -348,6 +378,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Diary'**
   String get diary;
+
+  /// No description provided for @incidentNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Incident Notes'**
+  String get incidentNotes;
 
   /// No description provided for @hrwarningemails.
   ///
@@ -372,6 +408,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tips for Preserving Digital Files'**
   String get tipsForPreservivngDigitalFiles;
+
+  /// No description provided for @evidenceWhatsAppDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshots of harassing messages with timestamps and sender information visible.'**
+  String get evidenceWhatsAppDescription;
+
+  /// No description provided for @evidenceEmailsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Email correspondence showing harassment, including headers with dates and times.'**
+  String get evidenceEmailsDescription;
+
+  /// No description provided for @evidenceVoiceNotesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio recordings of threatening or harassing voice messages (where legal).'**
+  String get evidenceVoiceNotesDescription;
+
+  /// No description provided for @evidenceCctvDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Video evidence from security cameras showing incidents of harassment.'**
+  String get evidenceCctvDescription;
+
+  /// No description provided for @evidenceCallRecordingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded phone conversations (only legal with consent in Pakistan).'**
+  String get evidenceCallRecordingsDescription;
+
+  /// No description provided for @evidenceScreenshotsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen captures of harassing content from social media or other platforms.'**
+  String get evidenceScreenshotsDescription;
+
+  /// No description provided for @evidencePhotosDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Photographic evidence of physical harassment or threats.'**
+  String get evidencePhotosDescription;
+
+  /// No description provided for @evidenceDigitalCommunicationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Any other form of digital communication showing harassment.'**
+  String get evidenceDigitalCommunicationDescription;
+
+  /// No description provided for @evidenceWitnessStatementsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Written statements from people who witnessed the harassment.'**
+  String get evidenceWitnessStatementsDescription;
+
+  /// No description provided for @evidenceDiaryIncidentNotesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal records documenting dates, times, and details of incidents.'**
+  String get evidenceDiaryIncidentNotesDescription;
+
+  /// No description provided for @evidenceMedicalReportsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical documentation of physical or psychological harm caused by harassment.'**
+  String get evidenceMedicalReportsDescription;
+
+  /// No description provided for @evidenceHrWarningEmailsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Official warnings or complaints filed with HR department.'**
+  String get evidenceHrWarningEmailsDescription;
+
+  /// No description provided for @evidencePatternOfBehaviorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Documentation showing repeated instances of harassment over time.'**
+  String get evidencePatternOfBehaviorDescription;
 
   /// No description provided for @uploadEvidenceForAiReview.
   ///
@@ -673,12 +787,6 @@ abstract class AppLocalizations {
   /// **'Domestic Violence'**
   String get domesticViolence;
 
-  /// No description provided for @next.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get next;
-
   /// No description provided for @privacy.
   ///
   /// In en, this message translates to:
@@ -910,7 +1018,7 @@ abstract class AppLocalizations {
   /// No description provided for @findAnswersAndSupport.
   ///
   /// In en, this message translates to:
-  /// **'Find answers and get support'**
+  /// **'Find answers and support'**
   String get findAnswersAndSupport;
 
   /// No description provided for @helpTopics.
@@ -922,19 +1030,19 @@ abstract class AppLocalizations {
   /// No description provided for @howToUseLegalSathi.
   ///
   /// In en, this message translates to:
-  /// **'How to Use Legal Sathi'**
+  /// **'How to use Legal Sathi'**
   String get howToUseLegalSathi;
 
   /// No description provided for @learnBasicsNavigatingApp.
   ///
   /// In en, this message translates to:
-  /// **'Learn the basics of navigating the app'**
+  /// **'Learn basics of navigating the app'**
   String get learnBasicsNavigatingApp;
 
   /// No description provided for @howToUploadEvidence.
   ///
   /// In en, this message translates to:
-  /// **'How to Upload Evidence'**
+  /// **'How to upload evidence'**
   String get howToUploadEvidence;
 
   /// No description provided for @stepByStepGuideUploadingDocuments.
@@ -1090,8 +1198,8 @@ abstract class AppLocalizations {
   /// No description provided for @errorMessage.
   ///
   /// In en, this message translates to:
-  /// **'Error'**
-  String get errorMessage;
+  /// **'Error: {message}'**
+  String errorMessage(Object message);
 
   /// No description provided for @successMessage.
   ///
@@ -8904,6 +9012,2646 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to Sign In'**
   String get goToSignIn;
+
+  /// No description provided for @tipsBackupCloudStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up to cloud storage immediately'**
+  String get tipsBackupCloudStorage;
+
+  /// No description provided for @tipsMultipleCopies.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep multiple copies in different locations'**
+  String get tipsMultipleCopies;
+
+  /// No description provided for @tipsDontCompress.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t compress or reduce image quality'**
+  String get tipsDontCompress;
+
+  /// No description provided for @tipsNoteMetadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Note metadata (date, time, sender)'**
+  String get tipsNoteMetadata;
+
+  /// No description provided for @tipsStoreChronologically.
+  ///
+  /// In en, this message translates to:
+  /// **'Store chronologically with labels'**
+  String get tipsStoreChronologically;
+
+  /// No description provided for @limitedAccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited Access'**
+  String get limitedAccessTitle;
+
+  /// No description provided for @limitedAccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Scenario simulations with progress tracking are available for signed-in users. You can still view the scenarios as a guest.'**
+  String get limitedAccessMessage;
+
+  /// No description provided for @selectLegalDomain.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Legal Domain *'**
+  String get selectLegalDomain;
+
+  /// No description provided for @describeLegalSituation.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe Your Legal Situation'**
+  String get describeLegalSituation;
+
+  /// No description provided for @aiGuidanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI will guide you step-by-step with legal advice and next actions'**
+  String get aiGuidanceSubtitle;
+
+  /// No description provided for @womenHarassment.
+  ///
+  /// In en, this message translates to:
+  /// **'Women Harassment'**
+  String get womenHarassment;
+
+  /// No description provided for @womenHarassmentDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace harassment, protection act, ombudsperson complaints'**
+  String get womenHarassmentDesc;
+
+  /// No description provided for @labourRightsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages, overtime, leave, contract violations, labour complaints'**
+  String get labourRightsDesc;
+
+  /// No description provided for @cyberCrime.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber Crime (PECA)'**
+  String get cyberCrime;
+
+  /// No description provided for @cyberCrimeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Online harassment, blackmail, fake accounts, FIA complaints'**
+  String get cyberCrimeDesc;
+
+  /// No description provided for @trafficLaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Road & Traffic Law'**
+  String get trafficLaw;
+
+  /// No description provided for @trafficLawDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic violations, challans, fines, police misconduct'**
+  String get trafficLawDesc;
+
+  /// No description provided for @aiStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your situation in your own words'**
+  String get aiStep1;
+
+  /// No description provided for @aiStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'AI asks clarifying questions if needed'**
+  String get aiStep2;
+
+  /// No description provided for @aiStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Get step-by-step legal guidance (PECA, Labour Act, etc.)'**
+  String get aiStep3;
+
+  /// No description provided for @aiStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive relevant law references'**
+  String get aiStep4;
+
+  /// No description provided for @aiStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Get complaint and legal remedies recommendations'**
+  String get aiStep5;
+
+  /// No description provided for @aiStep6.
+  ///
+  /// In en, this message translates to:
+  /// **'All actions happen within the chat'**
+  String get aiStep6;
+
+  /// No description provided for @stepProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String stepProgress(Object current, Object total);
+
+  /// No description provided for @startChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Chat with AI Advisor'**
+  String get startChat;
+
+  /// No description provided for @previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// No description provided for @simulation_suspectInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspect Information (if known)'**
+  String get simulation_suspectInfo;
+
+  /// No description provided for @simulation_aiStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your situation in your own words'**
+  String get simulation_aiStep1;
+
+  /// No description provided for @simulation_aiStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'AI asks clarifying questions if needed'**
+  String get simulation_aiStep2;
+
+  /// No description provided for @simulation_aiStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Get step-by-step legal guidance (PECA, Labour Act, etc.)'**
+  String get simulation_aiStep3;
+
+  /// No description provided for @simulation_aiStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive relevant law references'**
+  String get simulation_aiStep4;
+
+  /// No description provided for @simulation_aiStep5.
+  ///
+  /// In en, this message translates to:
+  /// **'Get complaint and legal remedies recommendations'**
+  String get simulation_aiStep5;
+
+  /// No description provided for @simulation_aiStep6.
+  ///
+  /// In en, this message translates to:
+  /// **'All actions happen within the chat'**
+  String get simulation_aiStep6;
+
+  /// No description provided for @trafficAccidentDisputeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic Accident Dispute'**
+  String get trafficAccidentDisputeTitle;
+
+  /// No description provided for @trafficAccidentDisputeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You were involved in a traffic accident and need guidance'**
+  String get trafficAccidentDisputeDesc;
+
+  /// No description provided for @accidentSceneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'At the Scene of Accident'**
+  String get accidentSceneTitle;
+
+  /// No description provided for @accidentSceneDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do immediately after the accident'**
+  String get accidentSceneDesc;
+
+  /// No description provided for @moveToSafeLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to a safe location if possible'**
+  String get moveToSafeLocation;
+
+  /// No description provided for @alertTrafficHazard.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert other traffic using hazard lights'**
+  String get alertTrafficHazard;
+
+  /// No description provided for @callPolice.
+  ///
+  /// In en, this message translates to:
+  /// **'Call police or traffic helpline'**
+  String get callPolice;
+
+  /// No description provided for @dontAdmitFault.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not admit fault or sign documents'**
+  String get dontAdmitFault;
+
+  /// No description provided for @gatherWitnessInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Gather witness information and photos'**
+  String get gatherWitnessInfo;
+
+  /// No description provided for @accidentDocsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documentation Required'**
+  String get accidentDocsTitle;
+
+  /// No description provided for @accidentDocsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect these documents for your protection'**
+  String get accidentDocsDesc;
+
+  /// No description provided for @firNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'FIR number'**
+  String get firNumber;
+
+  /// No description provided for @insuranceDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance policy details'**
+  String get insuranceDetails;
+
+  /// No description provided for @accidentPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photographs of accident site'**
+  String get accidentPhotos;
+
+  /// No description provided for @medicalCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical certificates if injured'**
+  String get medicalCertificate;
+
+  /// No description provided for @accidentRightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Rights & Claims'**
+  String get accidentRightsTitle;
+
+  /// No description provided for @accidentRightsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Know your compensation options'**
+  String get accidentRightsDesc;
+
+  /// No description provided for @fileMotorClaim.
+  ///
+  /// In en, this message translates to:
+  /// **'File motor accident claim within 6 months'**
+  String get fileMotorClaim;
+
+  /// No description provided for @vehicleAssessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Get vehicle assessment done'**
+  String get vehicleAssessment;
+
+  /// No description provided for @claimMedicalExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim medical expenses and loss of earnings'**
+  String get claimMedicalExpenses;
+
+  /// No description provided for @rightToSue.
+  ///
+  /// In en, this message translates to:
+  /// **'Know your right to sue for damages'**
+  String get rightToSue;
+
+  /// No description provided for @licenseIssueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'License Suspension/Cancellation'**
+  String get licenseIssueTitle;
+
+  /// No description provided for @licenseIssueDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your driving license is suspended or cancelled'**
+  String get licenseIssueDesc;
+
+  /// No description provided for @suspensionVsCancellationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspension vs Cancellation'**
+  String get suspensionVsCancellationTitle;
+
+  /// No description provided for @suspensionVsCancellationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Know the difference and implications'**
+  String get suspensionVsCancellationDesc;
+
+  /// No description provided for @suspensionDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspension is temporary license pause'**
+  String get suspensionDefinition;
+
+  /// No description provided for @cancellationDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation is permanent revocation'**
+  String get cancellationDefinition;
+
+  /// No description provided for @violationReasons.
+  ///
+  /// In en, this message translates to:
+  /// **'Reasons include violations or medical issues'**
+  String get violationReasons;
+
+  /// No description provided for @illegalDrivingWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Driving during suspension is illegal'**
+  String get illegalDrivingWarning;
+
+  /// No description provided for @appealProcessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal Process'**
+  String get appealProcessTitle;
+
+  /// No description provided for @appealProcessDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'How to challenge the decision'**
+  String get appealProcessDesc;
+
+  /// No description provided for @fileRTAAppeal.
+  ///
+  /// In en, this message translates to:
+  /// **'File appeal in RTA office'**
+  String get fileRTAAppeal;
+
+  /// No description provided for @appealDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'File within 30 days'**
+  String get appealDeadline;
+
+  /// No description provided for @gatherEvidence.
+  ///
+  /// In en, this message translates to:
+  /// **'Gather supporting evidence'**
+  String get gatherEvidence;
+
+  /// No description provided for @attendHearing.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend hearing and present case'**
+  String get attendHearing;
+
+  /// No description provided for @recoveryStepsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Steps'**
+  String get recoveryStepsTitle;
+
+  /// No description provided for @recoveryStepsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps to restore your license'**
+  String get recoveryStepsDesc;
+
+  /// No description provided for @completeSuspension.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete suspension period'**
+  String get completeSuspension;
+
+  /// No description provided for @passRefresherTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Pass refresher test if required'**
+  String get passRefresherTest;
+
+  /// No description provided for @payFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay required fees'**
+  String get payFees;
+
+  /// No description provided for @collectLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect renewed license'**
+  String get collectLicense;
+
+  /// No description provided for @trafficModuleName.
+  ///
+  /// In en, this message translates to:
+  /// **'Road & Traffic Law'**
+  String get trafficModuleName;
+
+  /// No description provided for @womenModuleName.
+  ///
+  /// In en, this message translates to:
+  /// **'Women Harassment'**
+  String get womenModuleName;
+
+  /// No description provided for @cyberModuleName.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber Crime'**
+  String get cyberModuleName;
+
+  /// No description provided for @labourModuleName.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Rights'**
+  String get labourModuleName;
+
+  /// No description provided for @generalModuleName.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Guidance'**
+  String get generalModuleName;
+
+  /// No description provided for @trafficChatScreenName.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic Assistant Chat'**
+  String get trafficChatScreenName;
+
+  /// No description provided for @traffic1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic Violation Fine'**
+  String get traffic1Title;
+
+  /// No description provided for @traffic1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You received a traffic ticket or penalty challan'**
+  String get traffic1Desc;
+
+  /// No description provided for @traffic1Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Your Violation'**
+  String get traffic1Step1Title;
+
+  /// No description provided for @traffic1Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Know what violation you committed and the legal implications'**
+  String get traffic1Step1Desc;
+
+  /// No description provided for @traffic1Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the violation code on your challan'**
+  String get traffic1Step1P1;
+
+  /// No description provided for @traffic1Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand the section under Motor Vehicles Act'**
+  String get traffic1Step1P2;
+
+  /// No description provided for @traffic1Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Know the fine amount and deadline'**
+  String get traffic1Step1P3;
+
+  /// No description provided for @traffic1Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn about your right to appeal'**
+  String get traffic1Step1P4;
+
+  /// No description provided for @traffic1Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Do\'s & Don\'ts'**
+  String get traffic1Step2Title;
+
+  /// No description provided for @traffic1Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Important steps to follow'**
+  String get traffic1Step2Desc;
+
+  /// No description provided for @traffic1Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the fine on time'**
+  String get traffic1Step2P1;
+
+  /// No description provided for @traffic1Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep receipt and challan safe'**
+  String get traffic1Step2P2;
+
+  /// No description provided for @traffic1Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal if you think it is unfair'**
+  String get traffic1Step2P3;
+
+  /// No description provided for @traffic1Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not ignore the challan'**
+  String get traffic1Step2P4;
+
+  /// No description provided for @traffic1Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not offer bribes'**
+  String get traffic1Step2P5;
+
+  /// No description provided for @traffic1Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate Actions'**
+  String get traffic1Step3Title;
+
+  /// No description provided for @traffic1Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps to take right now'**
+  String get traffic1Step3Desc;
+
+  /// No description provided for @traffic1Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay fine within deadline'**
+  String get traffic1Step3P1;
+
+  /// No description provided for @traffic1Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'File appeal in traffic court if needed'**
+  String get traffic1Step3P2;
+
+  /// No description provided for @traffic1Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect all evidence'**
+  String get traffic1Step3P3;
+
+  /// No description provided for @traffic1Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact a lawyer if required'**
+  String get traffic1Step3P4;
+
+  /// No description provided for @traffic2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic Accident Dispute'**
+  String get traffic2Title;
+
+  /// No description provided for @traffic2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You were involved in a traffic accident and need guidance'**
+  String get traffic2Desc;
+
+  /// No description provided for @traffic2Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'At the Scene of Accident'**
+  String get traffic2Step1Title;
+
+  /// No description provided for @traffic2Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do immediately after accident'**
+  String get traffic2Step1Desc;
+
+  /// No description provided for @traffic2Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to a safe place'**
+  String get traffic2Step1P1;
+
+  /// No description provided for @traffic2Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on hazard lights'**
+  String get traffic2Step1P2;
+
+  /// No description provided for @traffic2Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Call police (100)'**
+  String get traffic2Step1P3;
+
+  /// No description provided for @traffic2Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not admit fault'**
+  String get traffic2Step1P4;
+
+  /// No description provided for @traffic2Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect witness info and photos'**
+  String get traffic2Step1P5;
+
+  /// No description provided for @traffic2Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Documentation Required'**
+  String get traffic2Step2Title;
+
+  /// No description provided for @traffic2Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect these documents'**
+  String get traffic2Step2Desc;
+
+  /// No description provided for @traffic2Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'FIR number'**
+  String get traffic2Step2P1;
+
+  /// No description provided for @traffic2Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance details'**
+  String get traffic2Step2P2;
+
+  /// No description provided for @traffic2Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos of accident'**
+  String get traffic2Step2P3;
+
+  /// No description provided for @traffic2Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical certificates'**
+  String get traffic2Step2P4;
+
+  /// No description provided for @traffic2Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Witness statements'**
+  String get traffic2Step2P5;
+
+  /// No description provided for @traffic2Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Rights & Claims'**
+  String get traffic2Step3Title;
+
+  /// No description provided for @traffic2Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Know your compensation rights'**
+  String get traffic2Step3Desc;
+
+  /// No description provided for @traffic2Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File claim within 6 months'**
+  String get traffic2Step3P1;
+
+  /// No description provided for @traffic2Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Get vehicle inspection'**
+  String get traffic2Step3P2;
+
+  /// No description provided for @traffic2Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim medical expenses'**
+  String get traffic2Step3P3;
+
+  /// No description provided for @traffic2Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Right to sue for damages'**
+  String get traffic2Step3P4;
+
+  /// No description provided for @traffic3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'License Suspension/Cancellation'**
+  String get traffic3Title;
+
+  /// No description provided for @traffic3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your driving license is suspended or cancelled'**
+  String get traffic3Desc;
+
+  /// No description provided for @traffic3Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspension vs Cancellation'**
+  String get traffic3Step1Title;
+
+  /// No description provided for @traffic3Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand the difference'**
+  String get traffic3Step1Desc;
+
+  /// No description provided for @traffic3Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspension is temporary'**
+  String get traffic3Step1P1;
+
+  /// No description provided for @traffic3Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation is permanent'**
+  String get traffic3Step1P2;
+
+  /// No description provided for @traffic3Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Causes include violations or medical issues'**
+  String get traffic3Step1P3;
+
+  /// No description provided for @traffic3Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Driving during suspension is illegal'**
+  String get traffic3Step1P4;
+
+  /// No description provided for @traffic3Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Appeal Process'**
+  String get traffic3Step2Title;
+
+  /// No description provided for @traffic3Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'How to challenge decision'**
+  String get traffic3Step2Desc;
+
+  /// No description provided for @traffic3Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File appeal in RTA office'**
+  String get traffic3Step2P1;
+
+  /// No description provided for @traffic3Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Within 30 days'**
+  String get traffic3Step2P2;
+
+  /// No description provided for @traffic3Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect supporting evidence'**
+  String get traffic3Step2P3;
+
+  /// No description provided for @traffic3Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Attend hearing'**
+  String get traffic3Step2P4;
+
+  /// No description provided for @traffic3Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Steps'**
+  String get traffic3Step3Title;
+
+  /// No description provided for @traffic3Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'How to restore license'**
+  String get traffic3Step3Desc;
+
+  /// No description provided for @traffic3Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete suspension period'**
+  String get traffic3Step3P1;
+
+  /// No description provided for @traffic3Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Pass required tests'**
+  String get traffic3Step3P2;
+
+  /// No description provided for @traffic3Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay fees'**
+  String get traffic3Step3P3;
+
+  /// No description provided for @traffic3Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect renewed license'**
+  String get traffic3Step3P4;
+
+  /// No description provided for @womenChatName.
+  ///
+  /// In en, this message translates to:
+  /// **'Women Harassment Assistant Chat'**
+  String get womenChatName;
+
+  /// No description provided for @women1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace Sexual Harassment'**
+  String get women1Title;
+
+  /// No description provided for @women1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You experienced harassment at your workplace'**
+  String get women1Desc;
+
+  /// No description provided for @women1Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand Your Rights'**
+  String get women1Step1Title;
+
+  /// No description provided for @women1Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Know legal protections available to you'**
+  String get women1Step1Desc;
+
+  /// No description provided for @women1Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Sexual Harassment of Women at Workplace Act protects you'**
+  String get women1Step1P1;
+
+  /// No description provided for @women1Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Harassment includes unwanted advances, comments, or touching'**
+  String get women1Step1P2;
+
+  /// No description provided for @women1Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer must ensure safe working environment'**
+  String get women1Step1P3;
+
+  /// No description provided for @women1Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'You can complain without fear of retaliation'**
+  String get women1Step1P4;
+
+  /// No description provided for @women1Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate Actions'**
+  String get women1Step2Title;
+
+  /// No description provided for @women1Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do when harassment occurs'**
+  String get women1Step2Desc;
+
+  /// No description provided for @women1Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Say NO clearly and firmly'**
+  String get women1Step2P1;
+
+  /// No description provided for @women1Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Document incidents with details'**
+  String get women1Step2P2;
+
+  /// No description provided for @women1Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform harasser in writing'**
+  String get women1Step2P3;
+
+  /// No description provided for @women1Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Report to HR or ICC'**
+  String get women1Step2P4;
+
+  /// No description provided for @women1Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep copies of communication'**
+  String get women1Step2P5;
+
+  /// No description provided for @women1Step2P6.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not delay reporting'**
+  String get women1Step2P6;
+
+  /// No description provided for @women1Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint & Investigation'**
+  String get women1Step3Title;
+
+  /// No description provided for @women1Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Formal complaint process'**
+  String get women1Step3Desc;
+
+  /// No description provided for @women1Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File complaint with ICC/HR'**
+  String get women1Step3P1;
+
+  /// No description provided for @women1Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Provide written evidence'**
+  String get women1Step3P2;
+
+  /// No description provided for @women1Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigation within 90 days'**
+  String get women1Step3P3;
+
+  /// No description provided for @women1Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection against retaliation'**
+  String get women1Step3P4;
+
+  /// No description provided for @women1Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep records of process'**
+  String get women1Step3P5;
+
+  /// No description provided for @women2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Street Sexual Harassment'**
+  String get women2Title;
+
+  /// No description provided for @women2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You faced harassment in public'**
+  String get women2Desc;
+
+  /// No description provided for @women2Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding the Law'**
+  String get women2Step1Title;
+
+  /// No description provided for @women2Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal protections available'**
+  String get women2Step1Desc;
+
+  /// No description provided for @women2Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Indecent assault is a crime'**
+  String get women2Step1P1;
+
+  /// No description provided for @women2Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Stalking and eve-teasing are punishable'**
+  String get women2Step1P2;
+
+  /// No description provided for @women2Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'You can file FIR at any police station'**
+  String get women2Step1P3;
+
+  /// No description provided for @women2Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Section 354 IPC applies'**
+  String get women2Step1P4;
+
+  /// No description provided for @women2Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety First'**
+  String get women2Step2Title;
+
+  /// No description provided for @women2Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate response'**
+  String get women2Step2Desc;
+
+  /// No description provided for @women2Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to safe area'**
+  String get women2Step2P1;
+
+  /// No description provided for @women2Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Call emergency number 100'**
+  String get women2Step2P2;
+
+  /// No description provided for @women2Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform people nearby'**
+  String get women2Step2P3;
+
+  /// No description provided for @women2Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember description of offender'**
+  String get women2Step2P4;
+
+  /// No description provided for @women2Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Seek medical help if needed'**
+  String get women2Step2P5;
+
+  /// No description provided for @women2Step2P6.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not confront alone'**
+  String get women2Step2P6;
+
+  /// No description provided for @women2Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Filing FIR'**
+  String get women2Step3Title;
+
+  /// No description provided for @women2Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Police complaint process'**
+  String get women2Step3Desc;
+
+  /// No description provided for @women2Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to nearest police station'**
+  String get women2Step3P1;
+
+  /// No description provided for @women2Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'File FIR with details'**
+  String get women2Step3P2;
+
+  /// No description provided for @women2Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Get FIR copy'**
+  String get women2Step3P3;
+
+  /// No description provided for @women2Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical examination if needed'**
+  String get women2Step3P4;
+
+  /// No description provided for @women2Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow up case'**
+  String get women2Step3P5;
+
+  /// No description provided for @women3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Domestic Violence'**
+  String get women3Title;
+
+  /// No description provided for @women3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You are experiencing abuse at home'**
+  String get women3Desc;
+
+  /// No description provided for @women3Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'You Are Not Alone'**
+  String get women3Step1Title;
+
+  /// No description provided for @women3Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Support and legal rights'**
+  String get women3Step1Desc;
+
+  /// No description provided for @women3Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Domestic violence is a crime'**
+  String get women3Step1P1;
+
+  /// No description provided for @women3Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Protection of Women Act supports you'**
+  String get women3Step1P2;
+
+  /// No description provided for @women3Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'You can get protection order'**
+  String get women3Step1P3;
+
+  /// No description provided for @women3Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal and shelter support available'**
+  String get women3Step1P4;
+
+  /// No description provided for @women3Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Planning'**
+  String get women3Step2Title;
+
+  /// No description provided for @women3Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect yourself'**
+  String get women3Step2Desc;
+
+  /// No description provided for @women3Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep documents safe'**
+  String get women3Step2P1;
+
+  /// No description provided for @women3Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Save emergency contacts'**
+  String get women3Step2P2;
+
+  /// No description provided for @women3Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Document injuries'**
+  String get women3Step2P3;
+
+  /// No description provided for @women3Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Record incidents'**
+  String get women3Step2P4;
+
+  /// No description provided for @women3Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Know shelter locations'**
+  String get women3Step2P5;
+
+  /// No description provided for @women3Step2P6.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not blame yourself'**
+  String get women3Step2P6;
+
+  /// No description provided for @women3Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Options'**
+  String get women3Step3Title;
+
+  /// No description provided for @women3Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal actions available'**
+  String get women3Step3Desc;
+
+  /// No description provided for @women3Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File FIR'**
+  String get women3Step3P1;
+
+  /// No description provided for @women3Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply for protection order'**
+  String get women3Step3P2;
+
+  /// No description provided for @women3Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Get medical documentation'**
+  String get women3Step3P3;
+
+  /// No description provided for @women3Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact helpline'**
+  String get women3Step3P4;
+
+  /// No description provided for @women3Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Free legal aid available'**
+  String get women3Step3P5;
+
+  /// No description provided for @cyberChatName.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber Crime Assistant Chat'**
+  String get cyberChatName;
+
+  /// No description provided for @cyber1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Online Financial Fraud'**
+  String get cyber1Title;
+
+  /// No description provided for @cyber1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You lost money due to online scam'**
+  String get cyber1Desc;
+
+  /// No description provided for @cyber1Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate Actions'**
+  String get cyber1Step1Title;
+
+  /// No description provided for @cyber1Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Act quickly'**
+  String get cyber1Step1Desc;
+
+  /// No description provided for @cyber1Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Block accounts immediately'**
+  String get cyber1Step1P1;
+
+  /// No description provided for @cyber1Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Change passwords'**
+  String get cyber1Step1P2;
+
+  /// No description provided for @cyber1Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact bank'**
+  String get cyber1Step1P3;
+
+  /// No description provided for @cyber1Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Check transactions'**
+  String get cyber1Step1P4;
+
+  /// No description provided for @cyber1Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable fraud alert'**
+  String get cyber1Step1P5;
+
+  /// No description provided for @cyber1Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Know the Crime'**
+  String get cyber1Step2Title;
+
+  /// No description provided for @cyber1Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal understanding'**
+  String get cyber1Step2Desc;
+
+  /// No description provided for @cyber1Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Section 420 IPC applies'**
+  String get cyber1Step2P1;
+
+  /// No description provided for @cyber1Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity theft is cyber crime'**
+  String get cyber1Step2P2;
+
+  /// No description provided for @cyber1Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Phishing is punishable'**
+  String get cyber1Step2P3;
+
+  /// No description provided for @cyber1Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'File FIR cyber unit'**
+  String get cyber1Step2P4;
+
+  /// No description provided for @cyber1Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank may assist'**
+  String get cyber1Step2P5;
+
+  /// No description provided for @cyber1Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Steps'**
+  String get cyber1Step3Title;
+
+  /// No description provided for @cyber1Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal recovery'**
+  String get cyber1Step3Desc;
+
+  /// No description provided for @cyber1Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File FIR'**
+  String get cyber1Step3P1;
+
+  /// No description provided for @cyber1Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Provide evidence'**
+  String get cyber1Step3P2;
+
+  /// No description provided for @cyber1Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Request bank reversal'**
+  String get cyber1Step3P3;
+
+  /// No description provided for @cyber1Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Report to cyber cell'**
+  String get cyber1Step3P4;
+
+  /// No description provided for @cyber1Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Consider legal action'**
+  String get cyber1Step3P5;
+
+  /// No description provided for @cyber2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenge Porn / Image Abuse'**
+  String get cyber2Title;
+
+  /// No description provided for @cyber2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Private images shared without consent'**
+  String get cyber2Desc;
+
+  /// No description provided for @cyber2Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Know Your Rights'**
+  String get cyber2Step1Title;
+
+  /// No description provided for @cyber2Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal protection'**
+  String get cyber2Step1Desc;
+
+  /// No description provided for @cyber2Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing images is crime'**
+  String get cyber2Step1P1;
+
+  /// No description provided for @cyber2Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Section 67A IT Act'**
+  String get cyber2Step1P2;
+
+  /// No description provided for @cyber2Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Section 354D IPC'**
+  String get cyber2Step1P3;
+
+  /// No description provided for @cyber2Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'POCSO applies if minor'**
+  String get cyber2Step1P4;
+
+  /// No description provided for @cyber2Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'POCSO Act applies if a minor is involved'**
+  String get cyber2Step1P5;
+
+  /// No description provided for @cyber2Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate Response'**
+  String get cyber2Step2Title;
+
+  /// No description provided for @cyber2Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Act fast'**
+  String get cyber2Step2Desc;
+
+  /// No description provided for @cyber2Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Report platform'**
+  String get cyber2Step2P1;
+
+  /// No description provided for @cyber2Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Use takedown option'**
+  String get cyber2Step2P2;
+
+  /// No description provided for @cyber2Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Take screenshots'**
+  String get cyber2Step2P3;
+
+  /// No description provided for @cyber2Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Save URLs'**
+  String get cyber2Step2P4;
+
+  /// No description provided for @cyber2Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform trusted people'**
+  String get cyber2Step2P5;
+
+  /// No description provided for @cyber2Step2P6.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not engage attacker'**
+  String get cyber2Step2P6;
+
+  /// No description provided for @cyber2Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Action'**
+  String get cyber2Step3Title;
+
+  /// No description provided for @cyber2Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'File complaint'**
+  String get cyber2Step3Desc;
+
+  /// No description provided for @cyber2Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File FIR cyber police'**
+  String get cyber2Step3P1;
+
+  /// No description provided for @cyber2Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Report platform'**
+  String get cyber2Step3P2;
+
+  /// No description provided for @cyber2Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'NCW complaint'**
+  String get cyber2Step3P3;
+
+  /// No description provided for @cyber2Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Content removal request'**
+  String get cyber2Step3P4;
+
+  /// No description provided for @cyber2Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Civil case option'**
+  String get cyber2Step3P5;
+
+  /// No description provided for @cyber3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Hacking'**
+  String get cyber3Title;
+
+  /// No description provided for @cyber3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account was hacked'**
+  String get cyber3Desc;
+
+  /// No description provided for @cyber3Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Account'**
+  String get cyber3Step1Title;
+
+  /// No description provided for @cyber3Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Regain control'**
+  String get cyber3Step1Desc;
+
+  /// No description provided for @cyber3Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover account'**
+  String get cyber3Step1P1;
+
+  /// No description provided for @cyber3Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get cyber3Step1P2;
+
+  /// No description provided for @cyber3Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable 2FA'**
+  String get cyber3Step1P3;
+
+  /// No description provided for @cyber3Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Check activity'**
+  String get cyber3Step1P4;
+
+  /// No description provided for @cyber3Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove unknown apps'**
+  String get cyber3Step1P5;
+
+  /// No description provided for @cyber3Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Damage Check'**
+  String get cyber3Step2Title;
+
+  /// No description provided for @cyber3Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Assess impact'**
+  String get cyber3Step2Desc;
+
+  /// No description provided for @cyber3Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Check sent messages'**
+  String get cyber3Step2P1;
+
+  /// No description provided for @cyber3Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Check transactions'**
+  String get cyber3Step2P2;
+
+  /// No description provided for @cyber3Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Check changes'**
+  String get cyber3Step2P3;
+
+  /// No description provided for @cyber3Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor accounts'**
+  String get cyber3Step2P4;
+
+  /// No description provided for @cyber3Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Inform contacts'**
+  String get cyber3Step2P5;
+
+  /// No description provided for @cyber3Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Action'**
+  String get cyber3Step3Title;
+
+  /// No description provided for @cyber3Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Report crime'**
+  String get cyber3Step3Desc;
+
+  /// No description provided for @cyber3Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File FIR'**
+  String get cyber3Step3P1;
+
+  /// No description provided for @cyber3Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Report platform'**
+  String get cyber3Step3P2;
+
+  /// No description provided for @cyber3Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Save evidence'**
+  String get cyber3Step3P3;
+
+  /// No description provided for @cyber3Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Check credit reports'**
+  String get cyber3Step3P4;
+
+  /// No description provided for @cyber3Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber expert help'**
+  String get cyber3Step3P5;
+
+  /// No description provided for @labourChatName.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Rights Assistant Chat'**
+  String get labourChatName;
+
+  /// No description provided for @labour1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfair Dismissal'**
+  String get labour1Title;
+
+  /// No description provided for @labour1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You were fired without proper notice or compensation'**
+  String get labour1Desc;
+
+  /// No description provided for @labour1Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Understanding Your Rights'**
+  String get labour1Step1Title;
+
+  /// No description provided for @labour1Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer cannot fire you arbitrarily'**
+  String get labour1Step1Desc;
+
+  /// No description provided for @labour1Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Industrial Disputes Act protects workers'**
+  String get labour1Step1P1;
+
+  /// No description provided for @labour1Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid reason is required for termination'**
+  String get labour1Step1P2;
+
+  /// No description provided for @labour1Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Written notice is mandatory'**
+  String get labour1Step1P3;
+
+  /// No description provided for @labour1Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrongful termination is illegal'**
+  String get labour1Step1P4;
+
+  /// No description provided for @labour1Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'You can claim compensation or reinstatement'**
+  String get labour1Step1P5;
+
+  /// No description provided for @labour1Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate Documentation'**
+  String get labour1Step2Title;
+
+  /// No description provided for @labour1Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect evidence'**
+  String get labour1Step2Desc;
+
+  /// No description provided for @labour1Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep termination letter'**
+  String get labour1Step2P1;
+
+  /// No description provided for @labour1Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Record dismissal details'**
+  String get labour1Step2P2;
+
+  /// No description provided for @labour1Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect salary slips'**
+  String get labour1Step2P3;
+
+  /// No description provided for @labour1Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Save performance records'**
+  String get labour1Step2P4;
+
+  /// No description provided for @labour1Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Gather witness statements'**
+  String get labour1Step2P5;
+
+  /// No description provided for @labour1Step2P6.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep company policies'**
+  String get labour1Step2P6;
+
+  /// No description provided for @labour1Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Steps'**
+  String get labour1Step3Title;
+
+  /// No description provided for @labour1Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'How to seek remedy'**
+  String get labour1Step3Desc;
+
+  /// No description provided for @labour1Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File complaint with Labour Department'**
+  String get labour1Step3P1;
+
+  /// No description provided for @labour1Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim unpaid wages and severance'**
+  String get labour1Step3P2;
+
+  /// No description provided for @labour1Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Seek reinstatement or compensation'**
+  String get labour1Step3P3;
+
+  /// No description provided for @labour1Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'File Labour Tribunal case'**
+  String get labour1Step3P4;
+
+  /// No description provided for @labour1Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Free legal aid available'**
+  String get labour1Step3P5;
+
+  /// No description provided for @generalChatName.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Advisor'**
+  String get generalChatName;
+
+  /// No description provided for @general1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Concern'**
+  String get general1Title;
+
+  /// No description provided for @general1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Let AI guide your legal issue'**
+  String get general1Desc;
+
+  /// No description provided for @general1Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Legal Advisor'**
+  String get general1Step1Title;
+
+  /// No description provided for @general1Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get legal help easily'**
+  String get general1Step1Desc;
+
+  /// No description provided for @general1Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your issue'**
+  String get general1Step1P1;
+
+  /// No description provided for @general1Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'AI will analyze your case'**
+  String get general1Step1P2;
+
+  /// No description provided for @general1Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Get legal guidance'**
+  String get general1Step1P3;
+
+  /// No description provided for @general1Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on laws'**
+  String get general1Step1P4;
+
+  /// No description provided for @general1Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'All inside app'**
+  String get general1Step1P5;
+
+  /// No description provided for @general1Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get general1Step2Title;
+
+  /// No description provided for @general1Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your issue type'**
+  String get general1Step2Desc;
+
+  /// No description provided for @general1Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Traffic law issues'**
+  String get general1Step2P1;
+
+  /// No description provided for @general1Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Women harassment cases'**
+  String get general1Step2P2;
+
+  /// No description provided for @general1Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Cyber crimes'**
+  String get general1Step2P3;
+
+  /// No description provided for @general1Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour rights'**
+  String get general1Step2P4;
+
+  /// No description provided for @general1Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'How to Use'**
+  String get general1Step3Title;
+
+  /// No description provided for @general1Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Simple steps'**
+  String get general1Step3Desc;
+
+  /// No description provided for @general1Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get general1Step3P1;
+
+  /// No description provided for @general1Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Read guidance'**
+  String get general1Step3P2;
+
+  /// No description provided for @general1Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Start AI chat'**
+  String get general1Step3P3;
+
+  /// No description provided for @general1Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Get advice'**
+  String get general1Step3P4;
+
+  /// No description provided for @general1Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow steps'**
+  String get general1Step3P5;
+
+  /// No description provided for @labour2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-payment of Wages'**
+  String get labour2Title;
+
+  /// No description provided for @labour2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your employer is not paying your salary'**
+  String get labour2Desc;
+
+  /// No description provided for @labour2Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Know Your Entitlement'**
+  String get labour2Step1Title;
+
+  /// No description provided for @labour2Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your legal wage rights'**
+  String get labour2Step1Desc;
+
+  /// No description provided for @labour2Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum wage must be paid by law'**
+  String get labour2Step1P1;
+
+  /// No description provided for @labour2Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages must be paid on time'**
+  String get labour2Step1P2;
+
+  /// No description provided for @labour2Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Illegal deductions are not allowed'**
+  String get labour2Step1P3;
+
+  /// No description provided for @labour2Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Only lawful deductions are valid'**
+  String get labour2Step1P4;
+
+  /// No description provided for @labour2Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'You can recover unpaid wages with penalty'**
+  String get labour2Step1P5;
+
+  /// No description provided for @labour2Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate Steps'**
+  String get labour2Step2Title;
+
+  /// No description provided for @labour2Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Act quickly'**
+  String get labour2Step2Desc;
+
+  /// No description provided for @labour2Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Send written demand for salary'**
+  String get labour2Step2P1;
+
+  /// No description provided for @labour2Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep all communication records'**
+  String get labour2Step2P2;
+
+  /// No description provided for @labour2Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Record working hours'**
+  String get labour2Step2P3;
+
+  /// No description provided for @labour2Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate pending amount'**
+  String get labour2Step2P4;
+
+  /// No description provided for @labour2Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep bank statements'**
+  String get labour2Step2P5;
+
+  /// No description provided for @labour2Step2P6.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not rely on verbal promises'**
+  String get labour2Step2P6;
+
+  /// No description provided for @labour2Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Filing Complaint'**
+  String get labour2Step3Title;
+
+  /// No description provided for @labour2Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal action process'**
+  String get labour2Step3Desc;
+
+  /// No description provided for @labour2Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File complaint with Labour Department'**
+  String get labour2Step3P1;
+
+  /// No description provided for @labour2Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'File recovery case in Labour Court'**
+  String get labour2Step3P2;
+
+  /// No description provided for @labour2Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim unpaid salary + damages'**
+  String get labour2Step3P3;
+
+  /// No description provided for @labour2Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Case is free under law'**
+  String get labour2Step3P4;
+
+  /// No description provided for @labour2Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer must respond legally'**
+  String get labour2Step3P5;
+
+  /// No description provided for @labour3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Workplace Injury / Accident'**
+  String get labour3Title;
+
+  /// No description provided for @labour3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'You were injured at work'**
+  String get labour3Desc;
+
+  /// No description provided for @labour3Step1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rights After Injury'**
+  String get labour3Step1Title;
+
+  /// No description provided for @labour3Step1Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal protection and compensation'**
+  String get labour3Step1Desc;
+
+  /// No description provided for @labour3Step1P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer is liable for workplace injury'**
+  String get labour3Step1P1;
+
+  /// No description provided for @labour3Step1P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical expenses must be covered'**
+  String get labour3Step1P2;
+
+  /// No description provided for @labour3Step1P3.
+  ///
+  /// In en, this message translates to:
+  /// **'You can claim disability compensation'**
+  String get labour3Step1P3;
+
+  /// No description provided for @labour3Step1P4.
+  ///
+  /// In en, this message translates to:
+  /// **'You can claim lost wages'**
+  String get labour3Step1P4;
+
+  /// No description provided for @labour3Step1P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Family gets compensation in fatal cases'**
+  String get labour3Step1P5;
+
+  /// No description provided for @labour3Step2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate Actions'**
+  String get labour3Step2Title;
+
+  /// No description provided for @labour3Step2Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'What to do after accident'**
+  String get labour3Step2Desc;
+
+  /// No description provided for @labour3Step2P1.
+  ///
+  /// In en, this message translates to:
+  /// **'Report injury immediately'**
+  String get labour3Step2P1;
+
+  /// No description provided for @labour3Step2P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Get written acknowledgment'**
+  String get labour3Step2P2;
+
+  /// No description provided for @labour3Step2P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Seek medical treatment'**
+  String get labour3Step2P3;
+
+  /// No description provided for @labour3Step2P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photos of accident'**
+  String get labour3Step2P4;
+
+  /// No description provided for @labour3Step2P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect witness statements'**
+  String get labour3Step2P5;
+
+  /// No description provided for @labour3Step2P6.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not sign settlement without advice'**
+  String get labour3Step2P6;
+
+  /// No description provided for @labour3Step3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Compensation Claim'**
+  String get labour3Step3Title;
+
+  /// No description provided for @labour3Step3Desc.
+  ///
+  /// In en, this message translates to:
+  /// **'How to get compensation'**
+  String get labour3Step3Desc;
+
+  /// No description provided for @labour3Step3P1.
+  ///
+  /// In en, this message translates to:
+  /// **'File claim with Compensation Commissioner'**
+  String get labour3Step3P1;
+
+  /// No description provided for @labour3Step3P2.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach medical reports'**
+  String get labour3Step3P2;
+
+  /// No description provided for @labour3Step3P3.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim recovery wages'**
+  String get labour3Step3P3;
+
+  /// No description provided for @labour3Step3P4.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim disability benefits'**
+  String get labour3Step3P4;
+
+  /// No description provided for @labour3Step3P5.
+  ///
+  /// In en, this message translates to:
+  /// **'Employer must provide insurance proof'**
+  String get labour3Step3P5;
+
+  /// No description provided for @myDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'My Documents'**
+  String get myDocuments;
+
+  /// No description provided for @signInToViewDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to view and manage your documents'**
+  String get signInToViewDocs;
+
+  /// No description provided for @signInToDownloadDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to download documents'**
+  String get signInToDownloadDocs;
+
+  /// No description provided for @signInToManageDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to manage documents'**
+  String get signInToManageDocs;
+
+  /// No description provided for @noDocumentsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents available'**
+  String get noDocumentsAvailable;
+
+  /// No description provided for @noDocumentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents yet'**
+  String get noDocumentsYet;
+
+  /// No description provided for @documentsEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents you generate or download will appear here'**
+  String get documentsEmptyHint;
+
+  /// No description provided for @noDocumentsOfType.
+  ///
+  /// In en, this message translates to:
+  /// **'No documents of this type'**
+  String get noDocumentsOfType;
+
+  /// No description provided for @deleteDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Document'**
+  String get deleteDocument;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @couldNotOpenDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open document'**
+  String get couldNotOpenDocument;
+
+  /// No description provided for @documentDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Document deleted successfully'**
+  String get documentDeleted;
+
+  /// No description provided for @storageUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Usage'**
+  String get storageUsage;
+
+  /// No description provided for @complaints.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaints'**
+  String get complaints;
+
+  /// No description provided for @generatedPdfs.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated PDFs'**
+  String get generatedPdfs;
+
+  /// No description provided for @uploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded'**
+  String get uploaded;
+
+  /// No description provided for @allDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'All ({count})'**
+  String allDocuments(Object count);
+
+  /// No description provided for @openingDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening: {title}'**
+  String openingDocument(Object title);
+
+  /// Confirm delete dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{title}\"?'**
+  String deleteConfirm(Object title);
+
+  /// No description provided for @howToReportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'How to report an issue'**
+  String get howToReportIssue;
+
+  /// No description provided for @reportIssueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get help with technical problems'**
+  String get reportIssueSubtitle;
+
+  /// No description provided for @helpReportContent.
+  ///
+  /// In en, this message translates to:
+  /// **'For technical support, contact us through in-app support or website.'**
+  String get helpReportContent;
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently Asked Questions'**
+  String get faqTitle;
+
+  /// No description provided for @faqFreeUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Is Legal Sathi free to use?'**
+  String get faqFreeUse;
+
+  /// No description provided for @faqFreeUseAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Legal Sathi is free for all users.'**
+  String get faqFreeUseAnswer;
+
+  /// No description provided for @faqLawyerUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I use this instead of a lawyer?'**
+  String get faqLawyerUse;
+
+  /// No description provided for @faqLawyerUseAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'No, it provides guidance only.'**
+  String get faqLawyerUseAnswer;
+
+  /// No description provided for @faqAiAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'How accurate is the AI assistant?'**
+  String get faqAiAccuracy;
+
+  /// No description provided for @faqAiAccuracyAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'AI is trained on Pakistani laws but may not be 100% accurate.'**
+  String get faqAiAccuracyAnswer;
+
+  /// No description provided for @faqDataSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Is my data secure?'**
+  String get faqDataSecurity;
+
+  /// No description provided for @faqDataSecurityAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, your data is encrypted and secure.'**
+  String get faqDataSecurityAnswer;
+
+  /// No description provided for @stepByStepUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Step by step guide'**
+  String get stepByStepUpload;
+
+  /// No description provided for @howOcrWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How OCR works'**
+  String get howOcrWorks;
+
+  /// No description provided for @ocrSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Document scanning and analysis'**
+  String get ocrSubtitle;
+
+  /// No description provided for @howToDraftDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'How to draft documents'**
+  String get howToDraftDocuments;
+
+  /// No description provided for @draftSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'FIRs, complaints and legal documents'**
+  String get draftSubtitle;
+
+  /// No description provided for @helpUseAppContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Use bottom navigation to move between screens.'**
+  String get helpUseAppContent;
+
+  /// No description provided for @helpUploadContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to documents and upload files.'**
+  String get helpUploadContent;
+
+  /// No description provided for @helpOcrContent.
+  ///
+  /// In en, this message translates to:
+  /// **'OCR extracts text from images and PDFs.'**
+  String get helpOcrContent;
+
+  /// No description provided for @helpDraftContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Use draft tools to create legal documents.'**
+  String get helpDraftContent;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @faqLanguages.
+  ///
+  /// In en, this message translates to:
+  /// **'What languages are supported?'**
+  String get faqLanguages;
+
+  /// No description provided for @faqLanguagesAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'English, Urdu, and Roman Urdu are supported.'**
+  String get faqLanguagesAnswer;
+
+  /// No description provided for @stillNeedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Still Need Help?'**
+  String get stillNeedHelp;
+
+  /// No description provided for @contactSupportText.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact our support team for assistance'**
+  String get contactSupportText;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupport;
+
+  /// No description provided for @urduLine1.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Legal'**
+  String get urduLine1;
+
+  /// No description provided for @urduLine2.
+  ///
+  /// In en, this message translates to:
+  /// **'Companion'**
+  String get urduLine2;
+
+  /// No description provided for @aboutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Sathi is an AI-powered legal assistant designed to help Pakistani citizens understand their legal rights and navigate the legal system. We provide information on criminal law, civil law, labour rights, cyber crime, and more.\n\nOur mission is to make legal information accessible to everyone, regardless of their background or resources. We help users draft legal documents, understand laws, and take informed action.'**
+  String get aboutDescription;
+
+  /// No description provided for @versionInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Version Information'**
+  String get versionInfo;
+
+  /// No description provided for @version.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get version;
+
+  /// No description provided for @build.
+  ///
+  /// In en, this message translates to:
+  /// **'Build'**
+  String get build;
+
+  /// No description provided for @platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get platform;
+
+  /// No description provided for @mobileApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile App'**
+  String get mobileApp;
+
+  /// No description provided for @developer.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get developer;
+
+  /// No description provided for @developedWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Developed with '**
+  String get developedWith;
+
+  /// No description provided for @forPakistan.
+  ///
+  /// In en, this message translates to:
+  /// **' for the people of Pakistan'**
+  String get forPakistan;
+
+  /// No description provided for @legalDisclaimerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Disclaimer'**
+  String get legalDisclaimerTitle;
+
+  /// No description provided for @legalDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal Sathi provides general legal information only. This is not legal advice and should not replace consultation with a qualified lawyer.'**
+  String get legalDisclaimer;
+
+  /// No description provided for @copyright.
+  ///
+  /// In en, this message translates to:
+  /// **'© 2026 Legal Sathi. All rights reserved.'**
+  String get copyright;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
