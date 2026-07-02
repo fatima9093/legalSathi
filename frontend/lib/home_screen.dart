@@ -13,6 +13,7 @@ import 'package:front_end/create_account/auth_navigation_helper.dart';
 import 'package:front_end/chat_screen.dart';
 import 'package:front_end/scenario_simulator_screen.dart';
 import 'package:front_end/models/scenario_model.dart';
+import 'package:front_end/screens/dynamic_documents_screen.dart';
 import 'package:front_end/screens/upload_evidence_selection_screen.dart';
 import 'package:front_end/cyber_law_module/draft_document_type_screen.dart';
 import 'package:front_end/l10n/app_localizations.dart';
@@ -615,7 +616,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Navigate to Documents screen
                 Navigator.push(
                   context,
-                  SmoothPageRoute(page: const UploadEvidenceSelectionScreen()),
+                  SmoothPageRoute(page: const DynamicDocumentsScreen()),
                 );
               } else if (index == 3) {
                 // Navigate to Profile screen
